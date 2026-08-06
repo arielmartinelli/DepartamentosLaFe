@@ -21,7 +21,6 @@ import {
   consultasSemilla,
   cuentasSemilla,
   galeriasSemilla,
-  lugaresSemilla,
   prestacionesSemilla,
 } from "./semillas";
 import { CLAVES, guardar, leer, nuevoId, suscribir, type Clave } from "./repositorio";
@@ -36,7 +35,6 @@ import type {
   Edificio,
   EstadoConsulta,
   EstadoReserva,
-  Lugar,
   Prestacion,
   Reserva,
   SectorGaleria,
@@ -78,7 +76,6 @@ type Contenido = {
   bloqueos: Bloqueo[];
   consultas: ConsultaCompleta[];
   actividades: Actividad[];
-  lugares: Lugar[];
   comentarios: Comentario[];
   prestaciones: Prestacion[];
   galerias: SectorGaleria[];
@@ -105,10 +102,6 @@ type Contenido = {
   guardarActividad: (a: Actividad) => void;
   eliminarActividad: (id: string) => void;
   moverActividad: (id: string, paso: -1 | 1) => void;
-
-  guardarLugar: (l: Lugar) => void;
-  eliminarLugar: (id: string) => void;
-  moverLugar: (id: string, paso: -1 | 1) => void;
 
   guardarComentario: (c: Comentario) => void;
   eliminarComentario: (id: string) => void;
@@ -160,7 +153,6 @@ export function ProveedorContenido({ children }: { children: ReactNode }) {
   const bloqueos = useDato(CLAVES.bloqueos, bloqueosSemilla);
   const consultas = useDato(CLAVES.consultas, consultasSemilla);
   const actividades = useDato(CLAVES.actividades, actividadesSemilla);
-  const lugares = useDato(CLAVES.lugares, lugaresSemilla);
   const comentarios = useDato(CLAVES.comentarios, comentariosSemilla);
   const prestaciones = useDato(CLAVES.prestaciones, prestacionesSemilla);
   const galerias = useDato(CLAVES.galerias, galeriasSemilla);
@@ -195,7 +187,6 @@ export function ProveedorContenido({ children }: { children: ReactNode }) {
       bloqueos,
       consultas,
       actividades,
-      lugares,
       comentarios,
       prestaciones,
       galerias,
@@ -316,19 +307,6 @@ export function ProveedorContenido({ children }: { children: ReactNode }) {
       moverActividad: (id, paso) =>
         persistir(CLAVES.actividades, reordenar(actividades, id, paso)),
 
-      guardarLugar: (l) =>
-        persistir(
-          CLAVES.lugares,
-          lugares.some((x) => x.id === l.id)
-            ? lugares.map((x) => (x.id === l.id ? l : x))
-            : [...lugares, { ...l, orden: lugares.length }],
-        ),
-
-      eliminarLugar: (id) =>
-        persistir(CLAVES.lugares, lugares.filter((l) => l.id !== id)),
-
-      moverLugar: (id, paso) => persistir(CLAVES.lugares, reordenar(lugares, id, paso)),
-
       guardarComentario: (c) =>
         persistir(
           CLAVES.comentarios,
@@ -390,7 +368,6 @@ export function ProveedorContenido({ children }: { children: ReactNode }) {
     bloqueos,
     consultas,
     actividades,
-    lugares,
     comentarios,
     prestaciones,
     galerias,

@@ -11,7 +11,6 @@ import {
   Inbox,
   LayoutDashboard,
   LogOut,
-  MapPin,
   Menu,
   MessageSquareQuote,
   Mountain,
@@ -45,8 +44,7 @@ const secciones = [
   {
     titulo: "Contenido de la web",
     items: [
-      { href: "/admin/actividades", etiqueta: "Actividades", icono: Mountain },
-      { href: "/admin/alrededores", etiqueta: "Alrededores", icono: MapPin },
+      { href: "/admin/actividades", etiqueta: "Qué hacer", icono: Mountain },
       { href: "/admin/comentarios", etiqueta: "Comentarios", icono: MessageSquareQuote },
       { href: "/admin/configuracion", etiqueta: "Configuración", icono: Settings },
     ],

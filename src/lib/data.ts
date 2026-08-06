@@ -1,10 +1,8 @@
 import { foto, retrato } from "./imagenes";
 import type {
-  Cercania,
   Consulta,
   Departamento,
   Edificio,
-  Experiencia,
   ImagenGaleria,
   Pregunta,
   Resena,
@@ -277,70 +275,119 @@ export const politicas = [
    Contenido turístico
    ──────────────────────────────────────────────────────────────── */
 
-export const experiencias: Experiencia[] = [
+/**
+ * Qué hacer: excursiones y lugares cercanos en una sola lista.
+ * Nueve entradas; desde el panel se pueden agregar todas las que hagan falta.
+ */
+export const queHacer = [
   {
-    id: "exp-1",
-    nombre: "Navegación por el Canal Beagle",
+    id: "qh-1",
+    titulo: "Navegación por el Canal Beagle",
+    categoria: "Excursión",
     duracion: "4 horas",
+    distancia: "Sale del puerto, a 8 min",
     temporada: "Todo el año",
     descripcion:
       "Lobos marinos, cormoranes y el faro Les Eclaireurs. La salida de las 15 h suele tener menos gente y mejor luz.",
     foto: foto.navegacion,
+    mapa: "https://www.google.com/maps/search/?api=1&query=Puerto+de+Ushuaia",
   },
   {
-    id: "exp-2",
-    nombre: "Parque Nacional Tierra del Fuego",
+    id: "qh-2",
+    titulo: "Parque Nacional Tierra del Fuego",
+    categoria: "Naturaleza",
     duracion: "Día completo",
+    distancia: "15 min en auto",
     temporada: "Todo el año",
     descripcion:
       "Senderos de dificultad baja que los chicos hacen sin problema, bosque de lenga, castoreras y la bahía Lapataia.",
     foto: foto.lagos,
+    mapa: "https://www.google.com/maps/search/?api=1&query=Parque+Nacional+Tierra+del+Fuego",
   },
   {
-    id: "exp-3",
-    nombre: "Tren del Fin del Mundo",
+    id: "qh-3",
+    titulo: "Tren del Fin del Mundo",
+    categoria: "Paseo",
     duracion: "2 horas",
+    distancia: "20 min en auto",
     temporada: "Todo el año",
     descripcion:
       "El recorrido más corto y el que mejor funciona con chicos chicos. Se combina bien con la entrada al Parque.",
     foto: foto.ciudadDesdeElAgua,
+    mapa: "https://www.google.com/maps/search/?api=1&query=Tren+del+Fin+del+Mundo+Ushuaia",
   },
   {
-    id: "exp-4",
-    nombre: "Cerro Castor",
+    id: "qh-4",
+    titulo: "Cerro Castor",
+    categoria: "Nieve",
     duracion: "Día completo",
+    distancia: "30 min en auto",
     temporada: "Junio a octubre",
     descripcion:
       "Esquí, trineos y escuela para principiantes a 26 km. Guardamos el equipo en la propiedad sin cargo.",
     foto: foto.montanaNevada,
+    mapa: "https://www.google.com/maps/search/?api=1&query=Cerro+Castor+Ushuaia",
   },
   {
-    id: "exp-5",
-    nombre: "Avistaje de pingüinos",
+    id: "qh-5",
+    titulo: "Avistaje de pingüinos",
+    categoria: "Excursión",
     duracion: "5 horas",
+    distancia: "Sale del puerto",
     temporada: "Octubre a marzo",
     descripcion:
       "Colonia de pingüinos papúa y magallánicos en la isla Martillo. Conviene reservar con varios días de anticipación.",
     foto: foto.pinguinos,
+    mapa: "https://www.google.com/maps/search/?api=1&query=Isla+Martillo+Ushuaia",
   },
   {
-    id: "exp-6",
-    nombre: "Lagos Escondido y Fagnano",
-    duracion: "Día completo",
+    id: "qh-6",
+    titulo: "Glaciar Martial",
+    categoria: "Naturaleza",
+    duracion: "2 a 3 horas",
+    distancia: "12 min en auto",
     temporada: "Todo el año",
     descripcion:
-      "Se cruza el paso Garibaldi y se llega a los dos lagos grandes de la isla. Hay excursiones en 4x4 y también se hace en auto.",
-    foto: foto.canalBeagle,
+      "Caminata corta con vista a toda la ciudad y al canal. Es el paseo ideal para el día que llegás.",
+    foto: foto.faroRoca,
+    mapa: "https://www.google.com/maps/search/?api=1&query=Glaciar+Martial+Ushuaia",
   },
-];
-
-export const cercanias: Cercania[] = [
-  { id: "cer-1", nombre: "Parque Nacional Tierra del Fuego", categoria: "Naturaleza", distancia: "15 min en auto", descripcion: "Senderos, bahía Lapataia y el bosque de lengas.", foto: foto.lagos },
-  { id: "cer-2", nombre: "Puerto de Ushuaia", categoria: "Ciudad", distancia: "8 min en auto", descripcion: "Punto de salida de todas las navegaciones por el canal.", foto: foto.puerto },
-  { id: "cer-3", nombre: "Canal Beagle", categoria: "Naturaleza", distancia: "10 min en auto", descripcion: "El faro, los lobos marinos y la vista a la isla Redonda.", foto: foto.faroEclaireurs },
-  { id: "cer-4", nombre: "Tren del Fin del Mundo", categoria: "Paseos", distancia: "20 min en auto", descripcion: "Estación del Fin del Mundo, sobre la Ruta 3.", foto: foto.ciudadDesdeElAgua },
-  { id: "cer-5", nombre: "Cerro Castor", categoria: "Naturaleza", distancia: "30 min en auto", descripcion: "El centro de esquí más austral, abierto de junio a octubre.", foto: foto.montanaNevada },
-  { id: "cer-6", nombre: "Glaciar Martial", categoria: "Naturaleza", distancia: "12 min en auto", descripcion: "Caminata corta con vista a toda la ciudad y al canal.", foto: foto.faroRoca },
+  {
+    id: "qh-7",
+    titulo: "Lagos Escondido y Fagnano",
+    categoria: "Excursión",
+    duracion: "Día completo",
+    distancia: "1 h 30 en auto",
+    temporada: "Todo el año",
+    descripcion:
+      "Se cruza el paso Garibaldi y se llega a los dos lagos grandes de la isla. Hay salidas en 4x4 y también se hace en auto.",
+    foto: foto.canalBeagle,
+    mapa: "https://www.google.com/maps/search/?api=1&query=Lago+Escondido+Tierra+del+Fuego",
+  },
+  {
+    id: "qh-8",
+    titulo: "Puerto de Ushuaia",
+    categoria: "Ciudad",
+    duracion: "1 hora",
+    distancia: "8 min en auto",
+    temporada: "Todo el año",
+    descripcion:
+      "El cartel del fin del mundo, los cruceros a la Antártida y el mejor punto para ver la bahía al atardecer.",
+    foto: foto.puerto,
+    mapa: "https://www.google.com/maps/search/?api=1&query=Puerto+de+Ushuaia",
+  },
+  {
+    id: "qh-9",
+    titulo: "Centro y calle San Martín",
+    categoria: "Ciudad",
+    duracion: "A tu ritmo",
+    distancia: "12 cuadras a pie",
+    temporada: "Todo el año",
+    descripcion:
+      "Restaurantes de centolla y cordero, cervecerías, chocolaterías y las tiendas libres de impuestos.",
+    foto: foto.bahia,
+    mapa: "https://www.google.com/maps/search/?api=1&query=Avenida+San+Martin+Ushuaia",
+  },
 ];
 
 /** Servicios prácticos: van como lista, no como tarjetas con foto. */

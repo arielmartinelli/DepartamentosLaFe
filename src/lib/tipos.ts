@@ -83,24 +83,6 @@ export type Servicio = {
   destacadoEnHome: boolean;
 };
 
-export type Experiencia = {
-  id: string;
-  nombre: string;
-  duracion: string;
-  temporada: string;
-  descripcion: string;
-  foto: string;
-};
-
-export type Cercania = {
-  id: string;
-  nombre: string;
-  categoria: "Naturaleza" | "Paseos" | "Ciudad" | "Servicios";
-  distancia: string;
-  descripcion: string;
-  foto: string;
-};
-
 export type ImagenGaleria = {
   id: string;
   titulo: string;
@@ -135,27 +117,23 @@ export type Bloqueo = {
   motivo: string;
 };
 
+/**
+ * "Qué hacer" reúne excursiones y lugares cercanos en una sola lista.
+ * `duracion` sirve para las salidas y `distancia` para lo que está cerca;
+ * cada ficha usa el que corresponda.
+ */
 export type Actividad = {
   id: string;
   titulo: string;
   descripcion: string;
-  duracion: string;
-  temporada: string;
-  foto: string;
-  orden: number;
-  activa: boolean;
-};
-
-export type Lugar = {
-  id: string;
-  nombre: string;
-  descripcion: string;
-  distancia: string;
   categoria: string;
+  duracion: string;
+  distancia: string;
+  temporada: string;
   foto: string;
   mapa: string;
   orden: number;
-  activo: boolean;
+  activa: boolean;
 };
 
 export type Comentario = {
@@ -186,7 +164,7 @@ export type SectorGaleria = {
   id: string;
   nombre: string;
   descripcion: string;
-  tipo: "edificio" | "departamento" | "actividades" | "alrededores";
+  tipo: "edificio" | "departamento" | "actividades";
   referencia?: string;
   imagenes: ImagenSector[];
 };

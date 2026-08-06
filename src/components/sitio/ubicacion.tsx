@@ -1,11 +1,10 @@
 import { Mapa } from "./mapa";
-import { Cercanias } from "./cercanias";
 import { Revelar } from "./revelar";
 import { edificios } from "@/lib/data";
 
 export function Ubicacion() {
   return (
-    <section id="ubicacion" className="scroll-mt-24 bg-hueso py-20 sm:py-28 lg:py-32">
+    <section id="ubicacion" className="scroll-mt-24 py-20 sm:py-28 lg:py-32">
       <div className="contenedor">
         <Revelar className="max-w-2xl">
           <h2 className="titulo-seccion">A doce cuadras del centro</h2>
@@ -28,10 +27,6 @@ export function Ubicacion() {
               />
             </Revelar>
           ))}
-        </div>
-
-        <div className="mt-20">
-          <Cercanias />
         </div>
       </div>
     </section>

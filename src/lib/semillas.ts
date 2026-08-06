@@ -4,11 +4,10 @@
  * En cuanto la propietaria edita algo, el repositorio guarda su versión.
  */
 import {
-  cercanias,
   consultas as consultasBase,
   departamentos,
   edificios,
-  experiencias,
+  queHacer,
   resenas,
   servicios,
 } from "./data";
@@ -18,35 +17,14 @@ import type {
   Comentario,
   ConsultaCompleta,
   Cuenta,
-  Lugar,
   Prestacion,
   SectorGaleria,
 } from "./tipos";
 
-export const actividadesSemilla: Actividad[] = experiencias.map((e, i) => ({
-  id: e.id,
-  titulo: e.nombre,
-  descripcion: e.descripcion,
-  duracion: e.duracion,
-  temporada: e.temporada,
-  foto: e.foto,
+export const actividadesSemilla: Actividad[] = queHacer.map((q, i) => ({
+  ...q,
   orden: i,
   activa: true,
-}));
-
-const mapaDe = (nombre: string) =>
-  `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${nombre}, Ushuaia, Tierra del Fuego`)}`;
-
-export const lugaresSemilla: Lugar[] = cercanias.map((c, i) => ({
-  id: c.id,
-  nombre: c.nombre,
-  descripcion: c.descripcion,
-  distancia: c.distancia,
-  categoria: c.categoria,
-  foto: c.foto,
-  mapa: mapaDe(c.nombre),
-  orden: i,
-  activo: true,
 }));
 
 export const comentariosSemilla: Comentario[] = resenas.map((r, i) => ({
@@ -103,26 +81,14 @@ export const galeriasSemilla: SectorGaleria[] = [
     };
   }),
   {
-    id: "gal-actividades",
-    nombre: "Actividades",
-    descripcion: "Fotos de la sección “Qué hacer mientras estás acá”.",
+    id: "gal-que-hacer",
+    nombre: "Qué hacer en Ushuaia",
+    descripcion: "Fotos de las excursiones y los lugares cercanos.",
     tipo: "actividades",
-    imagenes: experiencias.map((e, i) => ({
-      id: `act-img-${i}`,
-      src: e.foto,
-      titulo: e.nombre,
-      principal: i === 0,
-    })),
-  },
-  {
-    id: "gal-alrededores",
-    nombre: "Descubrí los alrededores",
-    descripcion: "Fotos de los lugares cercanos.",
-    tipo: "alrededores",
-    imagenes: cercanias.map((c, i) => ({
-      id: `alr-img-${i}`,
-      src: c.foto,
-      titulo: c.nombre,
+    imagenes: queHacer.map((q, i) => ({
+      id: `qh-img-${i}`,
+      src: q.foto,
+      titulo: q.titulo,
       principal: i === 0,
     })),
   },

@@ -34,7 +34,7 @@ export const sitio = {
   },
   navegacion: [
     { etiqueta: "Departamentos", href: "/#departamentos" },
-    { etiqueta: "Experiencias", href: "/#experiencias" },
+    { etiqueta: "Qué hacer", href: "/#que-hacer" },
     { etiqueta: "La estadía", href: "/#estadia" },
     { etiqueta: "Ubicación", href: "/#ubicacion" },
     { etiqueta: "Preguntas", href: "/#preguntas" },

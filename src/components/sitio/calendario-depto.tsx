@@ -7,8 +7,16 @@ import { useContenido } from "@/lib/contenido";
 import { estadoDelDia } from "@/lib/disponibilidad";
 import { cn } from "@/lib/utils";
 
-/** Disponibilidad pública de una unidad: disponible, reservada o bloqueada. */
-export function CalendarioDepto({ departamentoId }: { departamentoId: string }) {
+type Props = {
+  departamentoId: string;
+  /** Fechas elegidas en el panel de reserva: se pintan sobre el calendario. */
+  desde?: string;
+  hasta?: string;
+  /** Si viene, tocar un día libre elige entrada y salida. */
+  onElegir?: (desde: string, hasta: string) => void;
+};
+
+export function CalendarioDepto({ departamentoId, desde, hasta, onElegir }: Props) {
   const { reservas, bloqueos } = useContenido();
   const hoy = new Date();
   const [ancla, setAncla] = useState({ anio: hoy.getFullYear(), mes: hoy.getMonth() });
@@ -38,6 +46,19 @@ export function CalendarioDepto({ departamentoId }: { departamentoId: string }) 
   const claveHoy = hoy.toISOString().slice(0, 10);
   const flecha =
     "grid size-9 place-items-center rounded-full text-texto-suave transition-colors duration-200 hover:bg-hueso hover:text-ink";
+
+  /** Al tocar: el primer clic fija la entrada, el segundo la salida. */
+  const elegir = (iso: string) => {
+    if (!onElegir) return;
+    if (!desde || !hasta || iso <= desde || (desde && hasta && desde !== hasta && iso > hasta)) {
+      const salida = new Date(new Date(`${iso}T12:00:00`).getTime() + 86_400_000)
+        .toISOString()
+        .slice(0, 10);
+      onElegir(iso, salida);
+    } else {
+      onElegir(desde, iso);
+    }
+  };
 
   return (
     <div className="rounded-xl border border-linea bg-white">
@@ -73,28 +94,52 @@ export function CalendarioDepto({ departamentoId }: { departamentoId: string }) 
                   {d}
                 </span>
               ))}
+
               {grillaMes(anio, mes, propias).map((c) => {
                 const est = estadoDelDia(c.iso, propias, bloqueosPropios);
+                const libre = !c.pasado && est === "disponible";
+
+                /* Tramo elegido: extremos llenos, días del medio en tono suave. */
+                const esEntrada = Boolean(desde) && c.iso === desde;
+                const esSalida = Boolean(hasta) && c.iso === hasta;
+                const enElMedio =
+                  Boolean(desde) && Boolean(hasta) && c.iso > desde! && c.iso < hasta!;
+                const enElTramo = esEntrada || esSalida || enElMedio;
+
+                const Elemento = libre && onElegir ? "button" : "span";
+
                 return (
-                  <span
+                  <Elemento
                     key={c.iso}
-                    role="gridcell"
-                    aria-label={`${c.dia} — ${est}`}
+                    {...(libre && onElegir
+                      ? { type: "button" as const, onClick: () => elegir(c.iso) }
+                      : { role: "gridcell" })}
+                    aria-label={`${c.dia} — ${enElTramo ? "elegido, " : ""}${est}`}
+                    aria-pressed={libre && onElegir ? enElTramo : undefined}
                     className={cn(
-                      "relative mx-auto grid size-9 place-items-center rounded-full text-[0.8125rem] tabular-nums",
-                      c.otroMes && "opacity-0",
+                      "relative mx-auto grid size-9 place-items-center rounded-full text-[0.8125rem] tabular-nums transition-colors duration-200",
+                      c.otroMes && "invisible",
                       c.pasado && !c.otroMes && "text-texto-tenue/45",
-                      !c.pasado && est === "disponible" && "font-medium text-ink",
-                      !c.pasado && est === "reservada" && "bg-ink font-medium text-white",
-                      !c.pasado && est === "bloqueada" &&
+
+                      /* Fuera del tramo */
+                      !enElTramo && libre && "font-medium text-ink",
+                      !enElTramo && libre && onElegir && "cursor-pointer hover:bg-oro-vidrio",
+                      !enElTramo && !c.pasado && est === "reservada" && "bg-ink font-medium text-white",
+                      !enElTramo &&
+                        !c.pasado &&
+                        est === "bloqueada" &&
                         "bg-hueso font-medium text-texto-tenue line-through decoration-texto-tenue/50",
+
+                      /* Tramo elegido */
+                      enElMedio && "bg-oro-vidrio font-medium text-oro-oscuro",
+                      (esEntrada || esSalida) && "bg-oro font-semibold text-white",
                     )}
                   >
                     {c.dia}
-                    {c.iso === claveHoy ? (
+                    {c.iso === claveHoy && !enElTramo ? (
                       <span aria-hidden className="absolute -bottom-0.5 size-1 rounded-full bg-oro" />
                     ) : null}
-                  </span>
+                  </Elemento>
                 );
               })}
             </div>
@@ -103,6 +148,10 @@ export function CalendarioDepto({ departamentoId }: { departamentoId: string }) 
       </div>
 
       <ul className="flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-linea px-5 py-4 text-[0.78rem] text-texto-suave sm:px-6">
+        <li className="flex items-center gap-2">
+          <span aria-hidden className="size-3.5 rounded-full bg-oro" />
+          Tu estadía
+        </li>
         <li className="flex items-center gap-2">
           <span aria-hidden className="size-3.5 rounded-full border border-linea bg-white" />
           Disponible

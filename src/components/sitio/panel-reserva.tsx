@@ -12,19 +12,27 @@ import { sitio } from "@/lib/site";
 import type { Departamento } from "@/lib/tipos";
 import { cn, formatearFecha, formatearPrecio, noches } from "@/lib/utils";
 
-function hoyMas(dias: number) {
-  const d = new Date();
-  d.setDate(d.getDate() + dias);
-  return d.toISOString().slice(0, 10);
-}
+export type Estadia = { desde: string; hasta: string; personas: number };
 
-export function PanelReserva({ dep, edificio }: { dep: Departamento; edificio: string }) {
+export function PanelReserva({
+  dep,
+  edificio,
+  estadia,
+  onCambio,
+}: {
+  dep: Departamento;
+  edificio: string;
+  estadia: Estadia;
+  onCambio: (e: Estadia) => void;
+}) {
   const { reservas, bloqueos, crearConsulta, ajustes } = useContenido();
   const { cuenta } = useSesion();
 
-  const [desde, setDesde] = useState(hoyMas(14));
-  const [hasta, setHasta] = useState(hoyMas(18));
-  const [personas, setPersonas] = useState(Math.min(2, dep.capacidad));
+  const { desde, hasta, personas } = estadia;
+  const setDesde = (v: string) => onCambio({ ...estadia, desde: v });
+  const setHasta = (v: string) => onCambio({ ...estadia, hasta: v });
+  const setPersonas = (v: number) => onCambio({ ...estadia, personas: v });
+
   const [abierto, setAbierto] = useState(false);
   const [enviado, setEnviado] = useState(false);
 
@@ -124,7 +132,7 @@ export function PanelReserva({ dep, edificio }: { dep: Departamento; edificio: s
               <input
                 type="date"
                 value={desde}
-                min={hoyMas(0)}
+                min={new Date().toISOString().slice(0, 10)}
                 onChange={(e) => setDesde(e.target.value)}
                 className={valor}
               />

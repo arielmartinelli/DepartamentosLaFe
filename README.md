@@ -20,8 +20,8 @@ Otros comandos: `npm run build`, `npm start`, `npm run lint`, `npm run typecheck
 
 | Ruta | Qué es |
 |---|---|
-| `/` | Portada: hero, los dos edificios presentados con sus tres departamentos, actividades, la estadía, opiniones, ubicación y preguntas frecuentes |
-| `/departamentos/[slug]` | Ficha completa: galería grande con visor, camas, cocina y baño, servicios, calendario propio, horarios y políticas, alrededores y mapa. El panel lateral consulta disponibilidad real y arma la consulta |
+| `/` | Portada: hero, los dos edificios presentados con sus tres departamentos, qué hacer, la estadía, opiniones, ubicación y preguntas frecuentes |
+| `/departamentos/[slug]` | Ficha completa: galería grande con visor, camas, cocina y baño, servicios, calendario propio con el tramo elegido marcado, horarios y políticas, qué hacer cerca y mapa |
 | `/entrar` · `/crear-cuenta` · `/recuperar` | Cuentas de visitante |
 | `/mis-consultas` | Conversación con la propietaria |
 
@@ -36,8 +36,8 @@ Otros comandos: `npm run build`, `npm start`, `npm run lint`, `npm run typecheck
 | `/admin/consultas` | Bandeja completa con fechas, departamento, huéspedes y conversación |
 | `/admin/departamentos` | Listado; cada unidad abre su editor con cuatro solapas |
 | `/admin/departamentos/[id]` | Editor: información, servicios, galería y disponibilidad |
-| `/admin/galerias` | Diez galerías independientes, una por sector |
-| `/admin/servicios` · `/admin/actividades` · `/admin/alrededores` · `/admin/comentarios` | Contenido de la web, con alta, edición, borrado y orden |
+| `/admin/galerias` | Nueve galerías independientes, una por sector |
+| `/admin/servicios` · `/admin/actividades` · `/admin/comentarios` | Contenido de la web, con alta, edición, borrado y orden |
 | `/admin/configuracion` | Contacto, marca y copia de seguridad |
 
 ## Todo se edita desde el panel
@@ -122,6 +122,14 @@ de `@media (hover: hover)` y todo se apaga con `prefers-reduced-motion`.
 - **Seguridad.** `next.config.ts` envía `X-Content-Type-Options`, `X-Frame-Options`,
   `Referrer-Policy`, `Permissions-Policy` y HSTS. El panel está fuera del índice.
 
+## Qué hacer: una sola sección
+
+Las excursiones y los lugares cercanos viven en la misma lista
+(`/admin/actividades`). Cada entrada puede llevar duración, distancia,
+temporada y enlace a Google Maps: con eso alcanza tanto para una navegación por
+el canal como para el supermercado de la esquina. Vienen nueve cargadas y se
+pueden agregar todas las que hagan falta.
+
 ## Cómo funciona una consulta
 
 1. El visitante elige fechas y huéspedes en la ficha del departamento.
@@ -131,6 +139,10 @@ de `@media (hover: hover)` y todo se apaga con `prefers-reduced-motion`.
 5. En ambos casos la consulta queda registrada en `/admin/consultas`, con las
    fechas, el departamento y la cantidad de huéspedes.
 6. Si tiene cuenta, sigue la conversación desde `/mis-consultas`.
+
+En el calendario de la ficha, la entrada y la salida se marcan en dorado y los
+días del medio en un dorado más suave. También se puede elegir el tramo tocando
+los días directamente sobre el calendario.
 
 ## Qué falta para producción
 

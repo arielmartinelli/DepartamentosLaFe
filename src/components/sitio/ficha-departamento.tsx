@@ -14,14 +14,15 @@ import {
   Users,
 } from "lucide-react";
 import { CalendarioDepto } from "./calendario-depto";
-import { Cercanias } from "./cercanias";
+import { QueHacer } from "./que-hacer";
 import { GaleriaDepto } from "./galeria-depto";
 import { Mapa } from "./mapa";
-import { PanelReserva } from "./panel-reserva";
+import { PanelReserva, type Estadia } from "./panel-reserva";
 import { Revelar } from "./revelar";
 import { TarjetaDepto } from "./tarjeta-depto";
 import { iconos } from "./iconos-servicio";
 import { Boton } from "@/components/ui/boton";
+import { useState } from "react";
 import { useContenido } from "@/lib/contenido";
 import { horarios, politicas } from "@/lib/data";
 import { formatearPrecio } from "@/lib/utils";
@@ -45,8 +46,21 @@ function Bloque({
   );
 }
 
+function hoyMas(dias: number) {
+  const d = new Date();
+  d.setDate(d.getDate() + dias);
+  return d.toISOString().slice(0, 10);
+}
+
 export function FichaDepartamento({ slug }: { slug: string }) {
   const { departamentos, edificios, prestaciones } = useContenido();
+
+  /* Las fechas viven acá para que el panel y el calendario muestren lo mismo. */
+  const [estadia, setEstadia] = useState<Estadia>({
+    desde: hoyMas(14),
+    hasta: hoyMas(18),
+    personas: 2,
+  });
 
   const dep = departamentos.find((d) => d.slug === slug);
   if (!dep) return null;
@@ -110,7 +124,7 @@ export function FichaDepartamento({ slug }: { slug: string }) {
       <div className="contenedor mt-10 grid gap-10 pb-20 lg:mt-12 lg:grid-cols-[minmax(0,1fr)_23rem] lg:gap-16">
         {/* En móvil el panel va arriba; en escritorio queda pegado a la derecha. */}
         <aside className="lg:order-2 lg:sticky lg:top-28 lg:self-start">
-          <PanelReserva dep={dep} edificio={ed.nombre} />
+          <PanelReserva dep={dep} edificio={ed.nombre} estadia={estadia} onCambio={setEstadia} />
         </aside>
 
         <div className="lg:order-1">
@@ -235,7 +249,16 @@ export function FichaDepartamento({ slug }: { slug: string }) {
           ) : null}
 
           <Bloque titulo="Fechas libres" id="disponibilidad">
-            <CalendarioDepto departamentoId={dep.id} />
+            <CalendarioDepto
+              departamentoId={dep.id}
+              desde={estadia.desde}
+              hasta={estadia.hasta}
+              onElegir={(desde, hasta) => setEstadia((e) => ({ ...e, desde, hasta }))}
+            />
+            <p className="mt-3 text-[0.82rem] text-texto-suave">
+              Tocá un día libre para elegir la entrada y otro para la salida. El tramo se
+              marca en dorado y se copia al panel de consulta.
+            </p>
           </Bloque>
 
           <Bloque titulo="Horarios y condiciones">
@@ -274,10 +297,11 @@ export function FichaDepartamento({ slug }: { slug: string }) {
         </div>
       </div>
 
-      <div className="border-t border-linea bg-hueso py-20 sm:py-24">
-        <div className="contenedor">
-          <Cercanias />
-        </div>
+      <div className="border-t border-linea">
+        <QueHacer
+          titulo="Qué hacer cerca"
+          bajada="Excursiones y lugares a mano desde este departamento. Los tiempos son en auto, desde la puerta."
+        />
       </div>
 
       <div className="contenedor py-20 sm:py-24">

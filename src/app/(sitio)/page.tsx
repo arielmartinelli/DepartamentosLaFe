@@ -1,7 +1,7 @@
 import { Cierre } from "@/components/sitio/cierre";
 import { Edificios } from "@/components/sitio/edificios";
 import { Estadia } from "@/components/sitio/estadia";
-import { Experiencias } from "@/components/sitio/experiencias";
+import { QueHacer } from "@/components/sitio/que-hacer";
 import { Hero } from "@/components/sitio/hero";
 import { Preguntas } from "@/components/sitio/preguntas";
 import { Resenas } from "@/components/sitio/resenas";
@@ -60,7 +60,7 @@ export default function PaginaInicio() {
       />
       <Hero />
       <Edificios />
-      <Experiencias />
+      <QueHacer />
       <Estadia />
       <Resenas />
       <Ubicacion />
