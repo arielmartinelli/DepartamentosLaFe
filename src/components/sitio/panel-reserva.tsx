@@ -29,8 +29,15 @@ export function PanelReserva({
   const { cuenta } = useSesion();
 
   const { desde, hasta, personas } = estadia;
-  const setDesde = (v: string) => onCambio({ ...estadia, desde: v });
-  const setHasta = (v: string) => onCambio({ ...estadia, hasta: v });
+
+  const sumarDia = (iso: string) =>
+    new Date(new Date(`${iso}T12:00:00`).getTime() + 86_400_000).toISOString().slice(0, 10);
+
+  /* Si la entrada pasa a la salida, la salida se corre un día: nunca queda inválido. */
+  const setDesde = (v: string) =>
+    onCambio({ ...estadia, desde: v, hasta: v >= hasta ? sumarDia(v) : hasta });
+  const setHasta = (v: string) =>
+    onCambio({ ...estadia, hasta: v <= desde ? sumarDia(desde) : v });
   const setPersonas = (v: number) => onCambio({ ...estadia, personas: v });
 
   const [abierto, setAbierto] = useState(false);
@@ -207,7 +214,11 @@ export function PanelReserva({
         </Boton>
 
         <p className="mt-3 text-center text-[0.78rem] text-texto-tenue">
-          No se cobra nada por consultar.
+          No se cobra nada por consultar. También podés elegir las fechas en el{" "}
+          <a href="#disponibilidad" className="underline underline-offset-2 hover:text-ink">
+            calendario
+          </a>
+          .
         </p>
 
         {cantidad > 0 ? (

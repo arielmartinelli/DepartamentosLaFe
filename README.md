@@ -140,9 +140,17 @@ pueden agregar todas las que hagan falta.
    fechas, el departamento y la cantidad de huéspedes.
 6. Si tiene cuenta, sigue la conversación desde `/mis-consultas`.
 
-En el calendario de la ficha, la entrada y la salida se marcan en dorado y los
-días del medio en un dorado más suave. También se puede elegir el tramo tocando
-los días directamente sobre el calendario.
+### Elegir fechas
+
+El calendario de la ficha y el panel de consulta comparten el mismo estado: se
+puede elegir desde cualquiera de los dos y el otro se actualiza solo.
+
+En el calendario la selección es en dos pasos —primero la entrada, después la
+salida— con vista previa del tramo al pasar el mouse. La entrada y la salida se
+marcan en dorado lleno y los días del medio en dorado suave. Si el tramo choca
+con fechas reservadas o bloqueadas, la salida se corta automáticamente en el
+primer día ocupado. En el panel, mover una fecha corrige la otra para que el
+tramo nunca quede invertido.
 
 ## Qué falta para producción
 

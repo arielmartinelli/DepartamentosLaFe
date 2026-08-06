@@ -256,8 +256,8 @@ export function FichaDepartamento({ slug }: { slug: string }) {
               onElegir={(desde, hasta) => setEstadia((e) => ({ ...e, desde, hasta }))}
             />
             <p className="mt-3 text-[0.82rem] text-texto-suave">
-              Tocá un día libre para elegir la entrada y otro para la salida. El tramo se
-              marca en dorado y se copia al panel de consulta.
+              Elegí las fechas acá o en el panel de consulta: los dos muestran siempre lo
+              mismo.
             </p>
           </Bloque>
 
