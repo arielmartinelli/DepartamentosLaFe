@@ -1,0 +1,183 @@
+@import "tailwindcss";
+
+@theme {
+  /* ── Superficies ───────────────────────────────────────────────
+     Blanco como base. Los tonos cálidos aparecen sólo en bandas
+     puntuales, para que las fotografías manden.                    */
+  --color-lienzo: #ffffff;
+  --color-hueso: #f7f5f1;
+  --color-arena: #efeae1;
+  --color-linea: #e6e1d8;
+  --color-linea-suave: #f0ece5;
+
+  /* ── Tinta ─────────────────────────────────────────────────── */
+  --color-ink: #131417;
+  --color-ink-soft: #1f2126;
+  --color-texto: #26282d;
+  --color-texto-suave: #6a6864;
+  --color-texto-tenue: #8e8a83;
+
+  /* ── Oro de marca (del logotipo) ───────────────────────────── */
+  --color-oro: #b07d2b;
+  --color-oro-claro: #e4be7c;
+  --color-oro-oscuro: #86591a;
+  --color-oro-vidrio: #f8f1e3;
+
+  /* ── Estado ────────────────────────────────────────────────── */
+  --color-exito: #2c6a4c;
+  --color-aviso: #8f6410;
+  --color-alerta: #a3382a;
+
+  /* ── Tipografía ────────────────────────────────────────────── */
+  --font-display: "Fraunces Variable", Georgia, "Times New Roman", serif;
+  --font-sans: "Plus Jakarta Sans Variable", ui-sans-serif, system-ui, -apple-system, sans-serif;
+
+  /* ── Radios ───────────────────────────────────────────────────
+     Escala corta y consciente: botones 10, tarjetas 14, fotos 18. */
+  --radius-xs: 0.5rem;
+  --radius-sm: 0.625rem;
+  --radius-md: 0.875rem;
+  --radius-lg: 1.125rem;
+  --radius-xl: 1.5rem;
+  --radius-2xl: 2rem;
+
+  /* ── Sombras ───────────────────────────────────────────────────
+     Difusas y bajas en opacidad; nunca duras.                     */
+  --shadow-carta: 0 1px 2px rgb(19 20 23 / 0.04), 0 8px 24px -14px rgb(19 20 23 / 0.16);
+  --shadow-alza: 0 2px 4px rgb(19 20 23 / 0.05), 0 18px 40px -20px rgb(19 20 23 / 0.26);
+  --shadow-flotante: 0 4px 10px rgb(19 20 23 / 0.05), 0 32px 64px -28px rgb(19 20 23 / 0.3);
+
+  /* ── Curvas ────────────────────────────────────────────────────
+     Nunca ease-in en interfaz: arranca lento y se siente pesado.  */
+  --ease-salida: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-mueve: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-cajon: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-linea);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 6rem;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-lienzo);
+    color: var(--color-texto);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    font-variation-settings: "SOFT" 40;
+    font-weight: 400;
+    letter-spacing: -0.028em;
+    color: var(--color-ink);
+    text-wrap: balance;
+  }
+
+  p { text-wrap: pretty; }
+
+  :focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  ::selection {
+    background-color: var(--color-oro-claro);
+    color: var(--color-ink);
+  }
+
+  input, textarea, select, button { font: inherit; }
+
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  summary { cursor: pointer; }
+}
+
+@layer utilities {
+  .contenedor {
+    width: 100%;
+    margin-inline: auto;
+    max-width: 82rem;
+    padding-inline: 1.25rem;
+  }
+  @media (min-width: 640px) { .contenedor { padding-inline: 2rem; } }
+  @media (min-width: 1280px) { .contenedor { padding-inline: 2.5rem; } }
+
+  /* Título de sección: serif grande, sin adornos ni filetes. */
+  .titulo-seccion {
+    font-size: clamp(1.9rem, 3.6vw, 2.9rem);
+    line-height: 1.06;
+  }
+
+  /* Nombre del edificio: mismo serif, con el oro de la marca. */
+  .texto-marca {
+    background: linear-gradient(96deg, #8a5f1b 0%, #c8983f 46%, #8f6320 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .flecha-selector {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%236a6864' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 6.5 8 10.5 12 6.5'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.9rem center;
+    background-size: 16px;
+    padding-right: 2.5rem;
+  }
+
+  /* Degradado de lectura sobre fotografía. */
+  .velo-foto {
+    background: linear-gradient(
+      180deg,
+      rgb(19 20 23 / 0.5) 0%,
+      rgb(19 20 23 / 0.14) 32%,
+      rgb(19 20 23 / 0.34) 66%,
+      rgb(19 20 23 / 0.78) 100%
+    );
+  }
+
+  .velo-pie {
+    background: linear-gradient(180deg, transparent 30%, rgb(19 20 23 / 0.72) 100%);
+  }
+
+  .sin-barra::-webkit-scrollbar { display: none; }
+  .sin-barra { scrollbar-width: none; }
+
+  .desliza {
+    scroll-snap-type: x mandatory;
+    overscroll-behavior-x: contain;
+  }
+  .desliza > * { scroll-snap-align: start; }
+
+  /* La foto respira al pasar el mouse; sólo en punteros finos. */
+  @media (hover: hover) and (pointer: fine) {
+    .zoom-foto img { transition: transform 700ms var(--ease-salida); }
+    .zoom-foto:hover img { transform: scale(1.045); }
+  }
+}
+
+@keyframes aparecer { from { opacity: 0 } to { opacity: 1 } }
+@keyframes desaparecer { from { opacity: 1 } to { opacity: 0 } }
+@keyframes surgir {
+  from { opacity: 0; transform: translate(-50%, calc(-50% + 10px)) scale(0.97) }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1) }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
