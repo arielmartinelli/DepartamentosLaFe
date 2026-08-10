@@ -114,10 +114,8 @@ export function borrarTodo() {
   cache.clear();
   if (hayNavegador()) {
     Object.values(CLAVES).forEach((c) => window.localStorage.removeItem(PREFIJO + c));
-    /* También las versiones viejas, para que la migración no las reviva. */
-    VERSIONES_ANTERIORES.forEach((v) =>
-      Object.values(CLAVES).forEach((c) => window.localStorage.removeItem(v + c)),
-    );
+    window.localStorage.removeItem(`${PREFIJO}__migrado`);
+    /* Las versiones anteriores no se tocan: son la copia de la que se recupera. */
   }
   avisar();
 }
@@ -150,4 +148,89 @@ export function importarTodo(json: string) {
 /** Identificadores cortos y legibles para datos creados desde el panel. */
 export function nuevoId(prefijo: string) {
   return `${prefijo}-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 5)}`;
+}
+
+
+/* ────────────────────────────────────────────────────────────────
+   Recuperación
+   ──────────────────────────────────────────────────────────────── */
+
+export type Hallazgo = {
+  version: string;
+  clave: string;
+  cantidad: number;
+  muestra: string;
+  esActual: boolean;
+};
+
+/** Nombre legible de lo que hay dentro de cada colección. */
+function describir(clave: string, valor: unknown): { cantidad: number; muestra: string } {
+  if (Array.isArray(valor)) {
+    const nombres = valor
+      .map((x) => {
+        const o = x as Record<string, unknown>;
+        return (o?.nombre ?? o?.titulo ?? o?.huesped ?? o?.autor ?? o?.id) as string | undefined;
+      })
+      .filter(Boolean)
+      .slice(0, 4);
+    return { cantidad: valor.length, muestra: nombres.join(" · ") };
+  }
+  if (valor && typeof valor === "object") {
+    return { cantidad: Object.keys(valor).length, muestra: "Ajustes del sitio" };
+  }
+  return { cantidad: 0, muestra: "" };
+}
+
+/* Se calcula una vez y se rehace cuando cambia algo. */
+let hallazgos: Hallazgo[] | null = null;
+
+/** Fotografía estable de lo guardado, para consumir desde React. */
+export function instantaneaHallazgos(): Hallazgo[] {
+  if (!hallazgos) hallazgos = inspeccionar();
+  return hallazgos;
+}
+
+export const hallazgosVacios: Hallazgo[] = [];
+
+/** Todo lo que hay guardado en este navegador, de cualquier versión. */
+export function inspeccionar(): Hallazgo[] {
+  if (!hayNavegador()) return [];
+
+  const versiones = [PREFIJO, ...VERSIONES_ANTERIORES];
+  const salida: Hallazgo[] = [];
+
+  versiones.forEach((version) => {
+    Object.values(CLAVES).forEach((clave) => {
+      const crudo = window.localStorage.getItem(version + clave);
+      if (!crudo) return;
+      try {
+        const { cantidad, muestra } = describir(clave, JSON.parse(crudo));
+        salida.push({
+          version: version.replace("lafe:", "").replace(":", ""),
+          clave,
+          cantidad,
+          muestra,
+          esActual: version === PREFIJO,
+        });
+      } catch {
+        /* Entrada ilegible: se ignora. */
+      }
+    });
+  });
+
+  return salida;
+}
+
+/** Copia una colección de una versión anterior a la actual. */
+export function restaurar(version: string, clave: string) {
+  if (!hayNavegador()) return false;
+  const origen = `lafe:${version}:`;
+  const crudo = window.localStorage.getItem(origen + clave);
+  if (!crudo) return false;
+
+  window.localStorage.setItem(PREFIJO + clave, crudo);
+  cache.delete(clave);
+  hallazgos = null;
+  avisar();
+  return true;
 }

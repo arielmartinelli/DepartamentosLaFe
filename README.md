@@ -152,6 +152,16 @@ Al subir la versión, agregá la anterior a `VERSIONES_ANTERIORES` y sumá a
 `SIN_MIGRAR` sólo las colecciones cuya estructura cambió. Las imágenes subidas
 viven en IndexedDB y no llevan versión, así que nunca se pierden.
 
+La migración es conservadora: **no pisa lo que ya exista** en la versión nueva.
+Si entre el cambio de versión y la migración se guardó algo, esa colección queda
+con lo nuevo y lo viejo sin traer.
+
+Para esos casos está **Configuración → Recuperar datos anteriores**: lista todo
+lo que quedó guardado de cualquier versión, con cuántos elementos tiene y una
+muestra de los nombres, y permite traer una colección o una versión entera. Las
+versiones anteriores nunca se borran, ni siquiera al volver a los datos de
+ejemplo.
+
 ## Fotografías
 
 `src/lib/imagenes.ts` es el único lugar donde hay rutas de imagen. La fachada es la foto

@@ -5,6 +5,7 @@ import { Check, CreditCard, Download, Mail, MessageSquare, Percent, Upload, User
 import { useRef, useState } from "react";
 import { EncabezadoPagina } from "@/components/admin/encabezado";
 import { Panel, PanelCabecera } from "@/components/admin/tarjeta";
+import { RecuperarDatos } from "@/components/admin/recuperar-datos";
 import { ZonaSubida } from "@/components/admin/zona-subida";
 import { Foto } from "@/components/sitio/foto";
 import { useResolverImagen } from "@/lib/usar-imagen";
@@ -212,6 +213,8 @@ export default function PaginaConfiguracion() {
               </Boton>
             </div>
           </Panel>
+
+          <RecuperarDatos />
         </div>
 
         <aside className="space-y-4">
