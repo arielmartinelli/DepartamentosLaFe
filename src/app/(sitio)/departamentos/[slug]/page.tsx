@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { FichaDepartamento } from "@/components/sitio/ficha-departamento";
 import { buscarEdificio, departamentos } from "@/lib/data";
-import { sitio } from "@/lib/site";
+import { imagenAlCompartir, sitio, urlBase } from "@/lib/site";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -32,8 +32,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: {
       title: titulo,
       description: dep.resumen,
-      url: `${sitio.url}/departamentos/${dep.slug}`,
-      images: [{ url: dep.fotos[0] }],
+      url: `${urlBase()}/departamentos/${dep.slug}`,
+      /* Si la foto es una subida local, no existe fuera del navegador: se
+         comparte la imagen general del alojamiento. */
+      images: [
+        /^https?:\/\//.test(dep.fotos[0] ?? "") || dep.fotos[0]?.startsWith("/")
+          ? { url: dep.fotos[0], alt: `${ed?.nombre} · ${dep.nombre}` }
+          : imagenAlCompartir,
+      ],
     },
   };
 }

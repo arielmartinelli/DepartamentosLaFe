@@ -168,21 +168,6 @@ export function ProveedorContenido({ children }: { children: ReactNode }) {
   const persistir = useCallback(<T,>(clave: Clave, valor: T) => guardar(clave, valor), []);
 
   const valor = useMemo<Contenido>(() => {
-    const sincronizarGaleria = (dep: Departamento, lista: SectorGaleria[]) =>
-      lista.map((g) =>
-        g.tipo === "departamento" && g.referencia === dep.id
-          ? {
-              ...g,
-              imagenes: dep.fotos.map((src, i) => ({
-                id: `${dep.id}-img-${i}`,
-                src,
-                titulo: i === 0 ? "Foto principal" : `Ambiente ${i}`,
-                principal: i === 0,
-              })),
-            }
-          : g,
-      );
-
     return {
       listo,
       edificios,
@@ -203,13 +188,13 @@ export function ProveedorContenido({ children }: { children: ReactNode }) {
           edificios.map((x) => (x.id === e.id ? e : x)),
         ),
 
-      guardarDepartamento: (d) => {
-        const lista = departamentos.some((x) => x.id === d.id)
-          ? departamentos.map((x) => (x.id === d.id ? d : x))
-          : [...departamentos, d];
-        persistir(CLAVES.departamentos, lista);
-        persistir(CLAVES.galerias, sincronizarGaleria(d, galerias));
-      },
+      guardarDepartamento: (d) =>
+        persistir(
+          CLAVES.departamentos,
+          departamentos.some((x) => x.id === d.id)
+            ? departamentos.map((x) => (x.id === d.id ? d : x))
+            : [...departamentos, d],
+        ),
 
       eliminarDepartamento: (id) =>
         persistir(
@@ -337,19 +322,22 @@ export function ProveedorContenido({ children }: { children: ReactNode }) {
         persistir(CLAVES.prestaciones, reordenar(prestaciones, id, paso)),
 
       guardarGaleria: (g) => {
-        const lista = galerias.map((x) => (x.id === g.id ? g : x));
-        persistir(CLAVES.galerias, lista);
-        /* Si es la galería de un departamento, sus fotos son la fuente de la ficha. */
-        if (g.tipo === "departamento" && g.referencia) {
+        persistir(CLAVES.galerias, galerias.map((x) => (x.id === g.id ? g : x)));
+
+        /* La galería de un edificio es la fuente de sus fotos en la portada. */
+        if (g.tipo === "edificio" && g.referencia) {
           const ordenadas = [...g.imagenes].sort((a, b) =>
             a.principal === b.principal ? 0 : a.principal ? -1 : 1,
           );
-          persistir(
-            CLAVES.departamentos,
-            departamentos.map((d) =>
-              d.id === g.referencia ? { ...d, fotos: ordenadas.map((i) => i.src) } : d,
-            ),
-          );
+          const fotos = ordenadas.map((i) => i.src).filter(Boolean);
+          if (fotos.length) {
+            persistir(
+              CLAVES.edificios,
+              edificios.map((e) =>
+                e.id === g.referencia ? { ...e, portada: fotos[0], fotos } : e,
+              ),
+            );
+          }
         }
       },
 

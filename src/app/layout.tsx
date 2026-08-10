@@ -1,12 +1,12 @@
 import type { Metadata, Viewport } from "next";
-import { sitio } from "@/lib/site";
+import { imagenAlCompartir, sitio, urlBase } from "@/lib/site";
 // Tipografías autoalojadas: sin pedidos a terceros, mejor LCP y sin dependencia de red.
 import "@fontsource-variable/fraunces/soft.css";
 import "@fontsource-variable/plus-jakarta-sans";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(sitio.url),
+  metadataBase: new URL(urlBase()),
   title: {
     default: "La Fe Departamentos — Alquiler temporario en Ushuaia",
     template: "%s · La Fe Departamentos",
@@ -26,17 +26,17 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "es_AR",
-    url: sitio.url,
+    url: urlBase(),
     siteName: sitio.nombre,
     title: "La Fe Departamentos — Alquiler temporario en Ushuaia",
     description: sitio.descripcion,
-    images: [{ url: sitio.marca.portada, width: 2048, height: 1511, alt: sitio.nombre }],
+    images: [imagenAlCompartir],
   },
   twitter: {
     card: "summary_large_image",
     title: "La Fe Departamentos — Alquiler temporario en Ushuaia",
     description: sitio.descripcion,
-    images: [sitio.marca.portada],
+    images: [imagenAlCompartir.url],
   },
   robots: {
     index: true,

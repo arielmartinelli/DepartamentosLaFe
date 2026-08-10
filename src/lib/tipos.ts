@@ -164,7 +164,7 @@ export type SectorGaleria = {
   id: string;
   nombre: string;
   descripcion: string;
-  tipo: "edificio" | "departamento" | "actividades";
+  tipo: "edificio" | "estadia";
   referencia?: string;
   imagenes: ImagenSector[];
 };

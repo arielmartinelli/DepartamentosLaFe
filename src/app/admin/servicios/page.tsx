@@ -34,7 +34,7 @@ export default function PaginaServicios() {
     <>
       <EncabezadoPagina
         titulo="Servicios"
-        descripcion="El catálogo de “Todo lo que vas a necesitar”. Cada departamento elige cuáles ofrece desde su propio editor."
+        descripcion="El catálogo de “Contamos con todo lo que necesitas”. Cada departamento elige cuáles ofrece desde su propio editor."
         acciones={
           <Boton variante="principal" medida="sm" onClick={() => setEditando(vacio())}>
             <Plus strokeWidth={2} /> Nuevo servicio
@@ -181,7 +181,7 @@ export default function PaginaServicios() {
                   onChange={(e) => setEditando({ ...editando, destacadoEnHome: e.target.checked })}
                   className="size-4 accent-[#b07d2b]"
                 />
-                Mostrar en “Todo lo que vas a necesitar”
+                Mostrar en “Contamos con todo lo que necesitas”
               </label>
             </div>
           </div>

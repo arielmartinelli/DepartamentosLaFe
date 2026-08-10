@@ -8,7 +8,11 @@ import { horarios } from "@/lib/data";
 import { foto } from "@/lib/imagenes";
 
 export function Estadia() {
-  const { prestaciones } = useContenido();
+  const { prestaciones, galerias } = useContenido();
+
+  const sector = galerias.find((g) => g.tipo === "estadia");
+  const imagen =
+    sector?.imagenes.find((i) => i.principal)?.src ?? sector?.imagenes[0]?.src ?? foto.comedorMadera;
   const lista = [...prestaciones]
     .filter((s) => s.activo && s.destacadoEnHome)
     .sort((a, b) => a.orden - b.orden);
@@ -22,7 +26,7 @@ export function Estadia() {
       <div className="contenedor grid items-start gap-12 lg:grid-cols-12 lg:gap-16">
         <Revelar className="lg:col-span-6">
           <Foto
-            src={foto.comedorMadera}
+            src={imagen}
             alt="Mesa de madera junto a la ventana, puesta para el desayuno"
             zoom
             sizes="(max-width: 1024px) 100vw, 46vw"
@@ -33,7 +37,7 @@ export function Estadia() {
         <div className="lg:col-span-6 lg:pt-6">
           <Revelar>
             <h2 id="estadia-titulo" className="titulo-seccion">
-              Todo lo que vas a necesitar
+              Contamos con todo lo que necesitas
             </h2>
             <p className="mt-5 max-w-lg text-[1.05rem] leading-relaxed text-texto-suave">
               Lo que figura acá viene incluido en los seis departamentos y no se cobra

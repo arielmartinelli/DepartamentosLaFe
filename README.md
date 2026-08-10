@@ -37,7 +37,7 @@ Otros comandos: `npm run build`, `npm start`, `npm run lint`, `npm run typecheck
 | `/admin/consultas` | Bandeja completa con fechas, departamento, huéspedes y conversación |
 | `/admin/departamentos` | Listado; cada unidad abre su editor con cuatro solapas |
 | `/admin/departamentos/[id]` | Editor: información, servicios, galería y disponibilidad |
-| `/admin/galerias` | Nueve galerías independientes, una por sector |
+| `/admin/galerias` | Fotos de los títulos de cada edificio y de la sección de servicios, con botón Guardar |
 | `/admin/servicios` · `/admin/actividades` · `/admin/comentarios` | Contenido de la web, con alta, edición, borrado y orden |
 | `/admin/configuracion` | Contacto, marca y copia de seguridad |
 
@@ -57,12 +57,34 @@ Sólo se tocan archivos para cambiar el diseño o los datos iniciales:
 | Fotografías de arranque | `src/lib/imagenes.ts` |
 | Logotipo y marca | `public/brand/` |
 
+### Vista previa al compartir el enlace
+
+`public/og.jpg` (1200×630) es la imagen que aparece cuando alguien pega el
+enlace en WhatsApp, Instagram o Facebook. Está armada con la fachada y el
+logotipo, y pesa 155 KB: WhatsApp descarta las imágenes pesadas y ahí se pierde
+la vista previa.
+
+Para que funcione, la dirección tiene que ser absoluta y del dominio real. Se
+resuelve en `urlBase()` de `src/lib/site.ts`, en este orden:
+
+1. `NEXT_PUBLIC_SITIO_URL` — completala cuando tengas el dominio propio.
+2. El dominio que asigna Vercel, que se detecta solo.
+3. `sitio.url`, como último recurso.
+
+Copiá `.env.example` a `.env.local` para definirla en tu máquina. Después de
+publicar conviene probar el enlace en
+[developers.facebook.com/tools/debug](https://developers.facebook.com/tools/debug/),
+que fuerza a WhatsApp y Facebook a releer los metadatos.
+
 ### Subir fotos desde la computadora
 
 En el panel se puede **arrastrar y soltar** imágenes —o elegirlas con el botón—
-en las galerías de cada departamento, en las galerías por sector, en las
-actividades, en los servicios y en la marca. Las galerías aceptan **varias a la
-vez**.
+en la galería de cada departamento, en Galerías, en las actividades, en los
+servicios y en la marca. Las galerías aceptan **varias a la vez**.
+
+En **Galerías** están sólo las fotos de la portada: las que acompañan al título
+de cada edificio y la de la sección de servicios. Las de cada departamento se
+editan en su propio editor, junto al resto de sus datos.
 
 Antes de guardarse, cada imagen se reescala a 1800 px de ancho y se comprime en
 WebP: una foto de 6 MB queda en unos 300 KB.

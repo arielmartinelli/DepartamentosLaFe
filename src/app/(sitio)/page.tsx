@@ -8,15 +8,15 @@ import { Resenas } from "@/components/sitio/resenas";
 import { Ubicacion } from "@/components/sitio/ubicacion";
 import { departamentos, edificios, preguntas } from "@/lib/data";
 import { foto } from "@/lib/imagenes";
-import { sitio } from "@/lib/site";
+import { imagenAlCompartir, sitio, urlBase } from "@/lib/site";
 
 const negocio = {
   "@context": "https://schema.org",
   "@type": "LodgingBusiness",
   name: sitio.nombre,
   description: sitio.descripcion,
-  url: sitio.url,
-  image: [foto.fachada],
+  url: urlBase(),
+  image: [`${urlBase()}${imagenAlCompartir.url}`, foto.fachada],
   telephone: sitio.contacto.telefono,
   email: sitio.contacto.email,
   priceRange: "$$",

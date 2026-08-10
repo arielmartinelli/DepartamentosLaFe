@@ -5,12 +5,12 @@
  */
 import {
   consultas as consultasBase,
-  departamentos,
   edificios,
   queHacer,
   resenas,
   servicios,
 } from "./data";
+import { foto } from "./imagenes";
 import type {
   Actividad,
   Bloqueo,
@@ -53,44 +53,30 @@ export const prestacionesSemilla: Prestacion[] = servicios.map((s, i) => ({
 export const galeriasSemilla: SectorGaleria[] = [
   ...edificios.map<SectorGaleria>((e) => ({
     id: `gal-${e.slug}`,
-    nombre: `Inicio ${e.nombre}`,
-    descripcion: `Fotos del edificio ${e.nombre} en la portada y en su presentación.`,
+    nombre: `Título ${e.nombre}`,
+    descripcion: `Las dos fotos que acompañan al título “Departamentos ${e.nombre}” en la portada. La primera es la grande.`,
     tipo: "edificio",
     referencia: e.id,
-    imagenes: e.fotos.map((src, i) => ({
+    imagenes: e.fotos.slice(0, 4).map((src, i) => ({
       id: `${e.id}-img-${i}`,
       src,
-      titulo: i === 0 ? `Fachada de ${e.nombre}` : `${e.nombre} — ambiente ${i}`,
+      titulo: i === 0 ? `Foto grande de ${e.nombre}` : `Foto ${i + 1} de ${e.nombre}`,
       principal: i === 0,
     })),
   })),
-  ...departamentos.map<SectorGaleria>((d) => {
-    const ed = edificios.find((e) => e.id === d.edificioId);
-    return {
-      id: `gal-${d.slug}`,
-      nombre: `${ed?.nombre} · ${d.nombre}`,
-      descripcion: `Galería de la ficha del ${d.nombre.toLowerCase()} de ${ed?.nombre}.`,
-      tipo: "departamento",
-      referencia: d.id,
-      imagenes: d.fotos.map((src, i) => ({
-        id: `${d.id}-img-${i}`,
-        src,
-        titulo: i === 0 ? "Foto principal" : `Ambiente ${i}`,
-        principal: i === 0,
-      })),
-    };
-  }),
   {
-    id: "gal-que-hacer",
-    nombre: "Qué hacer en Ushuaia",
-    descripcion: "Fotos de las excursiones y los lugares cercanos.",
-    tipo: "actividades",
-    imagenes: queHacer.map((q, i) => ({
-      id: `qh-img-${i}`,
-      src: q.foto,
-      titulo: q.titulo,
-      principal: i === 0,
-    })),
+    id: "gal-estadia",
+    nombre: "Contamos con todo lo que necesitas",
+    descripcion: "La fotografía vertical que acompaña a la lista de servicios en la portada.",
+    tipo: "estadia",
+    imagenes: [
+      {
+        id: "estadia-img-0",
+        src: foto.comedorMadera,
+        titulo: "Mesa junto a la ventana",
+        principal: true,
+      },
+    ],
   },
 ];
 

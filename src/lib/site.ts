@@ -41,6 +41,39 @@ export const sitio = {
   ],
 } as const;
 
+/**
+ * Dirección pública del sitio.
+ *
+ * Las vistas previas de WhatsApp, Instagram y Google necesitan la imagen en
+ * una URL absoluta. Si queda apuntando a un dominio que todavía no existe, el
+ * enlace se comparte sin foto. Por eso se toma, en este orden:
+ *
+ *   1. NEXT_PUBLIC_SITIO_URL (el dominio propio, cuando esté)
+ *   2. el dominio que asigna Vercel
+ *   3. el de `sitio.url`, como último recurso
+ */
+export function urlBase() {
+  const propia = process.env.NEXT_PUBLIC_SITIO_URL?.trim();
+  if (propia) return propia.replace(/\/$/, "");
+
+  const produccion = process.env.VERCEL_PROJECT_PRODUCTION_URL;
+  if (produccion) return `https://${produccion}`;
+
+  const despliegue = process.env.VERCEL_URL;
+  if (despliegue) return `https://${despliegue}`;
+
+  return sitio.url;
+}
+
+/** Imagen que se ve al compartir el enlace. */
+export const imagenAlCompartir = {
+  url: "/og.jpg",
+  width: 1200,
+  height: 630,
+  type: "image/jpeg",
+  alt: "La Fe Departamentos — Ushuaia, Tierra del Fuego",
+};
+
 export function urlWhatsApp(texto: string = sitio.contacto.whatsappTexto) {
   return `https://wa.me/${sitio.contacto.whatsapp}?text=${encodeURIComponent(texto)}`;
 }
