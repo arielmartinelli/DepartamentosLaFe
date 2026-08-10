@@ -4,6 +4,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useSyncExternalStore,
   type ReactNode,
@@ -23,7 +24,15 @@ import {
   galeriasSemilla,
   prestacionesSemilla,
 } from "./semillas";
-import { CLAVES, guardar, leer, nuevoId, suscribir, type Clave } from "./repositorio";
+import {
+  CLAVES,
+  guardar,
+  leer,
+  nuevoId,
+  sincronizarConLaBase,
+  suscribir,
+  type Clave,
+} from "./repositorio";
 import { sitio } from "./site";
 import type {
   Actividad,
@@ -151,6 +160,11 @@ function useDato<T>(clave: Clave, semilla: T): T {
 }
 
 export function ProveedorContenido({ children }: { children: ReactNode }) {
+  /* Si hay base de datos, se trae su contenido apenas carga la página. */
+  useEffect(() => {
+    void sincronizarConLaBase();
+  }, []);
+
   const edificios = useDato(CLAVES.edificios, edificiosSemilla);
   const departamentos = useDato(CLAVES.departamentos, departamentosSemilla);
   const reservas = useDato(CLAVES.reservas, reservasSemilla);

@@ -39,18 +39,18 @@ export const edificios: Edificio[] = [
     id: "ed-2",
     slug: "la-fe-ii",
     nombre: "La Fe II",
-    titular: "Dos departamentos más amplios, con cama king",
+    titular: "Dos departamentos con cama king",
     bajada:
-      "Dormitorio con cama king y un sofá hotelero en el living que se arma como matrimonial más simple, o como tres individuales.",
+      "Dormitorio con cama king y un sofá hotelero en el living, con el mismo equipamiento que el resto.",
     descripcion:
-      "Dos unidades pensadas para grupos de hasta cinco personas. El dormitorio tiene cama king y en el living hay un sofá hotelero que se convierte en cama matrimonial más una simple, o en tres camas individuales, según cómo venga el grupo. El resto del equipamiento es el mismo: cocina-comedor completa, televisor en cada ambiente, fibra óptica y cable.",
+      "Dos unidades con dormitorio de cama king y un sofá hotelero en el living. El equipamiento es el mismo que en La Fe I: cocina-comedor completa, televisor en cada ambiente, fibra óptica y cable.",
     direccion: "Ushuaia, Tierra del Fuego",
     aLosPies: "5 cuadras del centro · comercios a 100 m",
     coordenadas: { lat: -54.8015, lng: -68.3078 },
     portada: foto.livingVentanal,
     fotos: [foto.livingVentanal, foto.livingAmplio, foto.dormitorioDoble, foto.cocinaLena, foto.smartTv],
     rasgos: [
-      { titulo: "Hasta cinco personas", detalle: "Cama king más sofá hotelero en el living" },
+      { titulo: "Cama king", detalle: "Más sofá hotelero en el living" },
       { titulo: "Sofá que se arma a medida", detalle: "Matrimonial y simple, o tres individuales" },
       { titulo: "Mismo equipamiento", detalle: "Cocina completa, fibra óptica y TV en cada ambiente" },
     ],
@@ -112,18 +112,18 @@ export const departamentos: Departamento[] = [
     nombre: "Departamento 2",
     numero: 2,
     piso: "",
-    resumen: "El de cuatro plazas: matrimonial más dos camas simples.",
+    resumen: "Dormitorio con cama matrimonial y simple, cocina-comedor completa.",
     descripcion:
-      "El más amplio de La Fe I: el dormitorio suma una segunda cama simple, así que entran cuatro personas cómodas. La cocina-comedor está completa y hay televisor en cada ambiente.",
+      "Un dormitorio con cama matrimonial y cama simple, y una cocina-comedor equipada con todo lo necesario para cocinar de verdad durante la estadía. Televisor en cada ambiente y fibra óptica en todo el departamento.",
     parrafoExtra:
       "A cinco cuadras paralelas del centro y con panadería, rotisería, carnicería y verdulería a menos de cien metros: se sale a comprar en pantuflas.",
-    capacidad: 4,
+    capacidad: 3,
     dormitorios: 1,
     banos: 1,
     metros: 0,
     camas: [
       { tipo: "Cama matrimonial", cantidad: 1, ambiente: "Dormitorio" },
-      { tipo: "Camas simples", cantidad: 2, ambiente: "Dormitorio" },
+      { tipo: "Cama simple", cantidad: 1, ambiente: "Dormitorio" },
     ],
     bano: ["Baño completo", "Toallas de línea blanca", "Secador de pelo"],
     cocina: [
@@ -241,12 +241,12 @@ export const departamentos: Departamento[] = [
     nombre: "Departamento 1",
     numero: 1,
     piso: "",
-    resumen: "Cama king y sofá hotelero en el living: hasta cinco personas.",
+    resumen: "Cama king en el dormitorio y sofá hotelero en el living.",
     descripcion:
       "El dormitorio tiene cama king y el living un sofá hotelero que se arma como cama matrimonial más una simple, o como tres individuales, según venga el grupo. Cocina-comedor completa y televisor en cada ambiente.",
     parrafoExtra:
       "Es la opción para familias o grupos de amigos que no quieren separarse en dos departamentos. Mismo equipamiento que el resto, con más lugar para dormir.",
-    capacidad: 5,
+    capacidad: 3,
     dormitorios: 1,
     banos: 1,
     metros: 0,
@@ -284,12 +284,12 @@ export const departamentos: Departamento[] = [
     nombre: "Departamento 2",
     numero: 2,
     piso: "",
-    resumen: "Cama king y sofá hotelero en el living: hasta cinco personas.",
+    resumen: "Cama king en el dormitorio y sofá hotelero en el living.",
     descripcion:
       "El dormitorio tiene cama king y el living un sofá hotelero que se arma como cama matrimonial más una simple, o como tres individuales, según venga el grupo. Cocina-comedor completa y televisor en cada ambiente.",
     parrafoExtra:
       "Es la opción para familias o grupos de amigos que no quieren separarse en dos departamentos. Mismo equipamiento que el resto, con más lugar para dormir.",
-    capacidad: 5,
+    capacidad: 3,
     dormitorios: 1,
     banos: 1,
     metros: 0,

@@ -17,9 +17,13 @@ export default function PaginaCrearCuenta() {
   const campo = (k: keyof typeof datos) => (e: React.ChangeEvent<HTMLInputElement>) =>
     setDatos((d) => ({ ...d, [k]: e.target.value }));
 
-  const enviar = (e: FormEvent) => {
+  const [enviando, setEnviando] = useState(false);
+
+  const enviar = async (e: FormEvent) => {
     e.preventDefault();
-    const r = registrar(datos);
+    setEnviando(true);
+    const r = await registrar(datos);
+    setEnviando(false);
     if (r.ok) router.push("/mis-consultas");
     else setError(r.error);
   };
@@ -37,7 +41,7 @@ export default function PaginaCrearCuenta() {
         </>
       }
     >
-      <form onSubmit={enviar} className="space-y-4">
+      <form onSubmit={(e) => void enviar(e)} className="space-y-4">
         <div>
           <Etiqueta htmlFor="r-nombre">Nombre y apellido</Etiqueta>
           <Entrada id="r-nombre" required autoComplete="name" value={datos.nombre} onChange={campo("nombre")} />
@@ -70,8 +74,8 @@ export default function PaginaCrearCuenta() {
           </p>
         ) : null}
 
-        <Boton type="submit" variante="principal" medida="lg" className="w-full">
-          Crear cuenta
+        <Boton type="submit" variante="principal" medida="lg" className="w-full" disabled={enviando}>
+          {enviando ? "Creando…" : "Crear cuenta"}
         </Boton>
       </form>
     </TarjetaCuenta>

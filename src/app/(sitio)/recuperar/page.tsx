@@ -15,9 +15,9 @@ export default function PaginaRecuperar() {
   const [aviso, setAviso] = useState("");
   const [error, setError] = useState("");
 
-  const pedir = (e: FormEvent) => {
+  const pedir = async (e: FormEvent) => {
     e.preventDefault();
-    const r = recuperar(email);
+    const r = await recuperar(email);
     if (r.ok) {
       setAviso(r.mensaje);
       setError("");
@@ -27,9 +27,9 @@ export default function PaginaRecuperar() {
     }
   };
 
-  const cambiar = (e: FormEvent) => {
+  const cambiar = async (e: FormEvent) => {
     e.preventDefault();
-    const r = cambiarClave(email, clave);
+    const r = await cambiarClave(email, clave);
     if (r.ok) {
       setAviso(r.mensaje);
       setError("");
@@ -58,7 +58,7 @@ export default function PaginaRecuperar() {
           </Boton>
         </div>
       ) : (
-        <form onSubmit={paso === "pedir" ? pedir : cambiar} className="space-y-4">
+        <form onSubmit={(e) => void (paso === "pedir" ? pedir(e) : cambiar(e))} className="space-y-4">
           <div>
             <Etiqueta htmlFor="rc-mail">Correo electrónico</Etiqueta>
             <Entrada

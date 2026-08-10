@@ -15,9 +15,13 @@ export default function PaginaEntrar() {
   const [clave, setClave] = useState("");
   const [error, setError] = useState("");
 
-  const enviar = (e: FormEvent) => {
+  const [enviando, setEnviando] = useState(false);
+
+  const enviar = async (e: FormEvent) => {
     e.preventDefault();
-    const r = entrar(email, clave);
+    setEnviando(true);
+    const r = await entrar(email, clave);
+    setEnviando(false);
     if (r.ok) router.push("/mis-consultas");
     else setError(r.error);
   };
@@ -35,7 +39,7 @@ export default function PaginaEntrar() {
         </>
       }
     >
-      <form onSubmit={enviar} className="space-y-4">
+      <form onSubmit={(e) => void enviar(e)} className="space-y-4">
         <div>
           <Etiqueta htmlFor="e-mail">Correo electrónico</Etiqueta>
           <Entrada
@@ -66,8 +70,8 @@ export default function PaginaEntrar() {
           </p>
         ) : null}
 
-        <Boton type="submit" variante="principal" medida="lg" className="w-full">
-          Entrar
+        <Boton type="submit" variante="principal" medida="lg" className="w-full" disabled={enviando}>
+          {enviando ? "Entrando…" : "Entrar"}
         </Boton>
 
         <p className="text-center text-[0.85rem]">

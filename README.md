@@ -156,6 +156,18 @@ La migración es conservadora: **no pisa lo que ya exista** en la versión nueva
 Si entre el cambio de versión y la migración se guardó algo, esa colección queda
 con lo nuevo y lo viejo sin traer.
 
+#### Copias automáticas
+
+**Configuración → Copias automáticas** guarda una instantánea de todos los datos
+al abrir el panel y otra antes de cualquier migración. Se conservan las últimas
+cuatro y se restauran con un botón. Es la red de seguridad ante cualquier cambio
+de estructura.
+
+Las imágenes subidas no entran en la copia porque viven en IndexedDB, que no
+lleva versión y nunca se borra.
+
+#### Recuperar de una versión anterior
+
 Para esos casos está **Configuración → Recuperar datos anteriores**: lista todo
 lo que quedó guardado de cualquier versión, con cuántos elementos tiene y una
 muestra de los nombres, y permite traer una colección o una versión entera. Las

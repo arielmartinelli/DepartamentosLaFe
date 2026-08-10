@@ -123,6 +123,42 @@ async function comprimir(archivo: File): Promise<string> {
 
 export type ResultadoSubida = { ok: true; referencia: string } | { ok: false; error: string };
 
+/** Convierte el resultado comprimido en un archivo listo para subir. */
+async function aBinario(datos: string) {
+  const respuesta = await fetch(datos);
+  return respuesta.blob();
+}
+
+/**
+ * Sube la imagen al almacenamiento de Supabase y devuelve su dirección
+ * pública. Si no hay base configurada, devuelve null y se guarda local.
+ */
+async function subirAlServidor(datos: string, nombre: string): Promise<string | null> {
+  try {
+    const { supabase, hayBaseDeDatos } = await import("./supabase/cliente");
+    const bd = supabase();
+    if (!hayBaseDeDatos || !bd) return null;
+
+    const binario = await aBinario(datos);
+    const extension = binario.type === "image/webp" ? "webp" : "jpg";
+    const ruta = `${new Date().getFullYear()}/${Date.now().toString(36)}-${nombre
+      .replace(/\.[^.]+$/, "")
+      .replace(/[^a-zA-Z0-9]+/g, "-")
+      .slice(0, 40)
+      .toLowerCase()}.${extension}`;
+
+    const { error } = await bd.storage
+      .from("imagenes")
+      .upload(ruta, binario, { contentType: binario.type, upsert: false });
+    if (error) return null;
+
+    const { data } = bd.storage.from("imagenes").getPublicUrl(ruta);
+    return data.publicUrl ?? null;
+  } catch {
+    return null;
+  }
+}
+
 export async function guardarArchivo(archivo: File): Promise<ResultadoSubida> {
   if (!archivo.type.startsWith("image/")) {
     return { ok: false, error: `“${archivo.name}” no es una imagen.` };
@@ -133,6 +169,12 @@ export async function guardarArchivo(archivo: File): Promise<ResultadoSubida> {
 
   try {
     const datos = await comprimir(archivo);
+
+    /* Con base de datos, la imagen queda en el servidor y la ve todo el mundo. */
+    const publica = await subirAlServidor(datos, archivo.name);
+    if (publica) return { ok: true, referencia: publica };
+
+    /* Sin base, se guarda en este navegador. */
     const id = `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 7)}`;
     const db = await abrir();
     transaccion(db, "readwrite").put(datos, id);
@@ -184,4 +226,38 @@ export async function importarArchivos(datos: Record<string, string>) {
   } catch {
     /* Si falla, quedan las referencias por enlace. */
   }
+}
+
+
+/**
+ * Sube al servidor todas las imágenes que estaban guardadas en este navegador.
+ *
+ * Devuelve un mapa `local:<id>` → dirección pública, para poder reemplazar las
+ * referencias antes de mandar los datos a la base. Sin esto, las fotos que la
+ * propietaria subió desde su computadora quedarían rotas en el resto de los
+ * dispositivos.
+ */
+export async function subirLocalesAlServidor(
+  avisar?: (hechas: number, total: number) => void,
+): Promise<Record<string, string>> {
+  await cargarTodo();
+
+  const entradas = Object.entries(cache);
+  const mapa: Record<string, string> = {};
+  let hechas = 0;
+
+  for (const [id, datos] of entradas) {
+    const publica = await subirAlServidor(datos, `subida-${id}`);
+    if (publica) mapa[`local:${id}`] = publica;
+    hechas += 1;
+    avisar?.(hechas, entradas.length);
+  }
+
+  return mapa;
+}
+
+/** Cantidad de imágenes guardadas en este navegador. */
+export async function contarLocales() {
+  await cargarTodo();
+  return Object.keys(cache).length;
 }

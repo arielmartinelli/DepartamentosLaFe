@@ -18,8 +18,9 @@ import {
   Sparkles,
   X,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useContenido } from "@/lib/contenido";
+import { respaldarAhora } from "@/lib/repositorio";
 import { sitio } from "@/lib/site";
 import { useResolverImagen } from "@/lib/usar-imagen";
 import { cn } from "@/lib/utils";
@@ -84,6 +85,11 @@ export function Cascara({ children }: { children: React.ReactNode }) {
   const [abierto, setAbierto] = useState(false);
   const { consultas } = useContenido();
   const nuevas = consultas.filter((c) => c.estado === "nueva").length;
+
+  /* Copia de seguridad al entrar: si algo sale mal, siempre hay de dónde volver. */
+  useEffect(() => {
+    respaldarAhora("Al abrir el panel");
+  }, []);
 
   const navegacion = (
     <nav aria-label="Secciones del panel" className="flex grow flex-col gap-6 overflow-y-auto px-3">

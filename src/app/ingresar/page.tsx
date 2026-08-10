@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { Suspense } from "react";
 import { FormularioIngreso } from "@/components/admin/formulario-ingreso";
 import { foto } from "@/lib/imagenes";
 import { sitio } from "@/lib/site";
@@ -58,7 +59,13 @@ export default function PaginaIngreso() {
             Acceso exclusivo para la administración de {sitio.nombre}.
           </p>
 
-          <FormularioIngreso />
+          <Suspense
+            fallback={
+              <div className="mt-9 h-64 animate-pulse rounded-md bg-hueso" aria-hidden />
+            }
+          >
+            <FormularioIngreso />
+          </Suspense>
         </div>
       </div>
     </div>

@@ -62,7 +62,7 @@ export default function PaginaMisConsultas() {
             {cuenta.nombre} · {cuenta.email}
           </p>
         </div>
-        <Boton variante="contorno" medida="sm" onClick={salir}>
+        <Boton variante="contorno" medida="sm" onClick={() => void salir()}>
           <LogOut strokeWidth={1.7} aria-hidden />
           Cerrar sesión
         </Boton>

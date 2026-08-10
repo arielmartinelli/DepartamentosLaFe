@@ -21,7 +21,11 @@ const nextConfig: NextConfig = {
   images: {
     formats: ["image/avif", "image/webp"],
     deviceSizes: [360, 480, 640, 828, 1080, 1280, 1600, 1920, 2048],
-    remotePatterns: [{ protocol: "https", hostname: "images.unsplash.com" }],
+    remotePatterns: [
+      { protocol: "https", hostname: "images.unsplash.com" },
+      /* Almacenamiento de Supabase, cuando esté configurado. */
+      { protocol: "https", hostname: "*.supabase.co" },
+    ],
   },
   async headers() {
     return [{ source: "/:path*", headers: cabeceras }];

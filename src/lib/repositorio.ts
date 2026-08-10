@@ -40,6 +40,8 @@ export const CLAVES = {
 
 export type Clave = (typeof CLAVES)[keyof typeof CLAVES];
 
+import { crearRespaldo } from "./respaldos";
+
 const hayNavegador = () => typeof window !== "undefined";
 
 /* Caché en memoria + suscriptores: la fuente externa que consume React. */
@@ -59,6 +61,12 @@ export function suscribir(fn: () => void) {
 
 function migrar() {
   if (!hayNavegador()) return;
+
+  /* Antes de mover nada: copia de seguridad de lo que haya en cualquier versión. */
+  [PREFIJO, ...VERSIONES_ANTERIORES].forEach((version) =>
+    crearRespaldo(version, [...Object.values(CLAVES)], `Automática (${version.replace(/[^v0-9]/g, "")})`),
+  );
+
   const bandera = `${PREFIJO}__migrado`;
   if (window.localStorage.getItem(bandera)) return;
 
@@ -84,6 +92,14 @@ function migrar() {
 /* Se ejecuta una sola vez, al cargar el módulo en el navegador. */
 migrar();
 
+/** Instantánea de la versión actual: se llama al abrir el panel. */
+export function respaldarAhora(motivo = "Automática") {
+  return crearRespaldo(PREFIJO, [...Object.values(CLAVES)], motivo);
+}
+
+/** Devuelve el prefijo vigente, para las herramientas de recuperación. */
+export const prefijoActual = () => PREFIJO;
+
 export function leer<T>(clave: Clave, semilla: T): T {
   if (!hayNavegador()) return semilla;
   if (cache.has(clave)) return cache.get(clave) as T;
@@ -100,6 +116,7 @@ export function leer<T>(clave: Clave, semilla: T): T {
 
 export function guardar<T>(clave: Clave, valor: T) {
   cache.set(clave, valor);
+
   if (hayNavegador()) {
     try {
       window.localStorage.setItem(PREFIJO + clave, JSON.stringify(valor));
@@ -107,7 +124,68 @@ export function guardar<T>(clave: Clave, valor: T) {
       /* Cuota llena o modo privado: el contenido sigue en memoria. */
     }
   }
+
   avisar();
+
+  /* Si hay base de datos, se manda también al servidor. La pantalla ya se
+     actualizó con el valor nuevo, así que el envío no la hace esperar. */
+  void empujarAlServidor(clave, valor);
+}
+
+/* ────────────────────────────────────────────────────────────────
+   Sincronización con la base de datos
+   ──────────────────────────────────────────────────────────────── */
+
+let estadoRemoto: "sin-base" | "cargando" | "listo" | "error" = "sin-base";
+
+export const estadoDeLaBase = () => estadoRemoto;
+
+async function empujarAlServidor<T>(clave: Clave, valor: T) {
+  if (!hayNavegador()) return;
+  try {
+    const remoto = await import("./supabase/remoto");
+    if (!remoto.hayBaseDeDatos) return;
+    const ok = await remoto.empujar(clave, valor);
+    if (!ok) estadoRemoto = "error";
+    avisar();
+  } catch {
+    estadoRemoto = "error";
+  }
+}
+
+/**
+ * Trae todo lo que hay en la base y lo deja en la caché.
+ * Mientras tanto se sigue viendo lo local, así no hay pantalla en blanco.
+ */
+export async function sincronizarConLaBase() {
+  if (!hayNavegador()) return;
+
+  try {
+    const remoto = await import("./supabase/remoto");
+    if (!remoto.hayBaseDeDatos) return;
+
+    estadoRemoto = "cargando";
+    avisar();
+
+    const claves = Object.values(CLAVES).filter((c) => c !== "sesion");
+    const resultados = await Promise.all(
+      claves.map(async (clave) => [clave, await remoto.traer(clave)] as const),
+    );
+
+    let algo = false;
+    resultados.forEach(([clave, valor]) => {
+      if (valor !== null && valor !== undefined) {
+        cache.set(clave, valor);
+        algo = true;
+      }
+    });
+
+    estadoRemoto = algo ? "listo" : "listo";
+    avisar();
+  } catch {
+    estadoRemoto = "error";
+    avisar();
+  }
 }
 
 export function borrarTodo() {

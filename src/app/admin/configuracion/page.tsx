@@ -5,6 +5,8 @@ import { Check, CreditCard, Download, Mail, MessageSquare, Percent, Upload, User
 import { useRef, useState } from "react";
 import { EncabezadoPagina } from "@/components/admin/encabezado";
 import { Panel, PanelCabecera } from "@/components/admin/tarjeta";
+import { CopiasSeguridad } from "@/components/admin/copias-seguridad";
+import { EstadoBase } from "@/components/admin/estado-base";
 import { RecuperarDatos } from "@/components/admin/recuperar-datos";
 import { ZonaSubida } from "@/components/admin/zona-subida";
 import { Foto } from "@/components/sitio/foto";
@@ -213,6 +215,10 @@ export default function PaginaConfiguracion() {
               </Boton>
             </div>
           </Panel>
+
+          <EstadoBase />
+
+          <CopiasSeguridad />
 
           <RecuperarDatos />
         </div>
