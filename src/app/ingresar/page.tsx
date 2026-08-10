@@ -26,27 +26,17 @@ export default function PaginaIngreso() {
         />
         <div aria-hidden className="velo-foto absolute inset-0" />
 
-        <div className="relative flex h-full flex-col justify-between p-12">
-          <Image
-            src={sitio.marca.logo}
-            alt={sitio.nombre}
-            width={1200}
-            height={465}
-            className="h-10 w-auto"
-          />
-
-          <div>
-            <p className="text-[0.75rem] font-medium text-white/70">
-              {sitio.ciudad}, {sitio.provincia}
-            </p>
-            <p className="mt-4 max-w-md font-display text-[2.6rem] leading-[1.05] text-white">
-              Todo el alojamiento, desde un solo lugar.
-            </p>
-            <p className="mt-4 max-w-sm text-[0.95rem] leading-relaxed text-white/75">
-              Reservas, consultas, calendario, departamentos y contenido de la web. Sin
-              planillas sueltas.
-            </p>
-          </div>
+        <div className="relative flex h-full flex-col justify-end p-12">
+          <p className="text-[0.75rem] font-medium text-white/70">
+            {sitio.ciudad}, {sitio.provincia}
+          </p>
+          <p className="mt-4 max-w-md font-display text-[2.6rem] leading-[1.05] text-white">
+            Todo el alojamiento, desde un solo lugar.
+          </p>
+          <p className="mt-4 max-w-sm text-[0.95rem] leading-relaxed text-white/75">
+            Reservas, consultas, calendario, departamentos y contenido de la web. Sin
+            planillas sueltas.
+          </p>
         </div>
       </div>
 
@@ -61,23 +51,11 @@ export default function PaginaIngreso() {
             Volver al sitio
           </Link>
 
-          <div className="mt-10 lg:hidden">
-            <span className="inline-flex rounded-md bg-ink px-5 py-4">
-              <Image
-                src={sitio.marca.logo}
-                alt={sitio.nombre}
-                width={1200}
-                height={465}
-                className="h-8 w-auto"
-              />
-            </span>
-          </div>
-
-          <h1 className="mt-8 font-display text-[2.1rem] leading-tight text-ink">
+          <h1 className="mt-10 font-display text-[2.1rem] leading-tight text-ink">
             Ingresar al panel
           </h1>
           <p className="mt-3 text-[0.92rem] leading-relaxed text-texto-suave">
-            Acceso exclusivo para la administración de La Fe Departamentos.
+            Acceso exclusivo para la administración de {sitio.nombre}.
           </p>
 
           <FormularioIngreso />

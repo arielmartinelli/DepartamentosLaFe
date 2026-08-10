@@ -1,24 +1,15 @@
 "use client";
 
 import { ExternalLink } from "lucide-react";
+import { Carrusel } from "./carrusel";
 import { Foto } from "./foto";
 import { Revelar } from "./revelar";
 import { useContenido } from "@/lib/contenido";
 import { aLaVuelta } from "@/lib/data";
 import { cn } from "@/lib/utils";
 
-/* Alturas alternadas: el mosaico respira y no parece una grilla de plantilla. */
-const proporciones = [
-  "aspect-4/3",
-  "aspect-3/4",
-  "aspect-square",
-  "aspect-3/4",
-  "aspect-4/3",
-  "aspect-square",
-  "aspect-square",
-  "aspect-4/3",
-  "aspect-3/4",
-];
+/** Se muestran hasta nueve; el resto queda cargado en el panel. */
+const TOPE = 9;
 
 export function QueHacer({
   titulo = "Qué hacer mientras estás acá",
@@ -32,7 +23,11 @@ export function QueHacer({
   mostrarPracticos?: boolean;
 }) {
   const { actividades } = useContenido();
-  const lista = [...actividades].filter((a) => a.activa).sort((a, b) => a.orden - b.orden);
+  const lista = [...actividades]
+    .filter((a) => a.activa)
+    .sort((a, b) => a.orden - b.orden)
+    .slice(0, TOPE);
+
   if (!lista.length) return null;
 
   return (
@@ -51,32 +46,82 @@ export function QueHacer({
           </h2>
           <p className="mt-5 text-[1.05rem] leading-relaxed text-texto-suave">{bajada}</p>
         </Revelar>
+      </div>
 
-        <div className="mt-14 gap-6 [column-fill:balance] columns-1 sm:columns-2 lg:columns-3">
-          {lista.map((a, i) => (
-            <Revelar key={a.id} retraso={(i % 3) * 0.06} className="mb-6 break-inside-avoid">
-              <article className="group">
-                {a.mapa ? (
+      <div className="contenedor mt-14">
+        <Carrusel etiqueta="Qué hacer en Ushuaia">
+          {lista.map((a) => {
+            const marcas = [a.duracion, a.distancia].filter(Boolean);
+
+            return (
+              <li key={a.id} className="w-[78vw] shrink-0 sm:w-[46vw] lg:w-[24rem] xl:w-[25rem]">
+                <article className="group h-full">
                   <a
-                    href={a.mapa}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    href={a.mapa || undefined}
+                    target={a.mapa ? "_blank" : undefined}
+                    rel={a.mapa ? "noopener noreferrer" : undefined}
                     className="block rounded-lg outline-offset-4"
                   >
-                    <Contenido a={a} proporcion={proporciones[i % proporciones.length]} conEnlace />
-                  </a>
-                ) : (
-                  <Contenido a={a} proporcion={proporciones[i % proporciones.length]} />
-                )}
-              </article>
-            </Revelar>
-          ))}
-        </div>
+                    <div className="relative">
+                      <Foto
+                        src={a.foto}
+                        alt={a.titulo}
+                        zoom
+                        sizes="(max-width: 640px) 78vw, (max-width: 1024px) 46vw, 25rem"
+                        className="aspect-16/11 w-full rounded-lg"
+                      />
+                      <div
+                        aria-hidden
+                        className="velo-pie pointer-events-none absolute inset-0 rounded-lg"
+                      />
+                      <div className="absolute inset-x-0 bottom-0 p-5">
+                        <p className="text-[0.72rem] font-semibold uppercase tracking-[0.14em] text-oro-claro">
+                          {a.categoria}
+                        </p>
+                        <h3 className="mt-1.5 font-display text-[1.4rem] leading-tight text-white">
+                          {a.titulo}
+                        </h3>
+                      </div>
+                    </div>
 
-        {mostrarPracticos ? (
+                    <p className="mt-4 text-[0.9rem] leading-relaxed text-texto-suave">
+                      {a.descripcion}
+                    </p>
+
+                    <p className="mt-3 flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[0.82rem] text-texto-suave">
+                      {marcas.map((m, k) => (
+                        <span key={m} className="flex items-center gap-2.5">
+                          {k > 0 ? <span aria-hidden className="text-linea">·</span> : null}
+                          {m}
+                        </span>
+                      ))}
+                      {a.temporada && a.temporada !== "Todo el año" ? (
+                        <span className="flex items-center gap-2.5 text-texto-tenue">
+                          {marcas.length ? <span aria-hidden className="text-linea">·</span> : null}
+                          {a.temporada}
+                        </span>
+                      ) : null}
+                    </p>
+
+                    {a.mapa ? (
+                      <span className="mt-2.5 inline-flex items-center gap-1.5 text-[0.8rem] font-medium text-texto-tenue transition-colors duration-200 group-hover:text-ink">
+                        Cómo llegar
+                        <ExternalLink className="size-3.5" strokeWidth={1.7} aria-hidden />
+                      </span>
+                    ) : null}
+                  </a>
+                </article>
+              </li>
+            );
+          })}
+        </Carrusel>
+      </div>
+
+      {mostrarPracticos ? (
+        <div className="contenedor">
           <Revelar
             className={cn(
-              "mt-6 rounded-xl p-6 sm:p-8",
+              "mt-14 rounded-xl p-6 sm:p-8",
               fondo === "hueso" ? "bg-white ring-1 ring-linea" : "bg-hueso",
             )}
           >
@@ -92,72 +137,8 @@ export function QueHacer({
               ))}
             </ul>
           </Revelar>
-        ) : null}
-      </div>
-    </section>
-  );
-}
-
-function Contenido({
-  a,
-  proporcion,
-  conEnlace = false,
-}: {
-  a: {
-    titulo: string;
-    descripcion: string;
-    categoria: string;
-    duracion: string;
-    distancia: string;
-    temporada: string;
-    foto: string;
-  };
-  proporcion: string;
-  conEnlace?: boolean;
-}) {
-  const marcas = [a.duracion, a.distancia].filter(Boolean);
-
-  return (
-    <>
-      <Foto
-        src={a.foto}
-        alt={a.titulo}
-        zoom
-        sizes="(max-width: 640px) 92vw, (max-width: 1024px) 46vw, 31vw"
-        className={cn("w-full rounded-lg", proporcion)}
-      />
-
-      <p className="mt-4 flex flex-wrap items-center gap-x-2 gap-y-1 text-[0.74rem] font-semibold uppercase tracking-[0.12em] text-oro-oscuro">
-        <span>{a.categoria}</span>
-        {a.temporada && a.temporada !== "Todo el año" ? (
-          <>
-            <span aria-hidden className="text-linea">·</span>
-            <span className="text-texto-tenue">{a.temporada}</span>
-          </>
-        ) : null}
-      </p>
-
-      <h3 className="mt-1.5 font-display text-[1.35rem] leading-tight text-ink">{a.titulo}</h3>
-
-      <p className="mt-2 text-[0.9rem] leading-relaxed text-texto-suave">{a.descripcion}</p>
-
-      <p className="mt-3 flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[0.82rem] text-texto-suave">
-        {marcas.map((m, k) => (
-          <span key={m} className="flex items-center gap-2.5">
-            {k > 0 ? (
-              <span aria-hidden className="text-linea">·</span>
-            ) : null}
-            {m}
-          </span>
-        ))}
-      </p>
-
-      {conEnlace ? (
-        <span className="mt-2.5 inline-flex items-center gap-1.5 text-[0.8rem] font-medium text-texto-tenue transition-colors duration-200 group-hover:text-ink">
-          Cómo llegar
-          <ExternalLink className="size-3.5" strokeWidth={1.7} aria-hidden />
-        </span>
+        </div>
       ) : null}
-    </>
+    </section>
   );
 }

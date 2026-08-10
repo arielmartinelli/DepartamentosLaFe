@@ -156,8 +156,11 @@ Los que pasó la dueña, ya cargados como punto de partida:
 Las excursiones y los lugares cercanos viven en la misma lista
 (`/admin/actividades`). Cada entrada puede llevar duración, distancia,
 temporada y enlace a Google Maps: con eso alcanza tanto para una navegación por
-el canal como para el supermercado de la esquina. Vienen nueve cargadas y se
-pueden agregar todas las que hagan falta.
+el canal como para el supermercado de la esquina.
+
+En la web se muestran como **carrusel horizontal, con un tope de nueve**. Se
+pueden cargar más desde el panel: el orden de la lista define cuáles entran y el
+panel avisa cuando hay más de nueve visibles.
 
 ## Cómo funciona una consulta
 

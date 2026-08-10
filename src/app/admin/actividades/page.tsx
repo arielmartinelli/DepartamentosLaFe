@@ -17,6 +17,7 @@ export default function PaginaQueHacer() {
   const { actividades, guardarActividad, eliminarActividad, moverActividad } = useContenido();
   const [editando, setEditando] = useState<Actividad | null>(null);
   const lista = [...actividades].sort((a, b) => a.orden - b.orden);
+  const visibles = lista.filter((a) => a.activa).length;
 
   const vacia = (): Actividad => ({
     id: nuevoId("qh"),
@@ -45,8 +46,13 @@ export default function PaginaQueHacer() {
       />
 
       <p className="mb-5 text-[0.85rem] text-texto-suave">
-        {lista.filter((a) => a.activa).length} visibles de {lista.length} · el orden de esta
-        lista es el orden en la web.
+        {visibles} {visibles === 1 ? "visible" : "visibles"} de {lista.length} · el orden de
+        esta lista es el orden del carrusel en la web.
+        {visibles > 9 ? (
+          <span className="ml-1 font-medium text-aviso">
+            En la web se muestran las primeras nueve; el resto queda guardado acá.
+          </span>
+        ) : null}
       </p>
 
       <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
