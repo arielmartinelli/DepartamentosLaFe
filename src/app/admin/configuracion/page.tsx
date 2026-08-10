@@ -5,12 +5,15 @@ import { Check, CreditCard, Download, Mail, MessageSquare, Percent, Upload, User
 import { useRef, useState } from "react";
 import { EncabezadoPagina } from "@/components/admin/encabezado";
 import { Panel, PanelCabecera } from "@/components/admin/tarjeta";
+import { ZonaSubida } from "@/components/admin/zona-subida";
 import { Foto } from "@/components/sitio/foto";
+import { useResolverImagen } from "@/lib/usar-imagen";
 import { Boton } from "@/components/ui/boton";
 import { Entrada, Etiqueta } from "@/components/ui/campo";
 import { Insignia } from "@/components/ui/insignia";
 import { useContenido, type Ajustes } from "@/lib/contenido";
 import { borrarTodo, exportarTodo, importarTodo } from "@/lib/repositorio";
+import { exportarArchivos, importarArchivos } from "@/lib/archivos";
 
 const integraciones = [
   { icono: CreditCard, titulo: "Pagos online", texto: "Cobrar la seña con Mercado Pago o tarjeta al confirmar." },
@@ -32,6 +35,7 @@ const campos: { clave: keyof Ajustes; etiqueta: string; tipo?: string }[] = [
 
 export default function PaginaConfiguracion() {
   const { ajustes, guardarAjustes } = useContenido();
+  const resolver = useResolverImagen();
   const [borrador, setBorrador] = useState<Ajustes>(ajustes);
   const [guardado, setGuardado] = useState(false);
   const archivo = useRef<HTMLInputElement>(null);
@@ -41,8 +45,13 @@ export default function PaginaConfiguracion() {
     setGuardado(false);
   };
 
-  const descargar = () => {
-    const blob = new Blob([exportarTodo()], { type: "application/json" });
+  const descargar = async () => {
+    const paquete = JSON.stringify(
+      { ...JSON.parse(exportarTodo()), imagenes: await exportarArchivos() },
+      null,
+      2,
+    );
+    const blob = new Blob([paquete], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -98,10 +107,23 @@ export default function PaginaConfiguracion() {
                   Logotipo
                 </p>
                 <div className="mt-3 grid place-items-center rounded-sm bg-ink p-5">
-                  <Image src={ajustes.logo} alt="Logotipo actual" width={1200} height={465} className="h-9 w-auto" />
+                  <Image
+                    src={resolver(borrador.logo)}
+                    alt="Logotipo actual"
+                    width={1200}
+                    height={465}
+                    unoptimized={resolver(borrador.logo).startsWith("data:")}
+                    className="h-9 w-auto"
+                  />
                 </div>
+                <ZonaSubida
+                  compacta
+                  className="mt-3"
+                  onListo={([ref]) => editar("logo", ref)}
+                  ayuda="Conviene un PNG con fondo transparente."
+                />
                 <Entrada
-                  className="mt-3 h-10 text-[0.8rem]"
+                  className="mt-2 h-10 text-[0.8rem]"
                   aria-label="Ruta del logotipo"
                   value={borrador.logo}
                   onChange={(e) => editar("logo", e.target.value)}
@@ -112,9 +134,15 @@ export default function PaginaConfiguracion() {
                 <p className="text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-texto-tenue">
                   Marca del panel
                 </p>
-                <Foto src={ajustes.marca} alt="Marca actual" sizes="200px" className="mt-3 aspect-square w-full rounded-sm" />
+                <Foto src={borrador.marca} alt="Marca actual" sizes="200px" className="mt-3 aspect-square w-full rounded-sm" />
+                <ZonaSubida
+                  compacta
+                  className="mt-3"
+                  onListo={([ref]) => editar("marca", ref)}
+                  ayuda="Cuadrada, se ve al lado del nombre en el panel."
+                />
                 <Entrada
-                  className="mt-3 h-10 text-[0.8rem]"
+                  className="mt-2 h-10 text-[0.8rem]"
                   aria-label="Ruta de la marca"
                   value={borrador.marca}
                   onChange={(e) => editar("marca", e.target.value)}
@@ -125,9 +153,15 @@ export default function PaginaConfiguracion() {
                 <p className="text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-texto-tenue">
                   Imagen de portada
                 </p>
-                <Foto src={ajustes.portada} alt="Portada actual" sizes="200px" className="mt-3 aspect-square w-full rounded-sm" />
+                <Foto src={borrador.portada} alt="Portada actual" sizes="200px" className="mt-3 aspect-square w-full rounded-sm" />
+                <ZonaSubida
+                  compacta
+                  className="mt-3"
+                  onListo={([ref]) => editar("portada", ref)}
+                  ayuda="Es la foto grande del inicio y del acceso al panel."
+                />
                 <Entrada
-                  className="mt-3 h-10 text-[0.8rem]"
+                  className="mt-2 h-10 text-[0.8rem]"
                   aria-label="Ruta de la portada"
                   value={borrador.portada}
                   onChange={(e) => editar("portada", e.target.value)}
@@ -142,7 +176,7 @@ export default function PaginaConfiguracion() {
               detalle="Los datos viven en este navegador. Descargá una copia antes de cambiar de computadora."
             />
             <div className="flex flex-wrap gap-2 p-5 sm:p-6">
-              <Boton variante="contorno" medida="sm" onClick={descargar}>
+              <Boton variante="contorno" medida="sm" onClick={() => void descargar()}>
                 <Download strokeWidth={1.7} /> Descargar copia
               </Boton>
               <Boton variante="contorno" medida="sm" onClick={() => archivo.current?.click()}>
@@ -156,7 +190,14 @@ export default function PaginaConfiguracion() {
                 onChange={async (e) => {
                   const f = e.target.files?.[0];
                   if (!f) return;
-                  if (importarTodo(await f.text())) window.location.reload();
+                  const texto = await f.text();
+                  try {
+                    const paquete = JSON.parse(texto) as { imagenes?: Record<string, string> };
+                    if (paquete.imagenes) await importarArchivos(paquete.imagenes);
+                  } catch {
+                    /* Copia sin imágenes: se restaura igual el resto. */
+                  }
+                  if (importarTodo(texto)) window.location.reload();
                 }}
               />
               <Boton

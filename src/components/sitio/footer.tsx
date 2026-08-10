@@ -5,6 +5,7 @@ import Link from "next/link";
 import { buscarEdificio, departamentos } from "@/lib/data";
 import { useContenido } from "@/lib/contenido";
 import { sitio } from "@/lib/site";
+import { useResolverImagen } from "@/lib/usar-imagen";
 
 function IconoInstagram(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -26,6 +27,8 @@ function IconoFacebook(props: React.SVGProps<SVGSVGElement>) {
 
 export function Footer() {
   const { ajustes } = useContenido();
+  const resolver = useResolverImagen();
+  const logo = resolver(ajustes.logo);
   const anio = new Date().getFullYear();
   const wa = `https://wa.me/${ajustes.whatsapp}`;
   const enlace = "text-[0.875rem] text-texto-suave transition-colors duration-200 hover:text-ink";
@@ -37,10 +40,11 @@ export function Footer() {
           <div>
             <span className="inline-flex rounded-md bg-ink px-3.5 py-2.5">
               <Image
-                src={ajustes.logo}
+                src={logo}
                 alt={sitio.nombre}
                 width={1200}
                 height={465}
+                unoptimized={logo.startsWith("data:")}
                 className="h-8 w-auto"
               />
             </span>

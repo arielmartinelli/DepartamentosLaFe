@@ -1,20 +1,29 @@
+"use client";
+
 import Image from "next/image";
 import { Star } from "lucide-react";
 import { Boton } from "@/components/ui/boton";
+import { useContenido } from "@/lib/contenido";
 import { foto } from "@/lib/imagenes";
-import { sitio, urlWhatsApp } from "@/lib/site";
+import { sitio } from "@/lib/site";
+import { useResolverImagen } from "@/lib/usar-imagen";
 
 export function Hero() {
+  const { ajustes } = useContenido();
+  const resolver = useResolverImagen();
+  const portada = resolver(ajustes.portada) || foto.fachada;
+
   return (
     <section id="inicio" className="relative">
       <div className="relative h-[min(94svh,52rem)] min-h-[34rem] w-full overflow-hidden">
         <Image
-          src={foto.fachada}
+          src={portada}
           alt="Fachada de La Fe Departamentos al atardecer, con el cordón montañoso de Ushuaia detrás"
           fill
           priority
           fetchPriority="high"
           sizes="100vw"
+          unoptimized={portada.startsWith("data:")}
           className="object-cover object-center"
         />
         <div aria-hidden className="velo-foto absolute inset-0" />
@@ -38,7 +47,11 @@ export function Hero() {
               <a href="#departamentos">Ver los departamentos</a>
             </Boton>
             <Boton asChild variante="vidrio" medida="lg" pastilla>
-              <a href={urlWhatsApp()} target="_blank" rel="noopener noreferrer">
+              <a
+                href={`https://wa.me/${ajustes.whatsapp}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 Consultar disponibilidad
               </a>
             </Boton>

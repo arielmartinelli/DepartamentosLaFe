@@ -1,4 +1,7 @@
+"use client";
+
 import Image from "next/image";
+import { useResolverImagen } from "@/lib/usar-imagen";
 import { cn } from "@/lib/utils";
 
 type Props = {
@@ -24,7 +27,10 @@ export function Foto({
   sizes = "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw",
   zoom = false,
 }: Props) {
-  if (!src) {
+  const resolver = useResolverImagen();
+  const fuente = resolver(src);
+
+  if (!fuente) {
     return (
       <div
         role="img"
@@ -48,11 +54,12 @@ export function Foto({
       )}
     >
       <Image
-        src={src}
+        src={fuente}
         alt={alt}
         fill
         sizes={sizes}
         priority={prioridad}
+        unoptimized={fuente.startsWith("data:")}
         className={cn("object-cover", imgClassName)}
       />
     </div>

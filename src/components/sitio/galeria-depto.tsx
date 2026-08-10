@@ -4,6 +4,7 @@ import Image from "next/image";
 import { Grid2x2, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
 import { Visor } from "./visor";
+import { useResolverImagen } from "@/lib/usar-imagen";
 import { cn } from "@/lib/utils";
 
 /**
@@ -13,7 +14,10 @@ import { cn } from "@/lib/utils";
  * derecha, con altura fija para que las imágenes con `fill` tengan de dónde
  * agarrarse. En móvil: carrusel deslizable a pantalla completa.
  */
-export function GaleriaDepto({ fotos, titulo }: { fotos: string[]; titulo: string }) {
+export function GaleriaDepto({ fotos: crudas, titulo }: { fotos: string[]; titulo: string }) {
+  const resolver = useResolverImagen();
+  const fotos = crudas.map((f) => resolver(f)).filter(Boolean);
+
   const [indice, setIndice] = useState<number | null>(null);
   const [actual, setActual] = useState(0);
   const cinco = fotos.slice(0, 5);
@@ -45,6 +49,7 @@ export function GaleriaDepto({ fotos, titulo }: { fotos: string[]; titulo: strin
             fill
             priority
             sizes="100vw"
+            unoptimized={fotos[actual].startsWith("data:")}
             className="object-cover"
           />
         </button>
@@ -110,6 +115,7 @@ export function GaleriaDepto({ fotos, titulo }: { fotos: string[]; titulo: strin
               fill
               priority={i === 0}
               sizes={i === 0 ? "50vw" : "25vw"}
+              unoptimized={src.startsWith("data:")}
               className="object-cover transition-transform duration-500 ease-salida group-hover:scale-[1.04]"
             />
             <span

@@ -18,6 +18,7 @@ import { useMemo, useState } from "react";
 import { EncabezadoPagina } from "@/components/admin/encabezado";
 import { EstadoReservaTag } from "@/components/admin/estado";
 import { ListaTexto } from "@/components/admin/lista-texto";
+import { ZonaSubida } from "@/components/admin/zona-subida";
 import { Panel, PanelCabecera } from "@/components/admin/tarjeta";
 import { Foto } from "@/components/sitio/foto";
 import { iconos } from "@/components/sitio/iconos-servicio";
@@ -370,14 +371,22 @@ export default function EditorDepartamento() {
             titulo="Galería del departamento"
             detalle="La primera imagen es la principal: encabeza la ficha y las tarjetas."
             accion={
-              <Boton variante="principal" medida="sm" onClick={() => setNuevaFoto("")}>
-                <ImagePlus strokeWidth={1.8} /> Agregar imagen
+              <Boton variante="contorno" medida="sm" onClick={() => setNuevaFoto("")}>
+                <ImagePlus strokeWidth={1.8} /> Agregar por enlace
               </Boton>
             }
           />
+          <div className="px-5 pt-5 sm:px-6 sm:pt-6">
+            <ZonaSubida
+              multiple
+              onListo={(refs) => editar({ fotos: [...dep.fotos, ...refs] })}
+              ayuda="Podés soltar varias de una vez. Se reescalan a 1800 px y se guardan en el navegador."
+            />
+          </div>
+
           {dep.fotos.length === 0 ? (
-            <p className="px-6 py-14 text-center text-[0.88rem] text-texto-suave">
-              Todavía no hay fotos. Agregá al menos una para que la ficha se vea completa.
+            <p className="px-6 py-10 text-center text-[0.88rem] text-texto-suave">
+              Todavía no hay fotos. Subí al menos una para que la ficha se vea completa.
             </p>
           ) : (
             <ul className="grid gap-4 p-5 sm:grid-cols-2 sm:p-6 lg:grid-cols-3 xl:grid-cols-4">

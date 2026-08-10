@@ -7,8 +7,10 @@ import { AnimatePresence, motion } from "motion/react";
 import { Menu, Phone, UserRound, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Boton } from "@/components/ui/boton";
+import { useContenido } from "@/lib/contenido";
 import { useSesion } from "@/lib/sesion";
 import { sitio, urlWhatsApp } from "@/lib/site";
+import { useResolverImagen } from "@/lib/usar-imagen";
 import { cn } from "@/lib/utils";
 
 /**
@@ -16,6 +18,10 @@ import { cn } from "@/lib/utils";
  * se apoya en una placa oscura. Es la misma pieza, montada.
  */
 function Logotipo({ enPlaca }: { enPlaca: boolean }) {
+  const { ajustes } = useContenido();
+  const resolver = useResolverImagen();
+  const fuente = resolver(ajustes.logo) || sitio.marca.logo;
+
   return (
     <span
       className={cn(
@@ -24,11 +30,12 @@ function Logotipo({ enPlaca }: { enPlaca: boolean }) {
       )}
     >
       <Image
-        src={sitio.marca.logo}
+        src={fuente}
         alt={sitio.nombre}
         width={1200}
         height={465}
         priority
+        unoptimized={fuente.startsWith("data:")}
         className={cn("w-auto transition-[height] duration-300", enPlaca ? "h-6 sm:h-7" : "h-8 sm:h-9")}
       />
     </span>

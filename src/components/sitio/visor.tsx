@@ -87,6 +87,7 @@ export function Visor({ fotos, indice, titulo, onCerrar, onCambiar }: Props) {
                 alt={`${titulo} — foto ${(indice ?? 0) + 1}`}
                 fill
                 sizes="100vw"
+                unoptimized={fotos[indice ?? 0]?.startsWith("data:")}
                 className="object-contain"
                 priority
               />

@@ -57,6 +57,27 @@ Sólo se tocan archivos para cambiar el diseño o los datos iniciales:
 | Fotografías de arranque | `src/lib/imagenes.ts` |
 | Logotipo y marca | `public/brand/` |
 
+### Subir fotos desde la computadora
+
+En el panel se puede **arrastrar y soltar** imágenes —o elegirlas con el botón—
+en las galerías de cada departamento, en las galerías por sector, en las
+actividades, en los servicios y en la marca. Las galerías aceptan **varias a la
+vez**.
+
+Antes de guardarse, cada imagen se reescala a 1800 px de ancho y se comprime en
+WebP: una foto de 6 MB queda en unos 300 KB.
+
+Se guardan en **IndexedDB**, no en `localStorage`: la cuota de `localStorage`
+(unos 5 MB) se llenaría con media docena de fotos. En los datos queda una
+referencia `local:<id>` que `src/lib/usar-imagen.ts` traduce al mostrarla. Los
+campos de ruta o enlace siguen funcionando como antes, por si la foto vive en
+otro lado.
+
+Al conectar el backend, `guardarArchivo` en `src/lib/archivos.ts` sube el archivo
+al servidor y devuelve su URL: ningún componente cambia.
+
+La copia de seguridad de Configuración incluye las imágenes subidas.
+
 ### Cómo se guardan los datos
 
 `src/lib/repositorio.ts` es la única capa que habla con el almacenamiento. Hoy

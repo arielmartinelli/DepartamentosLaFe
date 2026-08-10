@@ -4,6 +4,7 @@ import { ArrowLeftRight, Eye, EyeOff, Pencil, Plus, Trash2 } from "lucide-react"
 import { useState } from "react";
 import { EncabezadoPagina } from "@/components/admin/encabezado";
 import { Panel, PanelCabecera } from "@/components/admin/tarjeta";
+import { ZonaSubida } from "@/components/admin/zona-subida";
 import { iconos } from "@/components/sitio/iconos-servicio";
 import { Boton } from "@/components/ui/boton";
 import { AreaTexto, Entrada, Etiqueta, Selector } from "@/components/ui/campo";
@@ -148,12 +149,19 @@ export default function PaginaServicios() {
               </Selector>
             </div>
             <div>
-              <Etiqueta htmlFor="s-foto">Fotografía (opcional)</Etiqueta>
+              <ZonaSubida
+                compacta
+                etiqueta="Fotografía (opcional)"
+                onListo={([ref]) => setEditando({ ...editando, foto: ref })}
+                ayuda="Si no cargás ninguna, se muestra el ícono."
+              />
               <Entrada
                 id="s-foto"
+                className="mt-2"
                 value={editando.foto ?? ""}
                 onChange={(e) => setEditando({ ...editando, foto: e.target.value || null })}
                 placeholder="/media/parrilla.jpg"
+                aria-label="Ruta o enlace de la fotografía"
               />
             </div>
             <div className="space-y-2.5 rounded-md bg-hueso p-4">

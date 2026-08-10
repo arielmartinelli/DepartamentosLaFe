@@ -14,6 +14,7 @@ import {
 import { useState } from "react";
 import { EncabezadoPagina } from "@/components/admin/encabezado";
 import { Panel, PanelCabecera } from "@/components/admin/tarjeta";
+import { ZonaSubida } from "@/components/admin/zona-subida";
 import { Foto } from "@/components/sitio/foto";
 import { Boton } from "@/components/ui/boton";
 import { AreaTexto, Entrada, Etiqueta } from "@/components/ui/campo";
@@ -268,12 +269,19 @@ export default function PaginaQueHacer() {
               />
             </div>
             <div className="sm:col-span-2">
-              <Etiqueta htmlFor="q-foto">Imagen</Etiqueta>
+              <ZonaSubida
+                compacta
+                etiqueta="Imagen"
+                onListo={([ref]) => setEditando({ ...editando, foto: ref })}
+                ayuda="O pegá una ruta o un enlace en el campo de abajo."
+              />
               <Entrada
                 id="q-foto"
+                className="mt-2"
                 value={editando.foto}
                 onChange={(e) => setEditando({ ...editando, foto: e.target.value })}
                 placeholder="/media/canal-beagle.jpg"
+                aria-label="Ruta o enlace de la imagen"
               />
             </div>
             <div>

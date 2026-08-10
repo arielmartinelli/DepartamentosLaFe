@@ -4,6 +4,7 @@ import { ArrowLeftRight, ImagePlus, Images, Star, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { EncabezadoPagina } from "@/components/admin/encabezado";
 import { Panel, PanelCabecera } from "@/components/admin/tarjeta";
+import { ZonaSubida } from "@/components/admin/zona-subida";
 import { Foto } from "@/components/sitio/foto";
 import { Boton } from "@/components/ui/boton";
 import { Entrada, Etiqueta } from "@/components/ui/campo";
@@ -98,14 +99,34 @@ export default function PaginaGalerias() {
               detalle={sector.descripcion}
               accion={
                 <Boton
-                  variante="principal"
+                  variante="contorno"
                   medida="sm"
                   onClick={() => setNueva({ galeria: sector.id, src: "", titulo: "" })}
                 >
-                  <ImagePlus strokeWidth={1.8} /> Agregar
+                  <ImagePlus strokeWidth={1.8} /> Agregar por enlace
                 </Boton>
               }
             />
+
+            <div className="px-5 pt-5 sm:px-6 sm:pt-6">
+              <ZonaSubida
+                multiple
+                onListo={(refs) =>
+                  guardarGaleria({
+                    ...sector,
+                    imagenes: [
+                      ...sector.imagenes,
+                      ...refs.map((src, i) => ({
+                        id: nuevoId("img"),
+                        src,
+                        titulo: "Sin título",
+                        principal: sector.imagenes.length === 0 && i === 0,
+                      })),
+                    ],
+                  })
+                }
+              />
+            </div>
 
             {sector.imagenes.length === 0 ? (
               <div className="px-6 py-16 text-center">

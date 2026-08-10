@@ -21,6 +21,7 @@ import {
 import { useState } from "react";
 import { useContenido } from "@/lib/contenido";
 import { sitio } from "@/lib/site";
+import { useResolverImagen } from "@/lib/usar-imagen";
 import { cn } from "@/lib/utils";
 
 const secciones = [
@@ -53,13 +54,17 @@ const secciones = [
 
 function Marca({ compacta = false }: { compacta?: boolean }) {
   const { ajustes } = useContenido();
+  const resolver = useResolverImagen();
+  const marca = resolver(ajustes.marca);
+
   return (
     <span className="flex items-center gap-3">
       <Image
-        src={ajustes.marca}
+        src={marca}
         alt=""
         width={160}
         height={160}
+        unoptimized={marca.startsWith("data:")}
         className={cn("shrink-0 rounded-md object-cover", compacta ? "size-9" : "size-10")}
       />
       <span className="min-w-0">
