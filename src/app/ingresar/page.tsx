@@ -18,7 +18,7 @@ export default function PaginaIngreso() {
       <div className="relative hidden overflow-hidden lg:block">
         <Image
           src={foto.fachada}
-          alt="Fachada de La Fe Departamentos al atardecer, con el cordón montañoso de Ushuaia detrás"
+          alt="Fachada de Departamentos La Fe al atardecer, con el cordón montañoso de Ushuaia detrás"
           fill
           priority
           sizes="50vw"

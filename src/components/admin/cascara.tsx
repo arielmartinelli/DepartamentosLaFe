@@ -69,10 +69,10 @@ function Marca({ compacta = false }: { compacta?: boolean }) {
       />
       <span className="min-w-0">
         <span className="block truncate text-[0.875rem] font-semibold leading-tight text-white">
-          {sitio.nombreCorto}
+          {sitio.nombre}
         </span>
         <span className="block truncate text-[0.72rem] leading-tight text-white/45">
-          Departamentos · Ushuaia
+          Ushuaia, Tierra del Fuego
         </span>
       </span>
     </span>

@@ -245,7 +245,7 @@ export default function PaginaConsultas() {
                     {c.telefono ? (
                       <Boton asChild variante="contorno" medida="sm">
                         <a
-                          href={chatCon(c, `Hola ${c.nombre.split(" ")[0]}, te escribimos de La Fe Departamentos.`)}
+                          href={chatCon(c, `Hola ${c.nombre.split(" ")[0]}, te escribimos de Departamentos La Fe.`)}
                           target="_blank"
                           rel="noopener noreferrer"
                         >
@@ -397,7 +397,7 @@ export default function PaginaConsultas() {
                 </p>
                 <Boton asChild variante="contorno" medida="sm">
                   <a
-                    href={chatCon(actual, `Hola ${actual.nombre.split(" ")[0]}, te escribimos de La Fe Departamentos.`)}
+                    href={chatCon(actual, `Hola ${actual.nombre.split(" ")[0]}, te escribimos de Departamentos La Fe.`)}
                     target="_blank"
                     rel="noopener noreferrer"
                   >

@@ -4,8 +4,8 @@
  * Reemplazar estos valores no requiere tocar componentes.
  */
 export const sitio = {
-  nombre: "La Fe Departamentos",
-  nombreCorto: "La Fe",
+  nombre: "Departamentos La Fe",
+  nombreCorto: "Departamentos La Fe",
   descripcion:
     "Departamentos de alquiler temporario en Ushuaia, a cinco cuadras del centro. Seis unidades con cocina-comedor equipada, fibra óptica y TV en cada ambiente.",
   url: "https://lafedepartamentos.com.ar",
@@ -23,9 +23,9 @@ export const sitio = {
     telefonoHref: "tel:+542901000000",
     whatsapp: "5492901000000",
     whatsappTexto:
-      "Hola, escribo desde la web de La Fe Departamentos. Quisiera consultar disponibilidad.",
+      "Hola, escribo desde la web de Departamentos La Fe. Quisiera consultar disponibilidad.",
     email: "reservas@lafedepartamentos.com.ar",
-    direccion: "Ushuaia 1569, Ushuaia",
+    direccion: "Ushuaia 1589, Ushuaia",
     horarios: "Todos los días, de 9 a 21 h",
   },
   redes: {
@@ -100,7 +100,7 @@ export const imagenAlCompartir = {
   width: 1200,
   height: 630,
   type: "image/jpeg",
-  alt: "La Fe Departamentos — Ushuaia, Tierra del Fuego",
+  alt: "Departamentos La Fe — Ushuaia, Tierra del Fuego",
 };
 
 export function urlWhatsApp(texto: string = sitio.contacto.whatsappTexto) {

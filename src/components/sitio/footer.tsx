@@ -57,7 +57,7 @@ export function Footer() {
                 href={ajustes.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="Instagram de La Fe Departamentos"
+                aria-label="Instagram de Departamentos La Fe"
                 className="grid size-10 place-items-center rounded-full border border-linea text-texto-suave transition-colors duration-200 hover:border-ink/30 hover:text-ink"
               >
                 <IconoInstagram className="size-[1.05rem]" />
@@ -66,7 +66,7 @@ export function Footer() {
                 href={ajustes.facebook}
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="Facebook de La Fe Departamentos"
+                aria-label="Facebook de Departamentos La Fe"
                 className="grid size-10 place-items-center rounded-full border border-linea text-texto-suave transition-colors duration-200 hover:border-ink/30 hover:text-ink"
               >
                 <IconoFacebook className="size-[1.05rem]" />

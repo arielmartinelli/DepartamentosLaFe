@@ -11,8 +11,8 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     metadataBase: new URL(base),
     title: {
-      default: "La Fe Departamentos — Alquiler temporario en Ushuaia",
-      template: "%s · La Fe Departamentos",
+      default: "Departamentos La Fe — Alquiler temporario en Ushuaia",
+      template: "%s · Departamentos La Fe",
     },
     description: sitio.descripcion,
     keywords: [
@@ -31,13 +31,13 @@ export async function generateMetadata(): Promise<Metadata> {
       locale: "es_AR",
       url: base,
       siteName: sitio.nombre,
-      title: "La Fe Departamentos — Alquiler temporario en Ushuaia",
+      title: "Departamentos La Fe — Alquiler temporario en Ushuaia",
       description: sitio.descripcion,
       images: [imagenAlCompartir],
     },
     twitter: {
       card: "summary_large_image",
-      title: "La Fe Departamentos — Alquiler temporario en Ushuaia",
+      title: "Departamentos La Fe — Alquiler temporario en Ushuaia",
       description: sitio.descripcion,
       images: [imagenAlCompartir.url],
     },

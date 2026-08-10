@@ -1,4 +1,4 @@
-# La Fe Departamentos — sitio web + panel de administración
+# Departamentos La Fe — sitio web + panel de administración
 
 Alquiler temporario en Ushuaia: **La Fe I con cuatro departamentos y La Fe II con
 dos**, a cinco cuadras del centro. Next.js 16 (App

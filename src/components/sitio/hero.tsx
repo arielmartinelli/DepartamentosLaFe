@@ -18,7 +18,7 @@ export function Hero() {
       <div className="relative h-[min(94svh,52rem)] min-h-[34rem] w-full overflow-hidden">
         <Image
           src={portada}
-          alt="Fachada de La Fe Departamentos al atardecer, con el cordón montañoso de Ushuaia detrás"
+          alt="Fachada de Departamentos La Fe al atardecer, con el cordón montañoso de Ushuaia detrás"
           fill
           priority
           fetchPriority="high"
