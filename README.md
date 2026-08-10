@@ -64,17 +64,27 @@ enlace en WhatsApp, Instagram o Facebook. Está armada con la fachada y el
 logotipo, y pesa 155 KB: WhatsApp descarta las imágenes pesadas y ahí se pierde
 la vista previa.
 
-Para que funcione, la dirección tiene que ser absoluta y del dominio real. Se
-resuelve en `urlBase()` de `src/lib/site.ts`, en este orden:
+Para que funcione, la dirección tiene que ser absoluta y del dominio real. Si
+queda apuntando a un dominio que no existe, el enlace se comparte sin foto.
 
-1. `NEXT_PUBLIC_SITIO_URL` — completala cuando tengas el dominio propio.
-2. El dominio que asigna Vercel, que se detecta solo.
-3. `sitio.url`, como último recurso.
+`urlBaseDelPedido()` en `src/lib/site.ts` la resuelve así:
 
-Copiá `.env.example` a `.env.local` para definirla en tu máquina. Después de
-publicar conviene probar el enlace en
-[developers.facebook.com/tools/debug](https://developers.facebook.com/tools/debug/),
-que fuerza a WhatsApp y Facebook a releer los metadatos.
+1. `NEXT_PUBLIC_SITIO_URL`, si está definida.
+2. La cabecera `host` del propio pedido.
+
+La segunda opción es la que hace que funcione siempre, sin configurar nada: el
+sitio se entera de su dominio al servir la página. La contra es que las páginas
+pasan a renderizarse por pedido en lugar de quedar estáticas.
+
+**Si definís `NEXT_PUBLIC_SITIO_URL` vuelven a ser estáticas**, porque ya no hace
+falta leer las cabeceras. Conviene hacerlo cuando el dominio esté firme: copiá
+`.env.example` a `.env.local` para tu máquina, y cargá la variable en Vercel para
+producción.
+
+Después de publicar, pasá el enlace por
+[developers.facebook.com/tools/debug](https://developers.facebook.com/tools/debug/)
+y tocá *Scrape Again*. WhatsApp guarda en caché el primer intento: si falló una
+vez, sigue mostrando el enlace sin foto aunque ya esté arreglado.
 
 ### Subir fotos desde la computadora
 

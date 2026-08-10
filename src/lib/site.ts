@@ -65,6 +65,35 @@ export function urlBase() {
   return sitio.url;
 }
 
+/**
+ * Dirección real desde la que se está sirviendo la página.
+ *
+ * Es la única forma de que la vista previa funcione sin depender de que
+ * alguien configure una variable: se lee del propio pedido. Si
+ * `NEXT_PUBLIC_SITIO_URL` está definida se usa esa y la página sigue siendo
+ * estática; si no, se toma la cabecera `host`.
+ */
+export async function urlBaseDelPedido() {
+  const propia = process.env.NEXT_PUBLIC_SITIO_URL?.trim();
+  if (propia) return propia.replace(/\/$/, "");
+
+  try {
+    const { headers } = await import("next/headers");
+    const cabeceras = await headers();
+    const anfitrion = cabeceras.get("x-forwarded-host") ?? cabeceras.get("host");
+    if (anfitrion) {
+      const protocolo =
+        cabeceras.get("x-forwarded-proto") ??
+        (anfitrion.startsWith("localhost") || anfitrion.startsWith("127.") ? "http" : "https");
+      return `${protocolo}://${anfitrion}`;
+    }
+  } catch {
+    /* Fuera de un pedido (por ejemplo, al generar el sitemap). */
+  }
+
+  return urlBase();
+}
+
 /** Imagen que se ve al compartir el enlace. */
 export const imagenAlCompartir = {
   url: "/og.jpg",

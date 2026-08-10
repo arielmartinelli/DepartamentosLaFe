@@ -2,9 +2,36 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { FichaDepartamento } from "@/components/sitio/ficha-departamento";
 import { buscarEdificio, departamentos } from "@/lib/data";
-import { imagenAlCompartir, sitio, urlBase } from "@/lib/site";
+import { imagenAlCompartir, sitio, urlBaseDelPedido } from "@/lib/site";
 
 type Props = { params: Promise<{ slug: string }> };
+
+/**
+ * Imagen para la vista previa del enlace.
+ *
+ * Las subidas locales (`local:…`) sólo existen en el navegador de la
+ * propietaria, así que ahí se comparte la foto general. Las de Unsplash se
+ * piden recortadas a 1200×630: WhatsApp descarta las imágenes pesadas.
+ */
+function imagenAlCompartirDe(foto: string | undefined, alt: string) {
+  if (!foto) return imagenAlCompartir;
+
+  if (foto.includes("images.unsplash.com")) {
+    const limpia = foto.split("?")[0];
+    return {
+      url: `${limpia}?auto=format&fit=crop&q=70&w=1200&h=630`,
+      width: 1200,
+      height: 630,
+      alt,
+    };
+  }
+
+  if (/^https?:\/\//.test(foto) || foto.startsWith("/")) {
+    return { url: foto, alt };
+  }
+
+  return imagenAlCompartir;
+}
 
 export function generateStaticParams() {
   return departamentos.map((d) => ({ slug: d.slug }));
@@ -16,8 +43,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!dep) return {};
   const ed = buscarEdificio(dep.edificioId);
 
+  const base = await urlBaseDelPedido();
   const titulo = `${ed?.nombre} · ${dep.nombre} — alquiler temporario en Ushuaia`;
+
   return {
+    metadataBase: new URL(base),
     title: titulo,
     description: [
       dep.resumen,
@@ -32,14 +62,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: {
       title: titulo,
       description: dep.resumen,
-      url: `${urlBase()}/departamentos/${dep.slug}`,
-      /* Si la foto es una subida local, no existe fuera del navegador: se
-         comparte la imagen general del alojamiento. */
-      images: [
-        /^https?:\/\//.test(dep.fotos[0] ?? "") || dep.fotos[0]?.startsWith("/")
-          ? { url: dep.fotos[0], alt: `${ed?.nombre} · ${dep.nombre}` }
-          : imagenAlCompartir,
-      ],
+      url: `${base}/departamentos/${dep.slug}`,
+      images: [imagenAlCompartirDe(dep.fotos[0], `${ed?.nombre} · ${dep.nombre}`)],
     },
   };
 }
