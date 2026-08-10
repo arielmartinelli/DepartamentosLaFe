@@ -161,7 +161,12 @@ export function ProveedorContenido({ children }: { children: ReactNode }) {
   const prestaciones = useDato(CLAVES.prestaciones, prestacionesSemilla);
   const galerias = useDato(CLAVES.galerias, galeriasSemilla);
   const cuentas = useDato(CLAVES.cuentas, cuentasSemilla);
-  const ajustes = useDato(CLAVES.ajustes, ajustesSemilla);
+  const ajustesGuardados = useDato(CLAVES.ajustes, ajustesSemilla);
+  /* Completa los campos que no existían cuando se guardó (por ejemplo, la guía). */
+  const ajustes = useMemo(
+    () => ({ ...ajustesSemilla, ...ajustesGuardados }),
+    [ajustesGuardados],
+  );
   const listo = true;
 
   /* Guarda y publica en un solo paso. */

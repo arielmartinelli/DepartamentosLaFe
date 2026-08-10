@@ -128,6 +128,20 @@ coinciden y no hay parpadeo.
 Desde **Configuración** se puede descargar toda la base en JSON, restaurarla en
 otra computadora o volver a los datos de ejemplo.
 
+#### Al cambiar la versión del almacenamiento
+
+`PREFIJO` en `src/lib/repositorio.ts` lleva la versión (`lafe:v4:`). Si se
+cambia, lo que la propietaria había cargado queda bajo la clave vieja y el panel
+aparece con los datos de ejemplo.
+
+Por eso hay una **migración**: al arrancar, copia las claves de las versiones
+anteriores a la actual, sin pisar nada de lo que ya exista en la nueva. Las
+galerías quedan fuera a propósito, porque cambiaron de forma.
+
+Al subir la versión, agregá la anterior a `VERSIONES_ANTERIORES` y sumá a
+`SIN_MIGRAR` sólo las colecciones cuya estructura cambió. Las imágenes subidas
+viven en IndexedDB y no llevan versión, así que nunca se pierden.
+
 ## Fotografías
 
 `src/lib/imagenes.ts` es el único lugar donde hay rutas de imagen. La fachada es la foto

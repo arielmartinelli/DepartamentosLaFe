@@ -11,6 +11,18 @@
 
 const PREFIJO = "lafe:v4:";
 
+/**
+ * Versiones anteriores del almacenamiento.
+ *
+ * Al cambiar de versión, lo guardado por la propietaria quedaba huérfano y el
+ * panel volvía a los datos de ejemplo. Ahora se migra: se copia lo viejo a la
+ * clave nueva, sin pisar nada de lo que ya exista.
+ */
+const VERSIONES_ANTERIORES = ["lafe:v3:", "lafe:v2:", "lafe:v1:"];
+
+/** Las galerías cambiaron de forma: esas sí arrancan de cero. */
+const SIN_MIGRAR: string[] = ["galerias"];
+
 export const CLAVES = {
   edificios: "edificios",
   departamentos: "departamentos",
@@ -45,6 +57,33 @@ export function suscribir(fn: () => void) {
   };
 }
 
+function migrar() {
+  if (!hayNavegador()) return;
+  const bandera = `${PREFIJO}__migrado`;
+  if (window.localStorage.getItem(bandera)) return;
+
+  try {
+    Object.values(CLAVES).forEach((clave) => {
+      if (SIN_MIGRAR.includes(clave)) return;
+      if (window.localStorage.getItem(PREFIJO + clave)) return;
+
+      for (const anterior of VERSIONES_ANTERIORES) {
+        const guardado = window.localStorage.getItem(anterior + clave);
+        if (guardado) {
+          window.localStorage.setItem(PREFIJO + clave, guardado);
+          break;
+        }
+      }
+    });
+    window.localStorage.setItem(bandera, new Date().toISOString());
+  } catch {
+    /* Si el navegador no deja escribir, se sigue con los datos de ejemplo. */
+  }
+}
+
+/* Se ejecuta una sola vez, al cargar el módulo en el navegador. */
+migrar();
+
 export function leer<T>(clave: Clave, semilla: T): T {
   if (!hayNavegador()) return semilla;
   if (cache.has(clave)) return cache.get(clave) as T;
@@ -75,6 +114,10 @@ export function borrarTodo() {
   cache.clear();
   if (hayNavegador()) {
     Object.values(CLAVES).forEach((c) => window.localStorage.removeItem(PREFIJO + c));
+    /* También las versiones viejas, para que la migración no las reviva. */
+    VERSIONES_ANTERIORES.forEach((v) =>
+      Object.values(CLAVES).forEach((c) => window.localStorage.removeItem(v + c)),
+    );
   }
   avisar();
 }
