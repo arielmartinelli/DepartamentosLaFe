@@ -37,7 +37,7 @@ Otros comandos: `npm run build`, `npm start`, `npm run lint`, `npm run typecheck
 | `/admin/consultas` | Bandeja completa con fechas, departamento, huéspedes y conversación |
 | `/admin/departamentos` | Listado; cada unidad abre su editor con cuatro solapas |
 | `/admin/departamentos/[id]` | Editor: información, servicios, galería y disponibilidad |
-| `/admin/galerias` | Fotos de los títulos de cada edificio y de la sección de servicios, con botón Guardar |
+| `/admin/galerias` | Sólo fotos de la portada: los dos títulos de edificio, las actividades y la sección de servicios. Cada bloque con su botón Guardar |
 | `/admin/servicios` · `/admin/actividades` · `/admin/comentarios` | Contenido de la web, con alta, edición, borrado y orden |
 | `/admin/configuracion` | Contacto, marca y copia de seguridad |
 
@@ -82,9 +82,19 @@ En el panel se puede **arrastrar y soltar** imágenes —o elegirlas con el bot�
 en la galería de cada departamento, en Galerías, en las actividades, en los
 servicios y en la marca. Las galerías aceptan **varias a la vez**.
 
-En **Galerías** están sólo las fotos de la portada: las que acompañan al título
-de cada edificio y la de la sección de servicios. Las de cada departamento se
-editan en su propio editor, junto al resto de sus datos.
+En **Galerías** están sólo las fotos de la portada, en cuatro bloques:
+
+- **Título La Fe I** y **Título La Fe II** — dos fotos cada uno: la principal es
+  la grande del bloque y la otra va al costado.
+- **Qué hacer mientras estás acá** — una foto por actividad; los textos y el
+  orden se editan en Qué hacer.
+- **Contamos con todo lo que necesitas** — la foto vertical de los servicios.
+
+Cada bloque tiene su propio botón **Guardar**: los cambios se acumulan y se
+marcan como “Sin guardar” hasta que se confirman.
+
+Las fotos de los departamentos **no están acá**: se editan en
+`Departamentos → Editar → Galería`, junto al resto de sus datos.
 
 Antes de guardarse, cada imagen se reescala a 1800 px de ancho y se comprime en
 WebP: una foto de 6 MB queda en unos 300 KB.

@@ -54,13 +54,13 @@ export const galeriasSemilla: SectorGaleria[] = [
   ...edificios.map<SectorGaleria>((e) => ({
     id: `gal-${e.slug}`,
     nombre: `Título ${e.nombre}`,
-    descripcion: `Las dos fotos que acompañan al título “Departamentos ${e.nombre}” en la portada. La primera es la grande.`,
+    descripcion: `Las dos fotos que acompañan al título “Departamentos ${e.nombre}” en la portada.`,
     tipo: "edificio",
     referencia: e.id,
-    imagenes: e.fotos.slice(0, 4).map((src, i) => ({
+    imagenes: e.fotos.slice(0, 2).map((src, i) => ({
       id: `${e.id}-img-${i}`,
       src,
-      titulo: i === 0 ? `Foto grande de ${e.nombre}` : `Foto ${i + 1} de ${e.nombre}`,
+      titulo: i === 0 ? "Foto grande" : "Foto del costado",
       principal: i === 0,
     })),
   })),

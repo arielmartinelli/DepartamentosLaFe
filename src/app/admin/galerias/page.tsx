@@ -11,22 +11,21 @@ import { Entrada } from "@/components/ui/campo";
 import { Insignia } from "@/components/ui/insignia";
 import { useContenido } from "@/lib/contenido";
 import { nuevoId } from "@/lib/repositorio";
-import type { ImagenSector, SectorGaleria } from "@/lib/tipos";
+import type { Actividad, ImagenSector, SectorGaleria } from "@/lib/tipos";
+
+/** Sólo se usan las dos primeras fotos del bloque de cada edificio. */
+const TOPE_EDIFICIO = 2;
 
 export default function PaginaGalerias() {
-  const { galerias, guardarGaleria } = useContenido();
+  const { galerias, actividades, guardarGaleria, guardarActividad } = useContenido();
 
-  /** Los cambios se acumulan acá hasta que se toca Guardar. */
   const [borradores, setBorradores] = useState<Record<string, SectorGaleria>>({});
   const [guardadas, setGuardadas] = useState<string[]>([]);
+  const [fotosActividad, setFotosActividad] = useState<Record<string, string>>({});
+  const [actividadesGuardadas, setActividadesGuardadas] = useState(false);
 
   const versionDe = (g: SectorGaleria) => borradores[g.id] ?? g;
   const hayCambios = (g: SectorGaleria) => Boolean(borradores[g.id]);
-
-  const editar = (g: SectorGaleria, imagenes: ImagenSector[]) => {
-    setBorradores((b) => ({ ...b, [g.id]: { ...versionDe(g), imagenes } }));
-    setGuardadas((v) => v.filter((id) => id !== g.id));
-  };
 
   const olvidar = (id: string) =>
     setBorradores((b) => {
@@ -35,6 +34,11 @@ export default function PaginaGalerias() {
       return copia;
     });
 
+  const editar = (g: SectorGaleria, imagenes: ImagenSector[]) => {
+    setBorradores((b) => ({ ...b, [g.id]: { ...versionDe(g), imagenes } }));
+    setGuardadas((v) => v.filter((id) => id !== g.id));
+  };
+
   const guardar = (g: SectorGaleria) => {
     const borrador = borradores[g.id];
     if (!borrador) return;
@@ -42,8 +46,6 @@ export default function PaginaGalerias() {
     olvidar(g.id);
     setGuardadas((v) => [...v, g.id]);
   };
-
-  const descartar = (g: SectorGaleria) => olvidar(g.id);
 
   const mover = (g: SectorGaleria, i: number, paso: -1 | 1) => {
     const actual = versionDe(g);
@@ -54,17 +56,35 @@ export default function PaginaGalerias() {
     editar(g, copia);
   };
 
+  /* ── Qué hacer: una foto por actividad ───────────────────────────── */
+
+  const lista = [...actividades].sort((a, b) => a.orden - b.orden);
+  const pendientesActividad = Object.keys(fotosActividad).length;
+
+  const guardarFotosActividad = () => {
+    lista.forEach((a) => {
+      const nueva = fotosActividad[a.id];
+      if (nueva) guardarActividad({ ...a, foto: nueva });
+    });
+    setFotosActividad({});
+    setActividadesGuardadas(true);
+  };
+
+  const fotoDe = (a: Actividad) => fotosActividad[a.id] ?? a.foto;
+
   return (
     <>
       <EncabezadoPagina
         titulo="Galerías"
-        descripcion="Las fotos de la portada: las que acompañan a cada edificio y la de la sección de servicios. Las fotos de cada departamento se editan en su propio editor."
+        descripcion="Las fotos de la portada: los títulos de cada edificio, las actividades y la sección de servicios."
       />
 
       <div className="space-y-4">
         {galerias.map((original) => {
           const g = versionDe(original);
           const sinGuardar = hayCambios(original);
+          const esEdificio = g.tipo === "edificio";
+          const lleno = esEdificio && g.imagenes.length >= TOPE_EDIFICIO;
 
           return (
             <Panel key={g.id}>
@@ -76,11 +96,7 @@ export default function PaginaGalerias() {
                     {sinGuardar ? (
                       <>
                         <Insignia tono="aviso">Sin guardar</Insignia>
-                        <Boton
-                          variante="fantasma"
-                          medida="sm"
-                          onClick={() => descartar(original)}
-                        >
+                        <Boton variante="fantasma" medida="sm" onClick={() => olvidar(g.id)}>
                           Descartar
                         </Boton>
                       </>
@@ -91,36 +107,43 @@ export default function PaginaGalerias() {
                       disabled={!sinGuardar}
                       onClick={() => guardar(original)}
                     >
-                      {!sinGuardar && guardadas.includes(g.id) ? (
-                        <Check strokeWidth={2.2} />
-                      ) : null}
+                      {!sinGuardar && guardadas.includes(g.id) ? <Check strokeWidth={2.2} /> : null}
                       {!sinGuardar && guardadas.includes(g.id) ? "Guardado" : "Guardar"}
                     </Boton>
                   </div>
                 }
               />
 
-              <div className="px-5 pt-5 sm:px-6 sm:pt-6">
-                <ZonaSubida
-                  multiple={g.tipo === "edificio"}
-                  onListo={(refs) =>
-                    editar(original, [
-                      ...g.imagenes,
-                      ...refs.map((src, i) => ({
-                        id: nuevoId("img"),
-                        src,
-                        titulo: "Sin título",
-                        principal: g.imagenes.length === 0 && i === 0,
-                      })),
-                    ])
-                  }
-                  ayuda={
-                    g.tipo === "edificio"
-                      ? "La marcada como principal es la foto grande del bloque; la siguiente va al costado."
-                      : "Se usa la marcada como principal. Conviene una foto vertical."
-                  }
-                />
-              </div>
+              {lleno ? (
+                <p className="px-5 pt-5 text-[0.82rem] text-texto-suave sm:px-6 sm:pt-6">
+                  Ya están las dos fotos que usa el bloque. Para cambiar una, eliminala y
+                  subí la nueva.
+                </p>
+              ) : (
+                <div className="px-5 pt-5 sm:px-6 sm:pt-6">
+                  <ZonaSubida
+                    multiple={esEdificio}
+                    onListo={(refs) =>
+                      editar(original, [
+                        ...g.imagenes,
+                        ...refs
+                          .slice(0, esEdificio ? TOPE_EDIFICIO - g.imagenes.length : 1)
+                          .map((src, i) => ({
+                            id: nuevoId("img"),
+                            src,
+                            titulo: g.imagenes.length + i === 0 ? "Foto grande" : "Foto del costado",
+                            principal: g.imagenes.length === 0 && i === 0,
+                          })),
+                      ])
+                    }
+                    ayuda={
+                      esEdificio
+                        ? "La marcada como principal es la foto grande; la otra va al costado."
+                        : "Conviene una foto vertical. Se usa la marcada como principal."
+                    }
+                  />
+                </div>
+              )}
 
               {g.imagenes.length === 0 ? (
                 <div className="px-6 py-12 text-center">
@@ -143,9 +166,6 @@ export default function PaginaGalerias() {
                             </Insignia>
                           </span>
                         ) : null}
-                        <span className="absolute right-2.5 top-2.5 rounded-full bg-ink/70 px-2 py-0.5 text-[0.68rem] font-semibold tabular-nums text-white">
-                          {i + 1}
-                        </span>
                       </div>
 
                       <div className="p-3">
@@ -215,10 +235,65 @@ export default function PaginaGalerias() {
             </Panel>
           );
         })}
+
+        {/* Qué hacer: se cambia la foto de cada actividad, no la lista */}
+        <Panel>
+          <PanelCabecera
+            titulo="Qué hacer mientras estás acá"
+            detalle="Una foto por actividad. Los textos y el orden se editan en Qué hacer."
+            accion={
+              <div className="flex items-center gap-2">
+                {pendientesActividad ? (
+                  <>
+                    <Insignia tono="aviso">Sin guardar</Insignia>
+                    <Boton variante="fantasma" medida="sm" onClick={() => setFotosActividad({})}>
+                      Descartar
+                    </Boton>
+                  </>
+                ) : null}
+                <Boton
+                  variante="principal"
+                  medida="sm"
+                  disabled={!pendientesActividad}
+                  onClick={guardarFotosActividad}
+                >
+                  {!pendientesActividad && actividadesGuardadas ? <Check strokeWidth={2.2} /> : null}
+                  {!pendientesActividad && actividadesGuardadas ? "Guardado" : "Guardar"}
+                </Boton>
+              </div>
+            }
+          />
+
+          <ul className="grid gap-4 p-5 sm:grid-cols-2 sm:p-6 lg:grid-cols-3">
+            {lista.map((a) => (
+              <li key={a.id} className="overflow-hidden rounded-lg border border-linea bg-white">
+                <Foto src={fotoDe(a)} alt={a.titulo} sizes="33vw" className="aspect-16/10 w-full" />
+                <div className="p-4">
+                  <p className="text-[0.72rem] font-semibold uppercase tracking-[0.12em] text-oro-oscuro">
+                    {a.categoria}
+                  </p>
+                  <p className="mt-1 text-[0.9rem] font-semibold text-ink">{a.titulo}</p>
+                  {fotosActividad[a.id] ? (
+                    <p className="mt-1 text-[0.76rem] text-aviso">Foto nueva sin guardar</p>
+                  ) : null}
+                  <ZonaSubida
+                    compacta
+                    className="mt-3"
+                    onListo={([ref]) => {
+                      setFotosActividad((f) => ({ ...f, [a.id]: ref }));
+                      setActividadesGuardadas(false);
+                    }}
+                    ayuda="Reemplaza la foto de esta actividad."
+                  />
+                </div>
+              </li>
+            ))}
+          </ul>
+        </Panel>
       </div>
 
       <p className="mt-6 rounded-md bg-white px-5 py-4 text-[0.85rem] leading-relaxed text-texto-suave ring-1 ring-linea">
-        Las fotos de cada departamento se administran desde{" "}
+        Las fotos de cada departamento no se tocan acá: se administran desde{" "}
         <span className="font-medium text-ink">Departamentos → Editar → Galería</span>, junto
         al resto de sus datos.
       </p>
