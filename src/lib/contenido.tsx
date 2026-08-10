@@ -53,6 +53,8 @@ export type Ajustes = {
   logo: string;
   marca: string;
   portada: string;
+  guia: string;
+  guiaActualizada: string;
 };
 
 const ajustesSemilla: Ajustes = {
@@ -66,6 +68,8 @@ const ajustesSemilla: Ajustes = {
   logo: sitio.marca.logo,
   marca: "/brand/marca-lafe.png",
   portada: sitio.marca.portada,
+  guia: "/guias/que-hacer-en-ushuaia.pdf",
+  guiaActualizada: "4 de agosto de 2026",
 };
 
 type Contenido = {

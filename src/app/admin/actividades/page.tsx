@@ -1,8 +1,19 @@
 "use client";
 
-import { ArrowLeftRight, ExternalLink, Eye, EyeOff, Pencil, Plus, Trash2 } from "lucide-react";
+import {
+  ArrowLeftRight,
+  Download,
+  ExternalLink,
+  Eye,
+  EyeOff,
+  FileText,
+  Pencil,
+  Plus,
+  Trash2,
+} from "lucide-react";
 import { useState } from "react";
 import { EncabezadoPagina } from "@/components/admin/encabezado";
+import { Panel, PanelCabecera } from "@/components/admin/tarjeta";
 import { Foto } from "@/components/sitio/foto";
 import { Boton } from "@/components/ui/boton";
 import { AreaTexto, Entrada, Etiqueta } from "@/components/ui/campo";
@@ -14,7 +25,10 @@ import type { Actividad } from "@/lib/tipos";
 import { cn } from "@/lib/utils";
 
 export default function PaginaQueHacer() {
-  const { actividades, guardarActividad, eliminarActividad, moverActividad } = useContenido();
+  const { actividades, ajustes, guardarActividad, eliminarActividad, moverActividad, guardarAjustes } =
+    useContenido();
+  const [guia, setGuia] = useState({ ruta: ajustes.guia, fecha: ajustes.guiaActualizada });
+  const [guiaGuardada, setGuiaGuardada] = useState(false);
   const [editando, setEditando] = useState<Actividad | null>(null);
   const lista = [...actividades].sort((a, b) => a.orden - b.orden);
   const visibles = lista.filter((a) => a.activa).length;
@@ -44,6 +58,69 @@ export default function PaginaQueHacer() {
           </Boton>
         }
       />
+
+      {/* Guía descargable */}
+      <Panel className="mb-6">
+        <PanelCabecera
+          titulo="Guía completa en PDF"
+          detalle="Es el archivo que se descarga con el botón “Descargar guía completa” de la web."
+          accion={
+            ajustes.guia ? (
+              <Boton asChild variante="contorno" medida="sm">
+                <a href={ajustes.guia} target="_blank" rel="noopener noreferrer">
+                  <Download strokeWidth={1.7} /> Ver la actual
+                </a>
+              </Boton>
+            ) : null
+          }
+        />
+        <div className="grid gap-4 p-5 sm:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_auto] sm:items-end sm:p-6">
+          <div>
+            <Etiqueta htmlFor="g-ruta">Archivo</Etiqueta>
+            <Entrada
+              id="g-ruta"
+              value={guia.ruta}
+              onChange={(e) => {
+                setGuia({ ...guia, ruta: e.target.value });
+                setGuiaGuardada(false);
+              }}
+              placeholder="/guias/que-hacer-en-ushuaia.pdf"
+            />
+          </div>
+          <div>
+            <Etiqueta htmlFor="g-fecha">Última actualización</Etiqueta>
+            <Entrada
+              id="g-fecha"
+              value={guia.fecha}
+              onChange={(e) => {
+                setGuia({ ...guia, fecha: e.target.value });
+                setGuiaGuardada(false);
+              }}
+              placeholder="4 de agosto de 2026"
+            />
+          </div>
+          <Boton
+            variante="principal"
+            medida="md"
+            onClick={() => {
+              guardarAjustes({ guia: guia.ruta.trim(), guiaActualizada: guia.fecha.trim() });
+              setGuiaGuardada(true);
+            }}
+          >
+            {guiaGuardada ? "Guardado" : "Guardar"}
+          </Boton>
+
+          <p className="flex items-start gap-2.5 rounded-md bg-hueso p-4 text-[0.82rem] leading-relaxed text-texto-suave sm:col-span-3">
+            <FileText className="mt-0.5 size-4 shrink-0 text-texto-tenue" strokeWidth={1.6} aria-hidden />
+            <span>
+              Para publicar una guía nueva, copiá el PDF en la carpeta{" "}
+              <code className="rounded-xs bg-white px-1.5 py-0.5 text-[0.78rem]">public/guias/</code>{" "}
+              y escribí acá su nombre, o pegá un enlace completo si la tenés en Drive. Al
+              conectar el almacenamiento, este campo pasa a ser una subida de archivos.
+            </span>
+          </p>
+        </div>
+      </Panel>
 
       <p className="mb-5 text-[0.85rem] text-texto-suave">
         {visibles} {visibles === 1 ? "visible" : "visibles"} de {lista.length} · el orden de

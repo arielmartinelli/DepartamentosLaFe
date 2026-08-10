@@ -162,6 +162,22 @@ En la web se muestran como **carrusel horizontal, con un tope de nueve**. Se
 pueden cargar más desde el panel: el orden de la lista define cuáles entran y el
 panel avisa cuando hay más de nueve visibles.
 
+Las nueve cargadas salen de la guía oficial *¿Qué hacer en Ushuaia?* del
+04.08.26, con horarios y precios de referencia.
+
+### La guía en PDF
+
+El botón **Descargar guía completa** de la sección entrega
+`public/guias/que-hacer-en-ushuaia.pdf`. Para publicar una versión nueva:
+
+1. Copiar el PDF a `public/guias/`.
+2. En `/admin/actividades`, escribir el nombre del archivo y la fecha de
+   actualización.
+
+También acepta un enlace completo, por si la guía vive en Drive. Los precios de
+la guía cambian seguido: por eso el texto invita a descargarla recién al llegar
+a Ushuaia.
+
 ## Cómo funciona una consulta
 
 1. El visitante elige fechas y huéspedes en la ficha del departamento.

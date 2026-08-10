@@ -1,6 +1,7 @@
 "use client";
 
-import { ExternalLink } from "lucide-react";
+import { Download, ExternalLink } from "lucide-react";
+import { Boton } from "@/components/ui/boton";
 import { Carrusel } from "./carrusel";
 import { Foto } from "./foto";
 import { Revelar } from "./revelar";
@@ -22,7 +23,7 @@ export function QueHacer({
   fondo?: "hueso" | "blanco";
   mostrarPracticos?: boolean;
 }) {
-  const { actividades } = useContenido();
+  const { actividades, ajustes } = useContenido();
   const lista = [...actividades]
     .filter((a) => a.activa)
     .sort((a, b) => a.orden - b.orden)
@@ -40,11 +41,31 @@ export function QueHacer({
       )}
     >
       <div className="contenedor">
-        <Revelar className="max-w-2xl">
-          <h2 id="que-hacer-titulo" className="titulo-seccion">
-            {titulo}
-          </h2>
-          <p className="mt-5 text-[1.05rem] leading-relaxed text-texto-suave">{bajada}</p>
+        <Revelar className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
+          <div className="max-w-2xl">
+            <h2 id="que-hacer-titulo" className="titulo-seccion">
+              {titulo}
+            </h2>
+            <p className="mt-5 text-[1.05rem] leading-relaxed text-texto-suave">{bajada}</p>
+          </div>
+
+          {ajustes.guia ? (
+            <div className="shrink-0 lg:max-w-xs lg:text-right">
+              <Boton asChild variante="principal" medida="md" pastilla>
+                <a href={ajustes.guia} target="_blank" rel="noopener noreferrer">
+                  <Download strokeWidth={1.8} aria-hidden />
+                  Descargar guía completa
+                </a>
+              </Boton>
+              <p className="mt-3 text-[0.8rem] leading-relaxed text-texto-tenue">
+                Excursiones, museos y actividades con precios y horarios de referencia.
+                {ajustes.guiaActualizada
+                  ? ` Última actualización: ${ajustes.guiaActualizada}.`
+                  : ""}{" "}
+                Descargala cuando ya estés en Ushuaia: la información cambia seguido.
+              </p>
+            </div>
+          ) : null}
         </Revelar>
       </div>
 
