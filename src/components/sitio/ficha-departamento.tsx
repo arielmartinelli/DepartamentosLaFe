@@ -109,8 +109,12 @@ export function FichaDepartamento({ slug }: { slug: string }) {
               <span className="font-semibold tabular-nums">{dep.puntaje.toFixed(2)}</span>
               <span className="text-texto-suave">· {dep.opiniones} opiniones</span>
             </span>
-            <span aria-hidden>·</span>
-            <span>{dep.piso}</span>
+            {dep.piso ? (
+              <>
+                <span aria-hidden>·</span>
+                <span>{dep.piso}</span>
+              </>
+            ) : null}
             <span aria-hidden>·</span>
             <span>{ed.direccion}</span>
           </p>
@@ -145,11 +149,15 @@ export function FichaDepartamento({ slug }: { slug: string }) {
                 <Bath className="size-4 text-oro" strokeWidth={1.6} aria-hidden />
                 {dep.banos} {dep.banos === 1 ? "baño" : "baños"}
               </li>
-              <li aria-hidden>·</li>
-              <li className="flex items-center gap-1.5">
-                <Maximize className="size-4 text-oro" strokeWidth={1.6} aria-hidden />
-                {dep.metros} m²
-              </li>
+              {dep.metros > 0 ? (
+                <>
+                  <li aria-hidden>·</li>
+                  <li className="flex items-center gap-1.5">
+                    <Maximize className="size-4 text-oro" strokeWidth={1.6} aria-hidden />
+                    {dep.metros} m²
+                  </li>
+                </>
+              ) : null}
               <li aria-hidden>·</li>
               <li>{formatearPrecio(dep.precioNoche)} la noche</li>
             </ul>

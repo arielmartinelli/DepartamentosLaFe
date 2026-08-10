@@ -29,7 +29,7 @@ export function Hero() {
           </h1>
 
           <p className="mt-6 max-w-xl text-[1.05rem] leading-relaxed text-white/80">
-            Seis departamentos propios en dos edificios, a doce cuadras del centro.
+            Seis departamentos propios en dos edificios, a cinco cuadras del centro.
             Llegás, dejás las valijas y salís a caminar.
           </p>
 

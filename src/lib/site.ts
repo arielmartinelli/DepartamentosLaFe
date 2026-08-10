@@ -7,7 +7,7 @@ export const sitio = {
   nombre: "La Fe Departamentos",
   nombreCorto: "La Fe",
   descripcion:
-    "Departamentos de alquiler temporario en Ushuaia. Dos edificios, seis unidades con cocina completa y calefacción, atendidos por sus dueños.",
+    "Departamentos de alquiler temporario en Ushuaia, a cinco cuadras del centro. Seis unidades con cocina-comedor equipada, fibra óptica y TV en cada ambiente.",
   url: "https://lafedepartamentos.com.ar",
   ciudad: "Ushuaia",
   provincia: "Tierra del Fuego",
@@ -25,7 +25,7 @@ export const sitio = {
     whatsappTexto:
       "Hola, escribo desde la web de La Fe Departamentos. Quisiera consultar disponibilidad.",
     email: "reservas@lafedepartamentos.com.ar",
-    direccion: "Ushuaia 1569 y Gobernador Paz 2140, Ushuaia",
+    direccion: "Ushuaia 1569, Ushuaia",
     horarios: "Todos los días, de 9 a 21 h",
   },
   redes: {

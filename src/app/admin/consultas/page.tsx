@@ -20,9 +20,8 @@ import { AreaTexto, Entrada, Etiqueta, Selector } from "@/components/ui/campo";
 import { Insignia } from "@/components/ui/insignia";
 import { Modal } from "@/components/ui/modal";
 import { useContenido } from "@/lib/contenido";
-import { urlWhatsApp } from "@/lib/site";
 import type { ConsultaCompleta, EstadoConsulta } from "@/lib/tipos";
-import { cn, formatearFecha, iniciales, noches } from "@/lib/utils";
+import { cn, formatearFecha, iniciales, noches, telefonoAWhatsApp } from "@/lib/utils";
 
 const tono = { nueva: "oro", respondida: "exito", archivada: "neutro" } as const;
 const rotulo = { nueva: "Nueva", respondida: "Respondida", archivada: "Archivada" };
@@ -81,6 +80,21 @@ export default function PaginaConsultas() {
 
   const abrir = (c: ConsultaCompleta) => {
     setAbierta(c);
+    setRespuesta("");
+  };
+
+  /** Chat de WhatsApp con el huésped, no con nosotros. */
+  const chatCon = (c: ConsultaCompleta, texto?: string) =>
+    `https://wa.me/${telefonoAWhatsApp(c.telefono)}${
+      texto ? `?text=${encodeURIComponent(texto)}` : ""
+    }`;
+
+  /* Deja el mensaje en la conversación y además abre WhatsApp con ese texto. */
+  const responderPorWhatsApp = (c: ConsultaCompleta) => {
+    const texto = respuesta.trim();
+    if (!texto) return;
+    responderConsulta(c.id, texto);
+    window.open(chatCon(c, texto), "_blank", "noopener,noreferrer");
     setRespuesta("");
   };
 
@@ -226,8 +240,19 @@ export default function PaginaConsultas() {
 
                   <div className="flex shrink-0 flex-wrap items-center gap-1.5">
                     <Boton variante="principal" medida="sm" onClick={() => abrir(c)}>
-                      Abrir
+                      Responder
                     </Boton>
+                    {c.telefono ? (
+                      <Boton asChild variante="contorno" medida="sm">
+                        <a
+                          href={chatCon(c, `Hola ${c.nombre.split(" ")[0]}, te escribimos de La Fe Departamentos.`)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <MessageCircle strokeWidth={1.7} /> WhatsApp
+                        </a>
+                      </Boton>
+                    ) : null}
                     {c.estado !== "archivada" ? (
                       <Boton
                         variante="fantasma"
@@ -276,46 +301,48 @@ export default function PaginaConsultas() {
         }
         pie={
           actual ? (
-            <>
+            <div className="flex w-full flex-wrap items-center gap-2">
               {actual.telefono ? (
-                <Boton asChild variante="contorno" medida="sm">
+                <Boton asChild variante="fantasma" medida="sm" aria-label="Llamar al huésped">
                   <a href={`tel:${actual.telefono}`}>
                     <Phone strokeWidth={1.6} /> Llamar
                   </a>
                 </Boton>
               ) : null}
-              {actual.telefono ? (
-                <Boton asChild variante="contorno" medida="sm">
-                  <a
-                    href={urlWhatsApp(`Hola ${actual.nombre.split(" ")[0]}, te escribimos de La Fe Departamentos.`)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <MessageCircle strokeWidth={1.7} /> WhatsApp
-                  </a>
-                </Boton>
-              ) : null}
               {actual.email ? (
-                <Boton asChild variante="contorno" medida="sm">
+                <Boton asChild variante="fantasma" medida="sm">
                   <a href={`mailto:${actual.email}`}>
                     <Mail strokeWidth={1.6} /> Correo
                   </a>
                 </Boton>
               ) : null}
-              <Boton
-                variante="principal"
-                medida="sm"
-                disabled={!respuesta.trim()}
-                onClick={() => {
-                  if (actual && respuesta.trim()) {
-                    responderConsulta(actual.id, respuesta.trim());
-                    setRespuesta("");
-                  }
-                }}
-              >
-                <Send strokeWidth={1.7} /> Responder
-              </Boton>
-            </>
+
+              <span className="ml-auto flex flex-wrap items-center gap-2">
+                <Boton
+                  variante="contorno"
+                  medida="sm"
+                  disabled={!respuesta.trim()}
+                  onClick={() => {
+                    if (actual && respuesta.trim()) {
+                      responderConsulta(actual.id, respuesta.trim());
+                      setRespuesta("");
+                    }
+                  }}
+                >
+                  <Send strokeWidth={1.7} /> Responder en la web
+                </Boton>
+                {actual.telefono ? (
+                  <Boton
+                    variante="principal"
+                    medida="sm"
+                    disabled={!respuesta.trim()}
+                    onClick={() => responderPorWhatsApp(actual)}
+                  >
+                    <MessageCircle strokeWidth={1.7} /> Responder por WhatsApp
+                  </Boton>
+                ) : null}
+              </span>
+            </div>
           ) : null
         }
       >
@@ -363,6 +390,23 @@ export default function PaginaConsultas() {
               </ul>
             </div>
 
+            {actual.telefono ? (
+              <div className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-linea px-4 py-3">
+                <p className="text-[0.85rem] text-texto-suave">
+                  ¿Preferís hablarle directo, sin escribir acá?
+                </p>
+                <Boton asChild variante="contorno" medida="sm">
+                  <a
+                    href={chatCon(actual, `Hola ${actual.nombre.split(" ")[0]}, te escribimos de La Fe Departamentos.`)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <MessageCircle strokeWidth={1.7} /> Abrir WhatsApp
+                  </a>
+                </Boton>
+              </div>
+            ) : null}
+
             <div>
               <Etiqueta htmlFor="q-respuesta">Tu respuesta</Etiqueta>
               <AreaTexto
@@ -372,9 +416,12 @@ export default function PaginaConsultas() {
                 onChange={(e) => setRespuesta(e.target.value)}
                 placeholder={`Hola ${actual.nombre.split(" ")[0]}, gracias por escribirnos…`}
               />
-              <p className="mt-2 text-[0.78rem] text-texto-tenue">
-                Al responder, la consulta pasa a “Respondida” y el visitante la ve en “Mis
-                consultas” si tiene cuenta.
+              <p className="mt-2 text-[0.78rem] leading-relaxed text-texto-tenue">
+                <span className="font-medium text-texto-suave">Responder en la web</span>{" "}
+                deja el mensaje en la conversación: el visitante lo ve en “Mis consultas”.{" "}
+                <span className="font-medium text-texto-suave">Responder por WhatsApp</span>{" "}
+                hace lo mismo y además abre el chat con {actual.nombre.split(" ")[0]} con el
+                texto ya escrito. En los dos casos la consulta pasa a “Respondida”.
               </p>
             </div>
           </div>

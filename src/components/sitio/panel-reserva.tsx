@@ -10,7 +10,14 @@ import { useSesion } from "@/lib/sesion";
 import { tramoLibre } from "@/lib/disponibilidad";
 import { sitio } from "@/lib/site";
 import type { Departamento } from "@/lib/tipos";
-import { cn, formatearFecha, formatearPrecio, noches } from "@/lib/utils";
+import {
+  cn,
+  correoValido,
+  formatearFecha,
+  formatearPrecio,
+  noches,
+  telefonoValido,
+} from "@/lib/utils";
 
 export type Estadia = { desde: string; hasta: string; personas: number };
 
@@ -47,6 +54,7 @@ export function PanelReserva({
   const [email, setEmail] = useState("");
   const [telefono, setTelefono] = useState("");
   const [texto, setTexto] = useState("");
+  const [tocado, setTocado] = useState(false);
 
   const cantidad = noches(desde, hasta);
   const total = cantidad * dep.precioNoche;
@@ -80,12 +88,21 @@ export function PanelReserva({
     setEmail(cuenta?.email ?? "");
     setTelefono(cuenta?.telefono ?? "");
     setEnviado(false);
+    setTocado(false);
     setAbierto(true);
   };
 
+  /* Teléfono y correo son obligatorios: sin ellos no hay forma de responder. */
+  const fallas = {
+    nombre: nombre.trim().length < 2,
+    telefono: !telefonoValido(telefono),
+    email: !correoValido(email),
+  };
+  const completo = !fallas.nombre && !fallas.telefono && !fallas.email;
+
   const registrar = (canal: "Web" | "WhatsApp") =>
     crearConsulta({
-      nombre: nombre.trim() || cuenta?.nombre || "Visitante sin identificar",
+      nombre: nombre.trim(),
       email: email.trim(),
       telefono: telefono.trim(),
       departamentoId: dep.id,
@@ -98,6 +115,10 @@ export function PanelReserva({
     });
 
   const porWhatsApp = () => {
+    if (!completo) {
+      setTocado(true);
+      return;
+    }
     registrar("WhatsApp");
     window.open(
       `https://wa.me/${ajustes.whatsapp}?text=${encodeURIComponent(texto.trim() || mensajeBase)}`,
@@ -108,6 +129,10 @@ export function PanelReserva({
   };
 
   const porLaWeb = () => {
+    if (!completo) {
+      setTocado(true);
+      return;
+    }
     registrar("Web");
     setEnviado(true);
   };
@@ -301,7 +326,7 @@ export function PanelReserva({
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
-              <div>
+              <div className="sm:col-span-2">
                 <Etiqueta htmlFor="c-nombre">Tu nombre</Etiqueta>
                 <Entrada
                   id="c-nombre"
@@ -309,20 +334,41 @@ export function PanelReserva({
                   onChange={(e) => setNombre(e.target.value)}
                   placeholder="Ana Gutiérrez"
                   autoComplete="name"
+                  required
+                  aria-invalid={tocado && fallas.nombre}
+                  aria-describedby={tocado && fallas.nombre ? "c-nombre-error" : undefined}
+                  className={tocado && fallas.nombre ? "border-alerta" : undefined}
                 />
+                {tocado && fallas.nombre ? (
+                  <p id="c-nombre-error" className="mt-1.5 text-[0.8rem] text-alerta">
+                    Decinos cómo te llamás.
+                  </p>
+                ) : null}
               </div>
+
               <div>
                 <Etiqueta htmlFor="c-tel">Teléfono</Etiqueta>
                 <Entrada
                   id="c-tel"
+                  type="tel"
                   value={telefono}
                   onChange={(e) => setTelefono(e.target.value)}
                   placeholder="+54 9 11 5555 5555"
                   autoComplete="tel"
+                  required
+                  aria-invalid={tocado && fallas.telefono}
+                  aria-describedby={tocado && fallas.telefono ? "c-tel-error" : undefined}
+                  className={tocado && fallas.telefono ? "border-alerta" : undefined}
                 />
+                {tocado && fallas.telefono ? (
+                  <p id="c-tel-error" className="mt-1.5 text-[0.8rem] text-alerta">
+                    Necesitamos un teléfono con código de área.
+                  </p>
+                ) : null}
               </div>
-              <div className="sm:col-span-2">
-                <Etiqueta htmlFor="c-mail">Correo (opcional)</Etiqueta>
+
+              <div>
+                <Etiqueta htmlFor="c-mail">Correo electrónico</Etiqueta>
                 <Entrada
                   id="c-mail"
                   type="email"
@@ -330,8 +376,23 @@ export function PanelReserva({
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="ana@correo.com"
                   autoComplete="email"
+                  required
+                  aria-invalid={tocado && fallas.email}
+                  aria-describedby={tocado && fallas.email ? "c-mail-error" : undefined}
+                  className={tocado && fallas.email ? "border-alerta" : undefined}
                 />
+                {tocado && fallas.email ? (
+                  <p id="c-mail-error" className="mt-1.5 text-[0.8rem] text-alerta">
+                    Revisá el correo: nos sirve para responderte.
+                  </p>
+                ) : null}
               </div>
+
+              <p className="text-[0.8rem] leading-relaxed text-texto-suave sm:col-span-2">
+                Los tres datos son obligatorios: con el teléfono te escribimos por
+                WhatsApp y con el correo te mandamos el detalle de precios y la
+                confirmación.
+              </p>
             </div>
 
             <div>

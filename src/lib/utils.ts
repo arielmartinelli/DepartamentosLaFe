@@ -45,3 +45,22 @@ export function slugificar(texto: string) {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/(^-|-$)/g, "");
 }
+
+/**
+ * Deja el teléfono como lo espera wa.me: sólo dígitos, sin el 0 inicial.
+ * No inventa código de país: se usa el que haya cargado el huésped.
+ */
+export function telefonoAWhatsApp(telefono: string) {
+  const digitos = telefono.replace(/\D/g, "");
+  return digitos.startsWith("0") ? digitos.slice(1) : digitos;
+}
+
+/** Validación mínima de correo, del lado del visitante. */
+export function correoValido(valor: string) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(valor.trim());
+}
+
+/** Un teléfono utilizable necesita al menos ocho dígitos. */
+export function telefonoValido(valor: string) {
+  return valor.replace(/\D/g, "").length >= 8;
+}

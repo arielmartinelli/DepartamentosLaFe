@@ -1,6 +1,7 @@
 # La Fe Departamentos — sitio web + panel de administración
 
-Alquiler temporario en Ushuaia: dos edificios, seis departamentos. Next.js 16 (App
+Alquiler temporario en Ushuaia: **La Fe I con cuatro departamentos y La Fe II con
+dos**, a cinco cuadras del centro. Next.js 16 (App
 Router), React 19, TypeScript, Tailwind CSS 4 y Motion. Los datos son simulados y viven
 en memoria; la estructura está preparada para conectar un backend sin rehacer la
 interfaz.
@@ -122,6 +123,34 @@ de `@media (hover: hover)` y todo se apaga con `prefers-reduced-motion`.
 - **Seguridad.** `next.config.ts` envía `X-Content-Type-Options`, `X-Frame-Options`,
   `Referrer-Policy`, `Permissions-Policy` y HSTS. El panel está fuera del índice.
 
+## Datos del alojamiento
+
+Los que pasó la dueña, ya cargados como punto de partida:
+
+- **La Fe I — 4 departamentos.** Dormitorio con cama matrimonial y cama simple
+  (3 personas). El Departamento 2 suma una segunda cama simple (4 personas).
+- **La Fe II — 2 departamentos.** Dormitorio con cama king y sofá hotelero en el
+  living, que se arma como matrimonial más simple o como tres individuales
+  (5 personas).
+- Todos con cocina-comedor equipada, heladera, microondas, pava eléctrica,
+  cafetera, tostadora, extractor de jugo, vajilla completa y desayuno seco.
+- Fibra óptica, cable y televisor en cada ambiente. Secador de pelo, ropa de cama
+  y toallas de línea blanca.
+- A cinco cuadras paralelas del centro; panadería, rotisería, carnicería,
+  verdulería, kioscos y despensas a menos de 100 m.
+- **$80.000 la noche.** Para reservar se abona una noche y el resto al llegar.
+
+### Falta confirmar con la dueña
+
+1. **Dirección de La Fe II.** Hoy figura sólo "Ushuaia, Tierra del Fuego" y el
+   mapa apunta cerca de La Fe I.
+2. **Precio de La Fe II.** Está cargado a $80.000 como el resto, pero son
+   unidades más grandes: confirmar si vale lo mismo.
+3. **Horarios de ingreso y salida.** Están puestos 15:00 y 10:30 como referencia.
+4. **Calefacción.** Figura como servicio; conviene confirmar el tipo.
+5. **Superficie en m².** Queda oculta en la web hasta que se cargue desde el panel.
+6. **Fotos reales.** Las actuales son de referencia.
+
 ## Qué hacer: una sola sección
 
 Las excursiones y los lugares cercanos viven en la misma lista
@@ -135,10 +164,26 @@ pueden agregar todas las que hagan falta.
 1. El visitante elige fechas y huéspedes en la ficha del departamento.
 2. El panel le dice si esas fechas están libres, cruzando reservas y bloqueos.
 3. Al tocar **Consultar** se abre el mensaje ya redactado y **puede editarlo**.
-4. Elige mandarlo por WhatsApp o dejarlo en la web.
-5. En ambos casos la consulta queda registrada en `/admin/consultas`, con las
+4. **Nombre, teléfono y correo son obligatorios**: sin ellos no hay forma de
+   responder. Se valida antes de enviar, con el aviso junto a cada campo.
+5. Elige mandarlo por WhatsApp o dejarlo en la web.
+6. En ambos casos la consulta queda registrada en `/admin/consultas`, con las
    fechas, el departamento y la cantidad de huéspedes.
-6. Si tiene cuenta, sigue la conversación desde `/mis-consultas`.
+7. Si tiene cuenta, sigue la conversación desde `/mis-consultas`.
+
+### Cómo responde la propietaria
+
+Desde `/admin/consultas`, con el mismo texto escrito una sola vez:
+
+- **Responder en la web** deja el mensaje en la conversación; el visitante lo ve
+  en “Mis consultas”.
+- **Responder por WhatsApp** hace lo mismo y además abre el chat **con el
+  teléfono del huésped**, con el texto ya cargado.
+- **Abrir WhatsApp** contacta al huésped sin escribir nada acá.
+
+En los tres casos hay también accesos directos a llamar y a escribir por correo.
+El número se normaliza a lo que espera `wa.me` (sólo dígitos, sin el 0 inicial);
+no se inventa código de país, se usa el que cargó el huésped.
 
 ### Elegir fechas
 

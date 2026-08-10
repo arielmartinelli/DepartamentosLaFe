@@ -30,14 +30,16 @@ const negocio = {
   geo: { "@type": "GeoCoordinates", latitude: -54.8021, longitude: -68.3095 },
   aggregateRating: { "@type": "AggregateRating", ratingValue: "4.93", reviewCount: "231" },
   amenityFeature: [
-    "WiFi", "Cocina equipada", "Calefacción central", "Estacionamiento",
-    "Ropa blanca incluida", "Check-in flexible", "Lavarropas",
+    "WiFi con fibra óptica", "TV por cable", "Cocina-comedor equipada",
+    "Desayuno seco", "Ropa de cama y toallas", "Secador de pelo", "Calefacción",
   ].map((n) => ({ "@type": "LocationFeatureSpecification", name: n, value: true })),
   containsPlace: departamentos.map((d) => ({
     "@type": "Accommodation",
     name: `${edificios.find((e) => e.id === d.edificioId)?.nombre} — ${d.nombre}`,
     occupancy: { "@type": "QuantitativeValue", maxValue: d.capacidad },
-    floorSize: { "@type": "QuantitativeValue", value: d.metros, unitCode: "MTK" },
+    ...(d.metros > 0
+      ? { floorSize: { "@type": "QuantitativeValue", value: d.metros, unitCode: "MTK" } }
+      : {}),
   })),
 };
 

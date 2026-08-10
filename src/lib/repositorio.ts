@@ -9,7 +9,7 @@
  *   guardar("reservas", valor)  →  PUT  /api/reservas
  */
 
-const PREFIJO = "lafe:v2:";
+const PREFIJO = "lafe:v3:";
 
 export const CLAVES = {
   edificios: "edificios",

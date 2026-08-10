@@ -7,10 +7,11 @@ export function Ubicacion() {
     <section id="ubicacion" className="scroll-mt-24 py-20 sm:py-28 lg:py-32">
       <div className="contenedor">
         <Revelar className="max-w-2xl">
-          <h2 className="titulo-seccion">A doce cuadras del centro</h2>
+          <h2 className="titulo-seccion">A cinco cuadras del centro</h2>
           <p className="mt-5 text-[1.05rem] leading-relaxed text-texto-suave">
-            Los dos edificios están en el mismo barrio, a tres cuadras uno del otro. Zona
-            tranquila, con vereda ancha y colectivo al Parque Nacional a dos cuadras.
+            Los dos edificios están en el mismo barrio, a cinco cuadras paralelas del centro.
+            A menos de cien metros hay panadería, rotisería, carnicería, verdulería,
+            kioscos y despensas.
           </p>
         </Revelar>
 

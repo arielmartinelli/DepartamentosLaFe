@@ -57,8 +57,14 @@ export function TarjetaDepto({
           <p className="mt-1 text-[0.875rem] leading-snug text-texto-suave">{dep.resumen}</p>
 
           <p className="mt-1.5 text-[0.875rem] text-texto-tenue">
-            {dep.capacidad} huéspedes · {dep.dormitorios}{" "}
-            {dep.dormitorios === 1 ? "dormitorio" : "dormitorios"} · {dep.metros} m²
+            {[
+              `${dep.capacidad} huéspedes`,
+              `${dep.dormitorios} ${dep.dormitorios === 1 ? "dormitorio" : "dormitorios"}`,
+              `${dep.banos} ${dep.banos === 1 ? "baño" : "baños"}`,
+              dep.metros > 0 ? `${dep.metros} m²` : null,
+            ]
+              .filter(Boolean)
+              .join(" · ")}
           </p>
 
           <p className="mt-3 text-[0.9rem] text-ink">

@@ -19,7 +19,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const titulo = `${ed?.nombre} · ${dep.nombre} — alquiler temporario en Ushuaia`;
   return {
     title: titulo,
-    description: `${dep.resumen} Hasta ${dep.capacidad} huéspedes, ${dep.metros} m², cocina equipada y calefacción. Alojamiento familiar en Ushuaia.`,
+    description: [
+      dep.resumen,
+      `Hasta ${dep.capacidad} huéspedes`,
+      dep.metros > 0 ? `${dep.metros} m²` : null,
+      "cocina-comedor equipada, fibra óptica y TV en cada ambiente",
+      "a cinco cuadras del centro de Ushuaia.",
+    ]
+      .filter(Boolean)
+      .join(" · "),
     alternates: { canonical: `/departamentos/${dep.slug}` },
     openGraph: {
       title: titulo,
@@ -45,7 +53,9 @@ export default async function PaginaDepartamento({ params }: Props) {
     image: dep.fotos,
     numberOfRooms: dep.dormitorios,
     occupancy: { "@type": "QuantitativeValue", maxValue: dep.capacidad },
-    floorSize: { "@type": "QuantitativeValue", value: dep.metros, unitCode: "MTK" },
+    ...(dep.metros > 0
+      ? { floorSize: { "@type": "QuantitativeValue", value: dep.metros, unitCode: "MTK" } }
+      : {}),
     aggregateRating: {
       "@type": "AggregateRating",
       ratingValue: String(dep.puntaje),

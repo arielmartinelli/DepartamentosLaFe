@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { FormularioIngreso } from "@/components/admin/formulario-ingreso";
+import { foto } from "@/lib/imagenes";
 import { sitio } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -13,16 +14,18 @@ export const metadata: Metadata = {
 export default function PaginaIngreso() {
   return (
     <div className="grid min-h-dvh lg:grid-cols-2">
-      {/* Panel de marca */}
-      <div className="grano relative hidden overflow-hidden bg-ink lg:block">
+      {/* Misma portada que la del inicio del sitio */}
+      <div className="relative hidden overflow-hidden lg:block">
         <Image
-          src={sitio.marca.portada}
-          alt=""
+          src={foto.fachada}
+          alt="Fachada de La Fe Departamentos al atardecer, con el cordón montañoso de Ushuaia detrás"
           fill
+          priority
           sizes="50vw"
-          className="object-cover opacity-30"
+          className="object-cover object-center"
         />
-        <div aria-hidden className="absolute inset-0 bg-linear-to-t from-ink via-ink/70 to-ink/30" />
+        <div aria-hidden className="velo-foto absolute inset-0" />
+
         <div className="relative flex h-full flex-col justify-between p-12">
           <Image
             src={sitio.marca.logo}
@@ -31,14 +34,15 @@ export default function PaginaIngreso() {
             height={465}
             className="h-10 w-auto"
           />
+
           <div>
-            <p className="text-[0.68rem] font-semibold uppercase tracking-[0.24em] text-oro-claro">
-              {sitio.coordenadas}
+            <p className="text-[0.75rem] font-medium text-white/70">
+              {sitio.ciudad}, {sitio.provincia}
             </p>
-            <p className="mt-5 max-w-md font-display text-[2.4rem] leading-[1.08] text-white">
+            <p className="mt-4 max-w-md font-display text-[2.6rem] leading-[1.05] text-white">
               Todo el alojamiento, desde un solo lugar.
             </p>
-            <p className="mt-4 max-w-sm text-[0.92rem] leading-relaxed text-white/55">
+            <p className="mt-4 max-w-sm text-[0.95rem] leading-relaxed text-white/75">
               Reservas, consultas, calendario, departamentos y contenido de la web. Sin
               planillas sueltas.
             </p>
@@ -47,7 +51,7 @@ export default function PaginaIngreso() {
       </div>
 
       {/* Formulario */}
-      <div className="flex flex-col justify-center bg-hueso px-6 py-14 sm:px-12">
+      <div className="flex flex-col justify-center bg-white px-6 py-14 sm:px-12">
         <div className="mx-auto w-full max-w-sm">
           <Link
             href="/"
@@ -58,7 +62,7 @@ export default function PaginaIngreso() {
           </Link>
 
           <div className="mt-10 lg:hidden">
-            <div className="inline-grid place-items-center rounded-lg bg-ink px-5 py-4">
+            <span className="inline-flex rounded-md bg-ink px-5 py-4">
               <Image
                 src={sitio.marca.logo}
                 alt={sitio.nombre}
@@ -66,7 +70,7 @@ export default function PaginaIngreso() {
                 height={465}
                 className="h-8 w-auto"
               />
-            </div>
+            </span>
           </div>
 
           <h1 className="mt-8 font-display text-[2.1rem] leading-tight text-ink">
