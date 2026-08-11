@@ -5,11 +5,13 @@ import { useMemo, useState } from "react";
 import { EncabezadoPagina } from "@/components/admin/encabezado";
 import { EstadoReservaTag } from "@/components/admin/estado";
 import { Fila, SinResultados, Tabla, Td, Th } from "@/components/admin/tabla";
+import { EsqueletoFilas } from "@/components/admin/esqueleto";
 import { Panel } from "@/components/admin/tarjeta";
 import { Boton } from "@/components/ui/boton";
 import { Entrada, Etiqueta, Selector } from "@/components/ui/campo";
 import { Modal } from "@/components/ui/modal";
 import { useContenido } from "@/lib/contenido";
+import { useCargandoInicial } from "@/lib/usar-carga";
 import { nuevoId } from "@/lib/repositorio";
 import type { EstadoReserva, Reserva } from "@/lib/tipos";
 import { formatearFecha, formatearPrecio, iniciales, noches } from "@/lib/utils";
@@ -24,6 +26,7 @@ export default function PaginaReservas() {
     eliminarReserva,
   } = useContenido();
 
+  const cargando = useCargandoInicial();
   const [texto, setTexto] = useState("");
   const [estado, setEstado] = useState<"todas" | EstadoReserva>("todas");
   const [depto, setDepto] = useState("todos");
@@ -135,7 +138,9 @@ export default function PaginaReservas() {
           </div>
         </div>
 
-        {filtradas.length === 0 ? (
+        {cargando ? (
+          <EsqueletoFilas cantidad={5} />
+        ) : filtradas.length === 0 ? (
           <SinResultados mensaje="No hay reservas que coincidan con los filtros aplicados." />
         ) : (
           <Tabla>

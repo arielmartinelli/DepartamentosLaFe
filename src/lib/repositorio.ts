@@ -136,9 +136,19 @@ export function guardar<T>(clave: Clave, valor: T) {
    Sincronización con la base de datos
    ──────────────────────────────────────────────────────────────── */
 
-let estadoRemoto: "sin-base" | "cargando" | "listo" | "error" = "sin-base";
+/* Si hay claves, se arranca en "cargando": así el indicador aparece de una. */
+const configurada = Boolean(
+  process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+);
+
+let estadoRemoto: "sin-base" | "cargando" | "listo" | "error" = configurada
+  ? "cargando"
+  : "sin-base";
 
 export const estadoDeLaBase = () => estadoRemoto;
+
+/** True mientras no llegó la primera respuesta de la base. */
+export const cargandoPrimeraVez = () => configurada && estadoRemoto === "cargando";
 
 async function empujarAlServidor<T>(clave: Clave, valor: T) {
   if (!hayNavegador()) return;

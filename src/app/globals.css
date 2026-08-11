@@ -166,6 +166,26 @@
   }
 }
 
+/* Barra de progreso: avanza sin conocer el total. */
+.barra-avance {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--color-oro) 35%,
+    var(--color-oro-claro) 50%,
+    var(--color-oro) 65%,
+    transparent 100%
+  );
+  background-size: 45% 100%;
+  background-repeat: no-repeat;
+  animation: avanzar 1.15s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+
+@keyframes avanzar {
+  0% { background-position: -45% 0; }
+  100% { background-position: 145% 0; }
+}
+
 @keyframes aparecer { from { opacity: 0 } to { opacity: 1 } }
 @keyframes desaparecer { from { opacity: 1 } to { opacity: 0 } }
 @keyframes surgir {

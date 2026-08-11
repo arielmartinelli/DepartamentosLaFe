@@ -9,7 +9,9 @@ import {
   CalendarRange,
   Images,
   Inbox,
+  Landmark,
   LayoutDashboard,
+  Loader2,
   LogOut,
   Menu,
   MessageSquareQuote,
@@ -21,6 +23,8 @@ import {
 import { useEffect, useState } from "react";
 import { useContenido } from "@/lib/contenido";
 import { respaldarAhora } from "@/lib/repositorio";
+import { useCargandoInicial } from "@/lib/usar-carga";
+import { BarraCarga } from "@/components/sitio/barra-carga";
 import { sitio } from "@/lib/site";
 import { useResolverImagen } from "@/lib/usar-imagen";
 import { cn } from "@/lib/utils";
@@ -38,6 +42,7 @@ const secciones = [
   {
     titulo: "Alojamiento",
     items: [
+      { href: "/admin/edificios", etiqueta: "Edificios", icono: Landmark },
       { href: "/admin/departamentos", etiqueta: "Departamentos", icono: Building2 },
       { href: "/admin/galerias", etiqueta: "Galerías", icono: Images },
       { href: "/admin/servicios", etiqueta: "Servicios", icono: Sparkles },
@@ -85,6 +90,7 @@ export function Cascara({ children }: { children: React.ReactNode }) {
   const [abierto, setAbierto] = useState(false);
   const { consultas } = useContenido();
   const nuevas = consultas.filter((c) => c.estado === "nueva").length;
+  const cargando = useCargandoInicial();
 
   /* Copia de seguridad al entrar: si algo sale mal, siempre hay de dónde volver. */
   useEffect(() => {
@@ -152,6 +158,7 @@ export function Cascara({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-dvh bg-hueso lg:grid lg:grid-cols-[16.5rem_minmax(0,1fr)]">
+      <BarraCarga />
       <aside className="sticky top-0 hidden h-dvh flex-col bg-ink py-5 lg:flex">
         <Link href="/admin" className="mb-7 block px-5">
           <Marca />
@@ -210,12 +217,20 @@ export function Cascara({ children }: { children: React.ReactNode }) {
 
       <div className="flex min-w-0 flex-col">
         <header className="sticky top-0 z-30 hidden items-center justify-between gap-6 border-b border-linea bg-hueso/85 px-8 py-3.5 backdrop-blur-xl lg:flex">
-          <p className="text-[0.82rem] capitalize text-texto-suave">
-            {new Intl.DateTimeFormat("es-AR", {
-              weekday: "long",
-              day: "numeric",
-              month: "long",
-            }).format(new Date())}
+          <p className="flex items-center gap-3 text-[0.82rem] text-texto-suave">
+            <span className="capitalize">
+              {new Intl.DateTimeFormat("es-AR", {
+                weekday: "long",
+                day: "numeric",
+                month: "long",
+              }).format(new Date())}
+            </span>
+            {cargando ? (
+              <span className="flex items-center gap-1.5 rounded-full bg-white px-2.5 py-1 text-[0.75rem] font-medium text-texto-suave ring-1 ring-linea">
+                <Loader2 className="size-3.5 animate-spin" strokeWidth={2} aria-hidden />
+                Cargando datos…
+              </span>
+            ) : null}
           </p>
           <div className="flex items-center gap-2.5 rounded-full border border-linea bg-white py-1 pl-1 pr-3.5">
             <span className="grid size-7 place-items-center rounded-full bg-ink text-[0.7rem] font-bold text-oro-claro">

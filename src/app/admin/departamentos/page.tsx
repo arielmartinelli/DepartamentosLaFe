@@ -4,13 +4,16 @@ import Link from "next/link";
 import { Pencil, Star } from "lucide-react";
 import { EncabezadoPagina } from "@/components/admin/encabezado";
 import { EstadoDeptoTag } from "@/components/admin/estado";
+import { EsqueletoTarjetas } from "@/components/admin/esqueleto";
 import { Foto } from "@/components/sitio/foto";
 import { Boton } from "@/components/ui/boton";
 import { useContenido } from "@/lib/contenido";
+import { useCargandoInicial } from "@/lib/usar-carga";
 import { cn, formatearPrecio } from "@/lib/utils";
 
 export default function PaginaDepartamentos() {
   const { departamentos, edificios, alternarDestacado } = useContenido();
+  const cargando = useCargandoInicial();
 
   return (
     <>
@@ -19,7 +22,14 @@ export default function PaginaDepartamentos() {
         descripcion="Seis unidades en dos edificios. Entrá a cada una para editar información, servicios, galería y disponibilidad."
       />
 
-      {edificios.map((ed) => {
+      {cargando ? (
+        <div className="space-y-10">
+          <EsqueletoTarjetas cantidad={4} />
+          <EsqueletoTarjetas cantidad={2} />
+        </div>
+      ) : null}
+
+      {cargando ? null : edificios.map((ed) => {
         const unidades = departamentos.filter((d) => d.edificioId === ed.id);
         if (!unidades.length) return null;
 

@@ -35,6 +35,7 @@ Otros comandos: `npm run build`, `npm start`, `npm run lint`, `npm run typecheck
 | `/admin/reservas` | Tabla con filtros y acciones |
 | `/admin/calendario` | Un departamento por vez, con selector, filtro de mes y bloqueo manual de fechas |
 | `/admin/consultas` | Bandeja completa con fechas, departamento, huéspedes y conversación |
+| `/admin/edificios` | Textos, dirección y punto en el mapa de La Fe I y La Fe II |
 | `/admin/departamentos` | Listado; cada unidad abre su editor con cuatro solapas |
 | `/admin/departamentos/[id]` | Editor: información, servicios, galería y disponibilidad |
 | `/admin/galerias` | Sólo fotos de la portada: los dos títulos de edificio, las actividades y la sección de servicios. Cada bloque con su botón Guardar |
@@ -119,6 +120,19 @@ Al conectar el backend, `guardarArchivo` en `src/lib/archivos.ts` sube el archiv
 al servidor y devuelve su URL: ningún componente cambia.
 
 La copia de seguridad de Configuración incluye las imágenes subidas.
+
+### Mientras cargan los datos
+
+Con base conectada, la página muestra primero lo que ya tenía y pide al servidor
+la versión al día. Durante esos milisegundos aparece una **barra dorada fina
+arriba de todo**, que se desvanece al terminar. No tapa nada.
+
+En el panel, además, la cabecera muestra “Cargando datos…” y los listados de
+departamentos, reservas y consultas se dibujan como **esqueletos** hasta que
+llega la respuesta: es preferible a mostrar por un instante datos que no son los
+que están guardados.
+
+Sin base configurada no aparece nada de esto, porque no hay nada que esperar.
 
 ### Cómo se guardan los datos
 

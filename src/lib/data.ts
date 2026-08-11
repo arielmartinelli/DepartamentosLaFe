@@ -90,13 +90,8 @@ export const departamentos: Departamento[] = [
       "Todos los utensilios y la vajilla",
       "Desayuno seco incluido",
     ],
-    comodidades: [
-      "Televisor en cada ambiente",
-      "WiFi con fibra óptica y cable",
-      "Ropa de cama y toallas incluidas",
-      "Espacio de trabajo con buena señal",
-    ],
-    servicios: ["wifi", "cable", "tv", "cocina", "desayuno", "ropa-blanca", "secador", "calefaccion"],
+    comodidades: ["Espacio de trabajo con buena señal", "Vajilla completa"],
+    servicios: ["wifi", "cable", "cocina", "desayuno", "ropa-blanca", "secador", "calefaccion"],
     precioNoche: 80000,
     puntaje: 4.9,
     opiniones: 22,
@@ -133,13 +128,8 @@ export const departamentos: Departamento[] = [
       "Todos los utensilios y la vajilla",
       "Desayuno seco incluido",
     ],
-    comodidades: [
-      "Televisor en cada ambiente",
-      "WiFi con fibra óptica y cable",
-      "Ropa de cama y toallas incluidas",
-      "Espacio de trabajo con buena señal",
-    ],
-    servicios: ["wifi", "cable", "tv", "cocina", "desayuno", "ropa-blanca", "secador", "calefaccion"],
+    comodidades: ["Espacio de trabajo con buena señal", "Vajilla completa"],
+    servicios: ["wifi", "cable", "cocina", "desayuno", "ropa-blanca", "secador", "calefaccion"],
     precioNoche: 80000,
     puntaje: 4.92,
     opiniones: 26,
@@ -176,13 +166,8 @@ export const departamentos: Departamento[] = [
       "Todos los utensilios y la vajilla",
       "Desayuno seco incluido",
     ],
-    comodidades: [
-      "Televisor en cada ambiente",
-      "WiFi con fibra óptica y cable",
-      "Ropa de cama y toallas incluidas",
-      "Espacio de trabajo con buena señal",
-    ],
-    servicios: ["wifi", "cable", "tv", "cocina", "desayuno", "ropa-blanca", "secador", "calefaccion"],
+    comodidades: ["Espacio de trabajo con buena señal", "Vajilla completa"],
+    servicios: ["wifi", "cable", "cocina", "desayuno", "ropa-blanca", "secador", "calefaccion"],
     precioNoche: 80000,
     puntaje: 4.9,
     opiniones: 30,
@@ -219,13 +204,8 @@ export const departamentos: Departamento[] = [
       "Todos los utensilios y la vajilla",
       "Desayuno seco incluido",
     ],
-    comodidades: [
-      "Televisor en cada ambiente",
-      "WiFi con fibra óptica y cable",
-      "Ropa de cama y toallas incluidas",
-      "Espacio de trabajo con buena señal",
-    ],
-    servicios: ["wifi", "cable", "tv", "cocina", "desayuno", "ropa-blanca", "secador", "calefaccion"],
+    comodidades: ["Espacio de trabajo con buena señal", "Vajilla completa"],
+    servicios: ["wifi", "cable", "cocina", "desayuno", "ropa-blanca", "secador", "calefaccion"],
     precioNoche: 80000,
     puntaje: 4.92,
     opiniones: 34,
@@ -262,13 +242,8 @@ export const departamentos: Departamento[] = [
       "Todos los utensilios y la vajilla",
       "Desayuno seco incluido",
     ],
-    comodidades: [
-      "Televisor en cada ambiente",
-      "WiFi con fibra óptica y cable",
-      "Ropa de cama y toallas incluidas",
-      "Espacio de trabajo con buena señal",
-    ],
-    servicios: ["wifi", "cable", "tv", "cocina", "desayuno", "ropa-blanca", "secador", "calefaccion"],
+    comodidades: ["Espacio de trabajo con buena señal", "Vajilla completa"],
+    servicios: ["wifi", "cable", "cocina", "desayuno", "ropa-blanca", "secador", "calefaccion"],
     precioNoche: 80000,
     puntaje: 4.9,
     opiniones: 22,
@@ -305,13 +280,8 @@ export const departamentos: Departamento[] = [
       "Todos los utensilios y la vajilla",
       "Desayuno seco incluido",
     ],
-    comodidades: [
-      "Televisor en cada ambiente",
-      "WiFi con fibra óptica y cable",
-      "Ropa de cama y toallas incluidas",
-      "Espacio de trabajo con buena señal",
-    ],
-    servicios: ["wifi", "cable", "tv", "cocina", "desayuno", "ropa-blanca", "secador", "calefaccion"],
+    comodidades: ["Espacio de trabajo con buena señal", "Vajilla completa"],
+    servicios: ["wifi", "cable", "cocina", "desayuno", "ropa-blanca", "secador", "calefaccion"],
     precioNoche: 80000,
     puntaje: 4.92,
     opiniones: 26,
@@ -499,34 +469,34 @@ export const resenas: Resena[] = [
 
 export const preguntas: Pregunta[] = [
   {
+    pregunta: "¿Cuántas personas entran en cada departamento?",
+    respuesta:
+      "Tres. Todos tienen un dormitorio con cama matrimonial y cama simple; los de La Fe II suman un sofá hotelero en el living. El precio es el mismo vayan una o tres personas.",
+  },
+  {
     pregunta: "¿Cuál es el horario de ingreso y de salida?",
     respuesta:
-      "El ingreso es desde las 15:00 y la salida hasta las 10:30. Si tu vuelo llega de madrugada o sale muy tarde, avisanos al reservar: coordinamos el horario sin costo adicional y, si hace falta, te guardamos las valijas.",
+      "El ingreso es desde las 15:00 y la salida hasta las 10:30. Si tu vuelo llega de madrugada o sale muy tarde, avisanos al reservar y coordinamos el horario.",
   },
   {
     pregunta: "¿Cómo se reserva y qué formas de pago aceptan?",
     respuesta:
-      "Se reserva con el 30 % de seña por transferencia y el resto se abona al llegar, en pesos o en dólares. No cobramos comisiones ni cargos administrativos: el trato es directo con la propietaria.",
+      "Se abona el valor de una noche para reservar y el resto se paga al llegar. El trato es directo con la propietaria: no hay comisiones ni cargos administrativos.",
   },
   {
-    pregunta: "¿Qué incluye la ropa de blanco y la limpieza?",
+    pregunta: "¿Qué incluye el departamento?",
     respuesta:
-      "Sábanas, toallas y toallones limpios al llegar, y recambio cada cuatro noches en estadías largas. La limpieza final está incluida en el precio; no hay cargo aparte.",
+      "Cocina-comedor equipada con heladera, microondas, pava eléctrica, cafetera, tostadora, extractor de jugo y toda la vajilla. Además, desayuno seco, ropa de cama y toallas de línea blanca, secador de pelo, calefacción, y televisor con cable en cada ambiente.",
   },
   {
-    pregunta: "¿Los departamentos tienen buena calefacción?",
+    pregunta: "¿Cómo es el internet?",
     respuesta:
-      "Sí. En La Fe I hay calefacción central más salamandra a leña en el Departamento 2, con la leña incluida. En La Fe II hay calefacción central, doble vidrio y piso radiante en los baños. Es la consulta más frecuente y la que más nos importa responder bien.",
+      "Fibra óptica, y llega bien a todos los ambientes. Varios huéspedes trabajan desde el departamento sin problemas.",
   },
   {
-    pregunta: "¿Aceptan mascotas?",
+    pregunta: "¿Qué hay cerca para comprar?",
     respuesta:
-      "Sí, mascotas pequeñas y educadas, avisando antes de reservar. Pedimos no dejarlas solas dentro del departamento y cuidar los muebles.",
-  },
-  {
-    pregunta: "¿Hay estacionamiento?",
-    respuesta:
-      "Sí, en ambos edificios y sin costo. En La Fe I son dos lugares dentro de la propiedad y en La Fe II hay cochera para cada unidad. Si venís con auto alquilado, avisanos para reservarte el lugar.",
+      "A menos de cien metros hay panadería, rotisería, carnicería, verdulería, kioscos y despensas. El centro queda a cinco cuadras paralelas, se va caminando.",
   },
 ];
 
@@ -536,13 +506,12 @@ export const preguntas: Pregunta[] = [
 
 export const servicios: Servicio[] = [
   { id: "wifi", nombre: "WiFi con fibra óptica", icono: "wifi", descripcion: "Llega bien a todos los ambientes: sirve para trabajar desde acá.", activo: true, destacadoEnHome: true },
-  { id: "cable", nombre: "TV por cable", icono: "tv", descripcion: "Con televisor en cada ambiente del departamento.", activo: true, destacadoEnHome: true },
+  { id: "cable", nombre: "TV por cable en cada ambiente", icono: "tv", descripcion: "Un televisor en el dormitorio y otro en la cocina-comedor.", activo: true, destacadoEnHome: true },
   { id: "cocina", nombre: "Cocina-comedor equipada", icono: "utensilios", descripcion: "Heladera, microondas, pava eléctrica, cafetera, tostadora y extractor de jugo.", activo: true, destacadoEnHome: true },
   { id: "desayuno", nombre: "Desayuno seco", icono: "cafe", descripcion: "Incluido, para que el primer día no tengas que salir a comprar.", activo: true, destacadoEnHome: true },
   { id: "ropa-blanca", nombre: "Ropa de cama y toallas", icono: "cama", descripcion: "De línea blanca, listas al llegar.", activo: true, destacadoEnHome: true },
   { id: "secador", nombre: "Secador de pelo", icono: "secador", descripcion: "En cada departamento, junto al baño.", activo: true, destacadoEnHome: true },
   { id: "calefaccion", nombre: "Calefacción", icono: "llama", descripcion: "Ambientes templados durante todo el año.", activo: true, destacadoEnHome: true },
-  { id: "tv", nombre: "TV en cada ambiente", icono: "tv", descripcion: "En el dormitorio y en la cocina-comedor.", activo: true, destacadoEnHome: false },
 ];
 
 /* ────────────────────────────────────────────────────────────────

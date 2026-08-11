@@ -14,12 +14,14 @@ import {
 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { EncabezadoPagina } from "@/components/admin/encabezado";
+import { EsqueletoFilas } from "@/components/admin/esqueleto";
 import { Panel } from "@/components/admin/tarjeta";
 import { Boton } from "@/components/ui/boton";
 import { AreaTexto, Entrada, Etiqueta, Selector } from "@/components/ui/campo";
 import { Insignia } from "@/components/ui/insignia";
 import { Modal } from "@/components/ui/modal";
 import { useContenido } from "@/lib/contenido";
+import { useCargandoInicial } from "@/lib/usar-carga";
 import type { ConsultaCompleta, EstadoConsulta } from "@/lib/tipos";
 import { cn, formatearFecha, iniciales, noches, telefonoAWhatsApp } from "@/lib/utils";
 
@@ -43,6 +45,7 @@ export default function PaginaConsultas() {
     responderConsulta,
   } = useContenido();
 
+  const cargando = useCargandoInicial();
   const [pestana, setPestana] = useState<"todas" | EstadoConsulta>("todas");
   const [texto, setTexto] = useState("");
   const [depto, setDepto] = useState("todos");
@@ -166,7 +169,11 @@ export default function PaginaConsultas() {
         ))}
       </div>
 
-      {lista.length === 0 ? (
+      {cargando ? (
+        <Panel>
+          <EsqueletoFilas cantidad={4} />
+        </Panel>
+      ) : lista.length === 0 ? (
         <Panel className="px-6 py-20 text-center">
           <p className="font-display text-lg text-ink">Bandeja vacía</p>
           <p className="mx-auto mt-2 max-w-sm text-[0.85rem] leading-relaxed text-texto-suave">
