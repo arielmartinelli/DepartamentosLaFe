@@ -8,6 +8,7 @@ import { Menu, Phone, UserRound, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Boton } from "@/components/ui/boton";
 import { useContenido } from "@/lib/contenido";
+import { pendientesParaElVisitante } from "@/lib/consultas";
 import { useSesion } from "@/lib/sesion";
 import { sitio, urlWhatsApp } from "@/lib/site";
 import { useResolverImagen } from "@/lib/usar-imagen";
@@ -45,6 +46,8 @@ function Logotipo({ enPlaca }: { enPlaca: boolean }) {
 export function Nav() {
   const ruta = usePathname();
   const { cuenta } = useSesion();
+  const { consultas } = useContenido();
+  const sinLeer = cuenta ? pendientesParaElVisitante(consultas, cuenta.id, cuenta.email) : 0;
   const enPortada = ruta === "/";
   const [abierto, setAbierto] = useState(false);
   const [scrolleado, setScrolleado] = useState(false);
@@ -122,14 +125,33 @@ export function Nav() {
 
             <Link
               href={cuenta ? "/mis-consultas" : "/entrar"}
-              aria-label={cuenta ? "Mis consultas" : "Entrar a mi cuenta"}
+              aria-label={
+                cuenta
+                  ? sinLeer
+                    ? `Mis consultas — ${sinLeer} con respuesta nueva`
+                    : "Mis consultas"
+                  : "Entrar a mi cuenta"
+              }
               className={cn(
-                "hidden items-center gap-2 rounded-full px-3 py-2 text-[0.875rem] font-medium transition-colors duration-200 sm:inline-flex",
+                "relative hidden items-center gap-2 rounded-full px-3 py-2 text-[0.875rem] font-medium transition-colors duration-200 sm:inline-flex",
                 solida ? "text-texto-suave hover:bg-hueso hover:text-ink" : "text-white/80 hover:bg-white/12 hover:text-white",
               )}
             >
-              <UserRound className="size-4" strokeWidth={1.7} aria-hidden />
+              <span className="relative">
+                <UserRound className="size-4" strokeWidth={1.7} aria-hidden />
+                {sinLeer ? (
+                  <span
+                    aria-hidden
+                    className="absolute -right-1 -top-1 size-2 rounded-full bg-oro ring-2 ring-white"
+                  />
+                ) : null}
+              </span>
               {cuenta ? cuenta.nombre.split(" ")[0] : "Mi cuenta"}
+              {sinLeer ? (
+                <span className="rounded-full bg-oro px-1.5 py-0.5 text-[0.68rem] font-bold text-white">
+                  {sinLeer}
+                </span>
+              ) : null}
             </Link>
 
             <Boton
@@ -210,6 +232,11 @@ export function Nav() {
                 <Boton asChild variante="contorno" medida="lg" pastilla>
                   <Link href={cuenta ? "/mis-consultas" : "/entrar"} onClick={() => setAbierto(false)}>
                     {cuenta ? "Mis consultas" : "Entrar a mi cuenta"}
+                    {sinLeer ? (
+                      <span className="ml-2 rounded-full bg-oro px-1.5 py-0.5 text-[0.68rem] font-bold text-white">
+                        {sinLeer}
+                      </span>
+                    ) : null}
                   </Link>
                 </Boton>
                 <a

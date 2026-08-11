@@ -29,6 +29,7 @@ import {
   guardar,
   leer,
   nuevoId,
+  escucharServidor,
   sincronizarConLaBase,
   suscribir,
   type Clave,
@@ -160,9 +161,16 @@ function useDato<T>(clave: Clave, semilla: T): T {
 }
 
 export function ProveedorContenido({ children }: { children: ReactNode }) {
-  /* Si hay base de datos, se trae su contenido apenas carga la página. */
+  /* Se trae el contenido y se queda escuchando los cambios del servidor. */
   useEffect(() => {
     void sincronizarConLaBase();
+
+    let cortar: (() => void) | undefined;
+    void escucharServidor().then((f) => {
+      cortar = f;
+    });
+
+    return () => cortar?.();
   }, []);
 
   const edificios = useDato(CLAVES.edificios, edificiosSemilla);

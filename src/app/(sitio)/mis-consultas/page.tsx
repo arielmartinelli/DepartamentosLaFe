@@ -7,6 +7,7 @@ import { Boton } from "@/components/ui/boton";
 import { AreaTexto } from "@/components/ui/campo";
 import { Insignia } from "@/components/ui/insignia";
 import { useContenido } from "@/lib/contenido";
+import { esperaRespuestaDe } from "@/lib/consultas";
 import { useSesion } from "@/lib/sesion";
 import { formatearFecha } from "@/lib/utils";
 
@@ -82,7 +83,14 @@ export default function PaginaMisConsultas() {
       ) : (
         <ul className="mt-10 space-y-6">
           {mias.map((c) => (
-            <li key={c.id} className="rounded-xl border border-linea bg-white">
+            <li
+              key={c.id}
+              className={
+                esperaRespuestaDe(c) === "visitante"
+                  ? "rounded-xl border border-oro/45 bg-white"
+                  : "rounded-xl border border-linea bg-white"
+              }
+            >
               <div className="flex flex-wrap items-center justify-between gap-3 border-b border-linea px-5 py-4 sm:px-6">
                 <div>
                   <h2 className="font-sans text-[0.95rem] font-semibold text-ink">
@@ -95,7 +103,11 @@ export default function PaginaMisConsultas() {
                       : ""}
                   </p>
                 </div>
-                <Insignia tono={tono[c.estado]}>{rotulo[c.estado]}</Insignia>
+                {esperaRespuestaDe(c) === "visitante" ? (
+                  <Insignia tono="oro">Respuesta nueva</Insignia>
+                ) : (
+                  <Insignia tono={tono[c.estado]}>{rotulo[c.estado]}</Insignia>
+                )}
               </div>
 
               <ul className="space-y-3 px-5 py-5 sm:px-6">

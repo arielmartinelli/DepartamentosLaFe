@@ -21,6 +21,7 @@ import { AreaTexto, Entrada, Etiqueta, Selector } from "@/components/ui/campo";
 import { Insignia } from "@/components/ui/insignia";
 import { Modal } from "@/components/ui/modal";
 import { useContenido } from "@/lib/contenido";
+import { esperaRespuestaDe } from "@/lib/consultas";
 import { useCargandoInicial } from "@/lib/usar-carga";
 import type { ConsultaCompleta, EstadoConsulta } from "@/lib/tipos";
 import { cn, formatearFecha, iniciales, noches, telefonoAWhatsApp } from "@/lib/utils";
@@ -188,7 +189,7 @@ export default function PaginaConsultas() {
               <Panel
                 className={cn(
                   "transition-shadow duration-200 ease-salida hover:shadow-carta",
-                  c.estado === "nueva" && "border-oro/40",
+                  esperaRespuestaDe(c) === "propietaria" && "border-oro/40",
                   c.estado === "archivada" && "opacity-70",
                 )}
               >
@@ -200,7 +201,11 @@ export default function PaginaConsultas() {
                   <div className="min-w-0 grow">
                     <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
                       <h2 className="font-sans text-[0.95rem] font-semibold text-ink">{c.nombre}</h2>
-                      <Insignia tono={tono[c.estado]}>{rotulo[c.estado]}</Insignia>
+                      {esperaRespuestaDe(c) === "propietaria" ? (
+                        <Insignia tono="oro">Espera tu respuesta</Insignia>
+                      ) : (
+                        <Insignia tono={tono[c.estado]}>{rotulo[c.estado]}</Insignia>
+                      )}
                       <Insignia tono="contorno">{c.canal}</Insignia>
                       <span className="text-[0.76rem] text-texto-tenue">
                         {formatearFecha(c.fecha, "larga")}

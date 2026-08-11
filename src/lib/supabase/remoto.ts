@@ -109,6 +109,38 @@ export async function traer<T>(clave: string): Promise<T | null> {
   }
 }
 
+/**
+ * Deja la tabla igual a la lista recibida.
+ *
+ * Antes sólo se hacía `upsert`, así que lo que la propietaria borraba en el
+ * panel seguía en el servidor y volvía a aparecer en la siguiente carga. Ahora
+ * se compara con lo que hay y se elimina lo que sobra.
+ */
+async function sincronizarTabla(tabla: string, filas: Fila[]) {
+  const bd = supabase();
+  if (!bd) return false;
+
+  const { data: existentes, error: errorLectura } = await bd.from(tabla).select("id");
+  if (errorLectura) throw errorLectura;
+
+  const vigentes = new Set(filas.map((f) => String(f.id)));
+  const sobrantes = ((existentes ?? []) as Fila[])
+    .map((f) => String(f.id))
+    .filter((id: string) => !vigentes.has(id));
+
+  if (sobrantes.length) {
+    const { error } = await bd.from(tabla).delete().in("id", sobrantes);
+    if (error) throw error;
+  }
+
+  if (filas.length) {
+    const { error } = await bd.from(tabla).upsert(filas);
+    if (error) throw error;
+  }
+
+  return true;
+}
+
 /** Guarda una colección completa. Devuelve false si no se pudo. */
 export async function empujar<T>(clave: string, valor: T): Promise<boolean> {
   const bd = supabase();
@@ -116,20 +148,13 @@ export async function empujar<T>(clave: string, valor: T): Promise<boolean> {
 
   try {
     if (clave === "reservas") {
-      const filas = (valor as unknown as Fila[]).map(deReserva);
-      const { error } = await bd.from("reservas").upsert(filas);
-      if (error) throw error;
-      /* Lo que ya no está en la lista se borra. */
-      const ids = filas.map((f) => f.id as string);
-      await bd.from("reservas").delete().not("id", "in", `(${ids.map((i) => `"${i}"`).join(",") || '""'})`);
-      return true;
+      const filas = (valor as unknown as Fila[]).map((r) => deReserva(r) as Fila);
+      return sincronizarTabla("reservas", filas);
     }
 
     if (clave === "consultas") {
-      const filas = (valor as unknown as Fila[]).map(deConsulta);
-      const { error } = await bd.from("consultas").upsert(filas);
-      if (error) throw error;
-      return true;
+      const filas = (valor as unknown as Fila[]).map((c) => deConsulta(c) as Fila);
+      return sincronizarTabla("consultas", filas);
     }
 
     const { error } = await bd
@@ -143,3 +168,24 @@ export async function empujar<T>(clave: string, valor: T): Promise<boolean> {
 }
 
 export { hayBaseDeDatos };
+
+
+/**
+ * Avisa cuando cambian las consultas o las reservas en el servidor.
+ * Sirve para que los mensajes lleguen sin recargar la página.
+ */
+export function escucharCambios(alCambiar: () => void) {
+  const bd = supabase();
+  if (!bd) return () => {};
+
+  const canal = bd
+    .channel("cambios-lafe")
+    .on("postgres_changes", { event: "*", schema: "public", table: "consultas" }, alCambiar)
+    .on("postgres_changes", { event: "*", schema: "public", table: "reservas" }, alCambiar)
+    .on("postgres_changes", { event: "*", schema: "public", table: "contenido" }, alCambiar)
+    .subscribe();
+
+  return () => {
+    void bd.removeChannel(canal);
+  };
+}

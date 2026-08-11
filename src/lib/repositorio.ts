@@ -164,6 +164,21 @@ async function empujarAlServidor<T>(clave: Clave, valor: T) {
 }
 
 /**
+ * Se queda escuchando al servidor: cuando alguien crea, responde o borra una
+ * consulta, la pantalla se actualiza sola.
+ */
+export async function escucharServidor() {
+  if (!hayNavegador()) return () => {};
+  try {
+    const remoto = await import("./supabase/remoto");
+    if (!remoto.hayBaseDeDatos) return () => {};
+    return remoto.escucharCambios(() => void sincronizarConLaBase());
+  } catch {
+    return () => {};
+  }
+}
+
+/**
  * Trae todo lo que hay en la base y lo deja en la caché.
  * Mientras tanto se sigue viendo lo local, así no hay pantalla en blanco.
  */

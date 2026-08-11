@@ -165,6 +165,30 @@ create index if not exists consultas_creado on public.consultas (creado desc);
 create index if not exists reservas_fechas on public.reservas (departamento, desde);
 
 
+-- ── Tiempo real ────────────────────────────────────────────────────
+-- Para que las consultas y las respuestas aparezcan solas, sin recargar
+-- la página, ni en el panel ni en la vista del visitante.
+
+alter table public.consultas replica identity full;
+alter table public.reservas  replica identity full;
+
+do $$
+begin
+  begin
+    alter publication supabase_realtime add table public.consultas;
+  exception when duplicate_object then null;
+  end;
+  begin
+    alter publication supabase_realtime add table public.reservas;
+  exception when duplicate_object then null;
+  end;
+  begin
+    alter publication supabase_realtime add table public.contenido;
+  exception when duplicate_object then null;
+  end;
+end $$;
+
+
 -- ── Imágenes ───────────────────────────────────────────────────────
 
 insert into storage.buckets (id, name, public)

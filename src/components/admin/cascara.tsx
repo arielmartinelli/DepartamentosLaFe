@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useContenido } from "@/lib/contenido";
+import { pendientesParaLaPropietaria } from "@/lib/consultas";
 import { respaldarAhora } from "@/lib/repositorio";
 import { useCargandoInicial } from "@/lib/usar-carga";
 import { BarraCarga } from "@/components/sitio/barra-carga";
@@ -89,7 +90,7 @@ export function Cascara({ children }: { children: React.ReactNode }) {
   const ruta = usePathname();
   const [abierto, setAbierto] = useState(false);
   const { consultas } = useContenido();
-  const nuevas = consultas.filter((c) => c.estado === "nueva").length;
+  const nuevas = pendientesParaLaPropietaria(consultas);
   const cargando = useCargandoInicial();
 
   /* Copia de seguridad al entrar: si algo sale mal, siempre hay de dónde volver. */
