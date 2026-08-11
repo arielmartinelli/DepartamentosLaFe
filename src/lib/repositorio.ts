@@ -169,10 +169,32 @@ async function empujarAlServidor<T>(clave: Clave, valor: T) {
  */
 export async function escucharServidor() {
   if (!hayNavegador()) return () => {};
+
   try {
     const remoto = await import("./supabase/remoto");
     if (!remoto.hayBaseDeDatos) return () => {};
-    return remoto.escucharCambios(() => void sincronizarConLaBase());
+
+    const refrescar = () => void sincronizarConLaBase({ silencioso: true });
+    const cortarCanal = remoto.escucharCambios(refrescar);
+
+    /* Por si el tiempo real no está habilitado en la base o se corta la
+       conexión: revisa cada 20 segundos y al volver a la pestaña. */
+    const reloj = window.setInterval(() => {
+      if (document.visibilityState === "visible") refrescar();
+    }, 20_000);
+
+    const alVolver = () => {
+      if (document.visibilityState === "visible") refrescar();
+    };
+    document.addEventListener("visibilitychange", alVolver);
+    window.addEventListener("focus", alVolver);
+
+    return () => {
+      cortarCanal();
+      window.clearInterval(reloj);
+      document.removeEventListener("visibilitychange", alVolver);
+      window.removeEventListener("focus", alVolver);
+    };
   } catch {
     return () => {};
   }
@@ -182,34 +204,41 @@ export async function escucharServidor() {
  * Trae todo lo que hay en la base y lo deja en la caché.
  * Mientras tanto se sigue viendo lo local, así no hay pantalla en blanco.
  */
-export async function sincronizarConLaBase() {
+export async function sincronizarConLaBase({ silencioso = false } = {}) {
   if (!hayNavegador()) return;
 
   try {
     const remoto = await import("./supabase/remoto");
     if (!remoto.hayBaseDeDatos) return;
 
-    estadoRemoto = "cargando";
-    avisar();
+    if (!silencioso) {
+      estadoRemoto = "cargando";
+      avisar();
+    }
 
     const claves = Object.values(CLAVES).filter((c) => c !== "sesion");
     const resultados = await Promise.all(
       claves.map(async (clave) => [clave, await remoto.traer(clave)] as const),
     );
 
-    let algo = false;
+    /* Sólo se reemplaza lo que realmente cambió: si la referencia no cambia,
+       React no vuelve a dibujar la pantalla. */
+    let cambio = false;
     resultados.forEach(([clave, valor]) => {
-      if (valor !== null && valor !== undefined) {
-        cache.set(clave, valor);
-        algo = true;
-      }
+      if (valor === null || valor === undefined) return;
+      const antes = cache.get(clave);
+      if (antes !== undefined && JSON.stringify(antes) === JSON.stringify(valor)) return;
+      cache.set(clave, valor);
+      cambio = true;
     });
 
-    estadoRemoto = algo ? "listo" : "listo";
-    avisar();
+    estadoRemoto = "listo";
+    if (cambio || !silencioso) avisar();
   } catch {
-    estadoRemoto = "error";
-    avisar();
+    if (!silencioso) {
+      estadoRemoto = "error";
+      avisar();
+    }
   }
 }
 

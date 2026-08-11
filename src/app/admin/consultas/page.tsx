@@ -21,7 +21,7 @@ import { AreaTexto, Entrada, Etiqueta, Selector } from "@/components/ui/campo";
 import { Insignia } from "@/components/ui/insignia";
 import { Modal } from "@/components/ui/modal";
 import { useContenido } from "@/lib/contenido";
-import { esperaRespuestaDe } from "@/lib/consultas";
+import { esperaRespuestaDe, mensajesPendientes, ultimoPendiente } from "@/lib/consultas";
 import { useCargandoInicial } from "@/lib/usar-carga";
 import type { ConsultaCompleta, EstadoConsulta } from "@/lib/tipos";
 import { cn, formatearFecha, iniciales, noches, telefonoAWhatsApp } from "@/lib/utils";
@@ -202,7 +202,10 @@ export default function PaginaConsultas() {
                     <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
                       <h2 className="font-sans text-[0.95rem] font-semibold text-ink">{c.nombre}</h2>
                       {esperaRespuestaDe(c) === "propietaria" ? (
-                        <Insignia tono="oro">Espera tu respuesta</Insignia>
+                        <Insignia tono="oro">
+                          {mensajesPendientes(c)}{" "}
+                          {mensajesPendientes(c) === 1 ? "mensaje pendiente" : "mensajes pendientes"}
+                        </Insignia>
                       ) : (
                         <Insignia tono={tono[c.estado]}>{rotulo[c.estado]}</Insignia>
                       )}
@@ -227,8 +230,15 @@ export default function PaginaConsultas() {
                       </span>
                     </p>
 
-                    <p className="mt-3 line-clamp-2 max-w-3xl text-[0.9rem] leading-relaxed text-texto-suave">
-                      {c.mensaje}
+                    <p
+                      className={cn(
+                        "mt-3 line-clamp-2 max-w-3xl text-[0.9rem] leading-relaxed",
+                        esperaRespuestaDe(c) === "propietaria"
+                          ? "font-medium text-ink"
+                          : "text-texto-suave",
+                      )}
+                    >
+                      {ultimoPendiente(c)}
                     </p>
 
                     <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-1.5 text-[0.8rem] text-texto-suave">
@@ -245,6 +255,13 @@ export default function PaginaConsultas() {
                       {c.conversacion.length > 1 ? (
                         <span className="text-texto-tenue">
                           {c.conversacion.length} mensajes en la conversación
+                        </span>
+                      ) : null}
+                      {esperaRespuestaDe(c) === "propietaria" ? (
+                        <span className="font-semibold text-oro">
+                          {mensajesPendientes(c) === 1
+                            ? "1 sin responder"
+                            : `${mensajesPendientes(c)} sin responder`}
                         </span>
                       ) : null}
                     </div>

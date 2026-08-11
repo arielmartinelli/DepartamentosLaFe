@@ -17,11 +17,39 @@ export function esperaRespuestaDe(consulta: ConsultaCompleta): "propietaria" | "
 }
 
 export const pendientesParaLaPropietaria = (consultas: ConsultaCompleta[]) =>
-  consultas.filter((c) => esperaRespuestaDe(c) === "propietaria").length;
+  sumar(consultas, "propietaria");
 
 export const pendientesParaElVisitante = (consultas: ConsultaCompleta[], cuentaId?: string, email?: string) =>
-  consultas.filter(
-    (c) =>
-      esperaRespuestaDe(c) === "visitante" &&
-      (c.cuentaId === cuentaId || (email && c.email.toLowerCase() === email.toLowerCase())),
-  ).length;
+  sumar(
+    consultas.filter(
+      (c) => c.cuentaId === cuentaId || (email && c.email.toLowerCase() === email.toLowerCase()),
+    ),
+    "visitante",
+  );
+
+/**
+ * Cuántos mensajes seguidos quedaron sin contestar al final de la conversación.
+ * Si la persona escribió tres veces y nadie respondió, son tres pendientes.
+ */
+export function mensajesPendientes(consulta: ConsultaCompleta): number {
+  const espera = esperaRespuestaDe(consulta);
+  if (!espera) return 0;
+
+  const autor = espera === "propietaria" ? "visitante" : "propietaria";
+  let cuenta = 0;
+  for (let i = consulta.conversacion.length - 1; i >= 0; i--) {
+    if (consulta.conversacion[i].autor !== autor) break;
+    cuenta++;
+  }
+  return cuenta || 1;
+}
+
+/** El último mensaje sin contestar, para mostrarlo como vista previa. */
+export function ultimoPendiente(consulta: ConsultaCompleta): string {
+  if (!esperaRespuestaDe(consulta)) return consulta.mensaje;
+  const ultimo = consulta.conversacion[consulta.conversacion.length - 1];
+  return ultimo?.texto ?? consulta.mensaje;
+}
+
+const sumar = (consultas: ConsultaCompleta[], quien: "propietaria" | "visitante") =>
+  consultas.reduce((t, c) => (esperaRespuestaDe(c) === quien ? t + mensajesPendientes(c) : t), 0);

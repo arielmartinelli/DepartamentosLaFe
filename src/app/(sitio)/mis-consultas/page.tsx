@@ -7,7 +7,7 @@ import { Boton } from "@/components/ui/boton";
 import { AreaTexto } from "@/components/ui/campo";
 import { Insignia } from "@/components/ui/insignia";
 import { useContenido } from "@/lib/contenido";
-import { esperaRespuestaDe } from "@/lib/consultas";
+import { esperaRespuestaDe, mensajesPendientes } from "@/lib/consultas";
 import { useSesion } from "@/lib/sesion";
 import { formatearFecha } from "@/lib/utils";
 
@@ -104,7 +104,11 @@ export default function PaginaMisConsultas() {
                   </p>
                 </div>
                 {esperaRespuestaDe(c) === "visitante" ? (
-                  <Insignia tono="oro">Respuesta nueva</Insignia>
+                  <Insignia tono="oro">
+                    {mensajesPendientes(c) === 1
+                      ? "1 mensaje nuevo"
+                      : `${mensajesPendientes(c)} mensajes nuevos`}
+                  </Insignia>
                 ) : (
                   <Insignia tono={tono[c.estado]}>{rotulo[c.estado]}</Insignia>
                 )}

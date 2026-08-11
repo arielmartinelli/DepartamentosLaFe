@@ -179,7 +179,7 @@ export function escucharCambios(alCambiar: () => void) {
   if (!bd) return () => {};
 
   const canal = bd
-    .channel("cambios-lafe")
+    .channel(`cambios-lafe-${Math.random().toString(36).slice(2)}`)
     .on("postgres_changes", { event: "*", schema: "public", table: "consultas" }, alCambiar)
     .on("postgres_changes", { event: "*", schema: "public", table: "reservas" }, alCambiar)
     .on("postgres_changes", { event: "*", schema: "public", table: "contenido" }, alCambiar)
