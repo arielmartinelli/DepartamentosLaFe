@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Eye, EyeOff, LogIn } from "lucide-react";
 import { useState, type FormEvent } from "react";
 import { Boton } from "@/components/ui/boton";
+import { BotonGoogle } from "@/components/ui/boton-google";
 import { Entrada, Etiqueta } from "@/components/ui/campo";
 import { useSesion } from "@/lib/sesion";
 
@@ -124,6 +125,10 @@ export function FormularioIngreso() {
         <LogIn className="size-4" strokeWidth={1.8} aria-hidden />
         {cargando ? "Ingresando…" : "Ingresar"}
       </Boton>
+
+      <div className="mt-6">
+        <BotonGoogle destino={parametros.get("volver") ?? "/admin"} texto="Ingresar con Google" />
+      </div>
 
       {enDemostracion ? (
         <p className="mt-6 rounded-sm border border-linea bg-white px-4 py-3 text-[0.78rem] leading-relaxed text-texto-suave">

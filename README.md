@@ -329,6 +329,34 @@ con fechas reservadas o bloqueadas, la salida se corta automáticamente en el
 primer día ocupado. En el panel, mover una fecha corrige la otra para que el
 tramo nunca quede invertido.
 
+## Entrar con Google
+
+El botón aparece solo cuando Supabase está configurado. Para habilitarlo hace falta
+darlo de alta una vez en Google y otra en Supabase.
+
+**1. Google Cloud** — [console.cloud.google.com](https://console.cloud.google.com) →
+*APIs y servicios* → *Pantalla de consentimiento de OAuth*: tipo **Externo**, nombre
+"Departamentos La Fe", correo de contacto, y publicarla. Después *Credenciales* →
+*Crear credenciales* → **ID de cliente de OAuth** → *Aplicación web*:
+
+- Orígenes autorizados: `https://departamentoslafe.vercel.app` y `http://localhost:3000`
+- URI de redirección autorizado: `https://<tu-proyecto>.supabase.co/auth/v1/callback`
+
+Ese URI lo da Supabase en la pantalla del proveedor; hay que copiarlo tal cual.
+
+**2. Supabase** — *Authentication* → *Sign In / Providers* → **Google**: activarlo y
+pegar el *Client ID* y el *Client Secret* de Google.
+
+**3. Supabase** — *Authentication* → *URL Configuration*:
+
+- Site URL: `https://departamentoslafe.vercel.app`
+- Redirect URLs: `https://departamentoslafe.vercel.app/auth/callback` y
+  `http://localhost:3000/auth/callback`
+
+La vuelta de Google la atiende `/auth/callback`, que canjea el código por la sesión y
+lleva a la persona a donde quería ir. El nombre de la cuenta lo toma de Google
+(`full_name`); el teléfono queda vacío hasta que lo complete en una consulta.
+
 ## Qué falta para producción
 
 1. **Autenticación real.** Auth.js en `/ingresar` y `/entrar`, con middleware que

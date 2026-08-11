@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 import { TarjetaCuenta } from "@/components/sitio/tarjeta-cuenta";
 import { Boton } from "@/components/ui/boton";
+import { BotonGoogle } from "@/components/ui/boton-google";
 import { Entrada, Etiqueta } from "@/components/ui/campo";
 import { useSesion } from "@/lib/sesion";
 
@@ -77,6 +78,8 @@ export default function PaginaCrearCuenta() {
         <Boton type="submit" variante="principal" medida="lg" className="w-full" disabled={enviando}>
           {enviando ? "Creando…" : "Crear cuenta"}
         </Boton>
+
+        <BotonGoogle destino="/mis-consultas" texto="Crear cuenta con Google" />
       </form>
     </TarjetaCuenta>
   );

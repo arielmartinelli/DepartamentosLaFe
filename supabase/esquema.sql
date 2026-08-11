@@ -30,7 +30,13 @@ begin
   insert into public.perfiles (id, nombre, telefono)
   values (
     new.id,
-    coalesce(new.raw_user_meta_data ->> 'nombre', ''),
+    -- 'nombre' llega del formulario propio; 'full_name' y 'name', de Google.
+    coalesce(
+      nullif(new.raw_user_meta_data ->> 'nombre', ''),
+      nullif(new.raw_user_meta_data ->> 'full_name', ''),
+      nullif(new.raw_user_meta_data ->> 'name', ''),
+      ''
+    ),
     coalesce(new.raw_user_meta_data ->> 'telefono', '')
   )
   on conflict (id) do nothing;

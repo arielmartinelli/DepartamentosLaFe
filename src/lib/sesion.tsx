@@ -30,6 +30,7 @@ type Sesion = {
     telefono: string;
   }) => Promise<Resultado>;
   entrar: (email: string, clave: string) => Promise<Resultado>;
+  entrarConGoogle: (destino?: string) => Promise<Aviso>;
   salir: () => Promise<void>;
   recuperar: (email: string) => Promise<Aviso>;
   cambiarClave: (email: string, clave: string) => Promise<Aviso>;
@@ -80,12 +81,17 @@ export function ProveedorSesion({ children }: { children: ReactNode }) {
         .eq("id", usuario.id)
         .maybeSingle();
 
+      /* Con Google el nombre llega en full_name o name, no en nombre. */
+      const datos = usuario.user_metadata ?? {};
+      const deGoogle =
+        (datos.nombre as string) || (datos.full_name as string) || (datos.name as string) || "";
+
       setCuentaRemota({
         id: usuario.id,
-        nombre: perfil?.nombre || (usuario.user_metadata?.nombre as string) || "",
+        nombre: perfil?.nombre || deGoogle || (usuario.email ?? "").split("@")[0],
         email: usuario.email ?? "",
         clave: "",
-        telefono: perfil?.telefono || (usuario.user_metadata?.telefono as string) || "",
+        telefono: perfil?.telefono || (datos.telefono as string) || "",
         creada: usuario.created_at?.slice(0, 10) ?? "",
       });
       setRol(perfil?.rol ?? "visitante");
@@ -153,6 +159,22 @@ export function ProveedorSesion({ children }: { children: ReactNode }) {
           };
         },
 
+        entrarConGoogle: async (destino) => {
+          const vuelta = new URL("/auth/callback", window.location.origin);
+          if (destino) vuelta.searchParams.set("next", destino);
+
+          const { error } = await bd.auth.signInWithOAuth({
+            provider: "google",
+            options: {
+              redirectTo: vuelta.toString(),
+              queryParams: { prompt: "select_account" },
+            },
+          });
+          return error
+            ? { ok: false, mensaje: traducir(error.message) }
+            : { ok: true, mensaje: "" };
+        },
+
         salir: async () => {
           await bd.auth.signOut();
         },
@@ -214,6 +236,11 @@ export function ProveedorSesion({ children }: { children: ReactNode }) {
         abrirLocal(c.id);
         return { ok: true, cuenta: c };
       },
+
+      entrarConGoogle: async () => ({
+        ok: false,
+        mensaje: "Entrar con Google necesita la base de datos configurada.",
+      }),
 
       salir: async () => abrirLocal(null),
 
