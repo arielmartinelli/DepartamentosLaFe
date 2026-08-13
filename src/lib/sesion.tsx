@@ -245,16 +245,20 @@ export function ProveedorSesion({ children }: { children: ReactNode }) {
             return { ok: false, mensaje: "La contraseña nueva tiene que ser distinta de la actual." };
           }
 
-          const { error: malaClave } = await bd.auth.signInWithPassword({
-            email: correo,
-            password: actual,
+          /* Supabase verifica la contraseña actual en la misma llamada: no hace
+             falta iniciar sesión de nuevo sólo para comprobarla. */
+          const { error } = await bd.auth.updateUser({
+            password: nueva,
+            current_password: actual,
           });
-          if (malaClave) return { ok: false, mensaje: "La contraseña actual no coincide." };
-
-          const { error } = await bd.auth.updateUser({ password: nueva });
-          return error
-            ? { ok: false, mensaje: traducir(error.message) }
-            : { ok: true, mensaje: "Listo, tu contraseña quedó cambiada." };
+          if (error) {
+            const suave = error.message.toLowerCase();
+            if (suave.includes("current") || suave.includes("credentials")) {
+              return { ok: false, mensaje: "La contraseña actual no coincide." };
+            }
+            return { ok: false, mensaje: traducir(error.message) };
+          }
+          return { ok: true, mensaje: "Listo, tu contraseña quedó cambiada." };
         },
       };
     }
