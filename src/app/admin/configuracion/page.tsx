@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { Check, CreditCard, Download, Mail, MessageSquare, Percent, Upload, Users2 } from "lucide-react";
 import { useRef, useState } from "react";
+import { Accesos } from "@/components/admin/accesos";
 import { EncabezadoPagina } from "@/components/admin/encabezado";
 import { Panel, PanelCabecera } from "@/components/admin/tarjeta";
 import { CopiasSeguridad } from "@/components/admin/copias-seguridad";
@@ -172,6 +173,8 @@ export default function PaginaConfiguracion() {
               </div>
             </div>
           </Panel>
+
+          <Accesos />
 
           <Panel>
             <PanelCabecera

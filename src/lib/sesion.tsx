@@ -34,6 +34,8 @@ type Sesion = {
   salir: () => Promise<void>;
   recuperar: (email: string) => Promise<Aviso>;
   cambiarClave: (email: string, clave: string) => Promise<Aviso>;
+  cambiarCorreoDeAcceso: (actual: string, nuevo: string) => Promise<Aviso>;
+  cambiarClaveDeAcceso: (actual: string, nueva: string) => Promise<Aviso>;
 };
 
 const Ctx = createContext<Sesion | null>(null);
@@ -198,6 +200,57 @@ export function ProveedorSesion({ children }: { children: ReactNode }) {
             ? { ok: false, mensaje: traducir(error.message) }
             : { ok: true, mensaje: "Listo, tu contraseña quedó actualizada." };
         },
+
+        cambiarCorreoDeAcceso: async (actual, nuevo) => {
+          const correo = cuentaRemota?.email;
+          if (!correo) return { ok: false, mensaje: "No hay una sesión abierta." };
+
+          /* Se vuelve a pedir la contraseña: si alguien deja la sesión abierta,
+             no puede quedarse con la cuenta cambiando el correo. */
+          const { error: malaClave } = await bd.auth.signInWithPassword({
+            email: correo,
+            password: actual,
+          });
+          if (malaClave) return { ok: false, mensaje: "La contraseña actual no coincide." };
+
+          const limpio = nuevo.trim().toLowerCase();
+          if (limpio === correo.toLowerCase()) {
+            return { ok: false, mensaje: "Ese ya es tu correo de acceso." };
+          }
+
+          const { error } = await bd.auth.updateUser(
+            { email: limpio },
+            { emailRedirectTo: `${window.location.origin}/ingresar` },
+          );
+          return error
+            ? { ok: false, mensaje: traducir(error.message) }
+            : {
+                ok: true,
+                mensaje: `Te mandamos un correo a ${limpio} para confirmar el cambio. Hasta que abras ese enlace seguís entrando con el correo de siempre.`,
+              };
+        },
+
+        cambiarClaveDeAcceso: async (actual, nueva) => {
+          const correo = cuentaRemota?.email;
+          if (!correo) return { ok: false, mensaje: "No hay una sesión abierta." };
+          if (nueva.length < 8) {
+            return { ok: false, mensaje: "La contraseña nueva necesita al menos 8 caracteres." };
+          }
+          if (nueva === actual) {
+            return { ok: false, mensaje: "La contraseña nueva tiene que ser distinta de la actual." };
+          }
+
+          const { error: malaClave } = await bd.auth.signInWithPassword({
+            email: correo,
+            password: actual,
+          });
+          if (malaClave) return { ok: false, mensaje: "La contraseña actual no coincide." };
+
+          const { error } = await bd.auth.updateUser({ password: nueva });
+          return error
+            ? { ok: false, mensaje: traducir(error.message) }
+            : { ok: true, mensaje: "Listo, tu contraseña quedó cambiada." };
+        },
       };
     }
 
@@ -240,6 +293,16 @@ export function ProveedorSesion({ children }: { children: ReactNode }) {
       entrarConGoogle: async () => ({
         ok: false,
         mensaje: "Entrar con Google necesita la base de datos configurada.",
+      }),
+
+      cambiarCorreoDeAcceso: async () => ({
+        ok: false,
+        mensaje: "Cambiar el correo de acceso necesita la base de datos configurada.",
+      }),
+
+      cambiarClaveDeAcceso: async () => ({
+        ok: false,
+        mensaje: "Cambiar la contraseña necesita la base de datos configurada.",
       }),
 
       salir: async () => abrirLocal(null),

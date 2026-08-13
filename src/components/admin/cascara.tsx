@@ -2,13 +2,14 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
 import {
   Building2,
   CalendarRange,
   Images,
   Inbox,
+  ExternalLink,
   Landmark,
   LayoutDashboard,
   Loader2,
@@ -23,6 +24,7 @@ import {
 import { useEffect, useState } from "react";
 import { useContenido } from "@/lib/contenido";
 import { pendientesParaLaPropietaria } from "@/lib/consultas";
+import { useSesion } from "@/lib/sesion";
 import { respaldarAhora } from "@/lib/repositorio";
 import { useCargandoInicial } from "@/lib/usar-carga";
 import { BarraCarga } from "@/components/sitio/barra-carga";
@@ -91,6 +93,13 @@ export function Cascara({ children }: { children: React.ReactNode }) {
   const [abierto, setAbierto] = useState(false);
   const { consultas } = useContenido();
   const nuevas = pendientesParaLaPropietaria(consultas);
+
+  const router = useRouter();
+  const { salir } = useSesion();
+  const cerrar = async () => {
+    await salir();
+    router.push("/ingresar");
+  };
   const cargando = useCargandoInicial();
 
   /* Copia de seguridad al entrar: si algo sale mal, siempre hay de dónde volver. */
@@ -146,14 +155,25 @@ export function Cascara({ children }: { children: React.ReactNode }) {
   );
 
   const pie = (
-    <div className="mt-auto p-3">
+    <div className="mt-auto space-y-0.5 p-3">
       <Link
         href="/"
         className="flex items-center gap-3 rounded-sm px-3 py-2 text-[0.86rem] font-medium text-white/55 transition-colors hover:bg-white/6 hover:text-white/90"
       >
-        <LogOut className="size-[1.05rem]" strokeWidth={1.5} aria-hidden />
-        Salir del panel
+        <ExternalLink className="size-[1.05rem]" strokeWidth={1.5} aria-hidden />
+        Ver el sitio
       </Link>
+
+      {/* Cierra la sesión de verdad: antes sólo volvía al inicio y la cuenta
+          quedaba abierta en esa computadora. */}
+      <button
+        type="button"
+        onClick={() => void cerrar()}
+        className="flex w-full items-center gap-3 rounded-sm px-3 py-2 text-left text-[0.86rem] font-medium text-white/55 transition-colors hover:bg-white/6 hover:text-white/90"
+      >
+        <LogOut className="size-[1.05rem]" strokeWidth={1.5} aria-hidden />
+        Cerrar sesión
+      </button>
     </div>
   );
 
