@@ -60,8 +60,13 @@ export default function PaginaConfiguracion() {
     const a = document.createElement("a");
     a.href = url;
     a.download = `la-fe-datos-${new Date().toISOString().slice(0, 10)}.json`;
+
+    /* El enlace tiene que estar en el documento y la dirección no se puede
+       liberar en el mismo instante: si no, el navegador cancela la descarga. */
+    document.body.appendChild(a);
     a.click();
-    URL.revokeObjectURL(url);
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
   };
 
   return (

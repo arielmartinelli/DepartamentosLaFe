@@ -19,6 +19,22 @@ import {
  */
 export function CopiasSeguridad() {
   const [restaurada, setRestaurada] = useState<string | null>(null);
+  const [reciente, setReciente] = useState<string | null>(null);
+  const [aviso, setAviso] = useState("");
+
+  /* Si nada cambió desde la última copia, no se guarda una igual: antes el
+     botón parecía roto porque no pasaba nada. Ahora lo dice. */
+  const copiar = () => {
+    setRestaurada(null);
+    const nuevo = respaldarAhora("Manual");
+    if (nuevo) {
+      setReciente(nuevo.id);
+      setAviso("Copia guardada.");
+    } else {
+      setReciente(null);
+      setAviso("No hizo falta: no cambió nada desde la copia anterior.");
+    }
+  };
   const respaldos = useSyncExternalStore(
     suscribirRespaldos,
     instantaneaRespaldos,
@@ -39,18 +55,20 @@ export function CopiasSeguridad() {
         titulo="Copias automáticas"
         detalle="Se guarda una al abrir el panel y otra antes de cualquier cambio de estructura. Se conservan las últimas cuatro."
         accion={
-          <Boton
-            variante="contorno"
-            medida="sm"
-            onClick={() => {
-              respaldarAhora("Manual");
-              setRestaurada(null);
-            }}
-          >
+          <Boton variante="contorno" medida="sm" onClick={copiar}>
             <ShieldCheck strokeWidth={1.7} /> Copiar ahora
           </Boton>
         }
       />
+
+      {aviso ? (
+        <p
+          role="status"
+          className="mx-5 mb-4 rounded-sm bg-hueso px-3.5 py-2.5 text-[0.83rem] text-texto-suave sm:mx-6"
+        >
+          {aviso}
+        </p>
+      ) : null}
 
       {respaldos.length === 0 ? (
         <p className="px-5 pb-5 text-[0.85rem] leading-relaxed text-texto-suave sm:px-6 sm:pb-6">
@@ -64,7 +82,11 @@ export function CopiasSeguridad() {
               <span className="min-w-0 grow">
                 <span className="flex flex-wrap items-center gap-2">
                   <span className="text-[0.88rem] font-medium text-ink">{cuando(r.fecha)}</span>
-                  {i === 0 ? <Insignia tono="exito">La más reciente</Insignia> : null}
+                  {reciente === r.id ? (
+                    <Insignia tono="oro">Recién guardada</Insignia>
+                  ) : i === 0 ? (
+                    <Insignia tono="exito">La más reciente</Insignia>
+                  ) : null}
                   <Insignia tono="neutro">{r.motivo}</Insignia>
                   {restaurada === r.id ? <Insignia tono="oro">Restaurada</Insignia> : null}
                 </span>

@@ -218,15 +218,20 @@ export function ProveedorSesion({ children }: { children: ReactNode }) {
             return { ok: false, mensaje: "Ese ya es tu correo de acceso." };
           }
 
+          /* El enlace tiene que volver por /auth/callback: es el único lugar
+             que canjea el token. Si vuelve a otra página, no cambia nada. */
+          const vuelta = new URL("/auth/callback", window.location.origin);
+          vuelta.searchParams.set("next", "/admin/configuracion");
+
           const { error } = await bd.auth.updateUser(
             { email: limpio },
-            { emailRedirectTo: `${window.location.origin}/ingresar` },
+            { emailRedirectTo: vuelta.toString() },
           );
           return error
             ? { ok: false, mensaje: traducir(error.message) }
             : {
                 ok: true,
-                mensaje: `Te mandamos un correo a ${limpio} para confirmar el cambio. Hasta que abras ese enlace seguís entrando con el correo de siempre.`,
+                mensaje: `Te mandamos un correo a ${limpio} y otro a ${correo}. Hay que abrir los dos enlaces, desde este mismo navegador, para que el cambio quede hecho. Mientras tanto seguís entrando con el correo de siempre.`,
               };
         },
 

@@ -182,8 +182,9 @@ export function Accesos() {
           </Boton>
 
           <p className="text-[0.78rem] leading-relaxed text-texto-tenue">
-            El cambio no es inmediato: llega un correo a la dirección nueva y recién al abrir ese
-            enlace queda activa. Mientras tanto seguís entrando con la de siempre.
+            El cambio no es inmediato. Por seguridad, Supabase manda un enlace a la dirección nueva
+            y otro a la actual: hay que abrir los dos, desde este mismo navegador. Hasta entonces
+            seguís entrando con el correo de siempre.
           </p>
         </form>
 
