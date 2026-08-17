@@ -45,9 +45,10 @@ function Logotipo({ enPlaca }: { enPlaca: boolean }) {
 
 export function Nav() {
   const ruta = usePathname();
-  const { cuenta } = useSesion();
+  const { cuenta, esPropietaria } = useSesion();
   const { consultas } = useContenido();
-  const sinLeer = cuenta ? pendientesParaElVisitante(consultas, cuenta.id, cuenta.email) : 0;
+  const esCliente = Boolean(cuenta && !esPropietaria);
+  const sinLeer = esCliente && cuenta ? pendientesParaElVisitante(consultas, cuenta.id, cuenta.email) : 0;
   const enPortada = ruta === "/";
   const [abierto, setAbierto] = useState(false);
   const [scrolleado, setScrolleado] = useState(false);
@@ -124,16 +125,16 @@ export function Nav() {
             </a>
 
             <Link
-              href={cuenta ? "/mis-consultas" : "/entrar"}
+              href={esCliente ? "/mis-consultas" : "/entrar"}
               aria-label={
-                cuenta
+                esCliente
                   ? sinLeer
                     ? `Mis consultas — ${sinLeer} con respuesta nueva`
                     : "Mis consultas"
                   : "Entrar a mi cuenta"
               }
               className={cn(
-                "relative hidden items-center gap-2 rounded-full px-3 py-2 text-[0.875rem] font-medium transition-colors duration-200 sm:inline-flex",
+                "relative hidden items-center gap-2 rounded-full px-3.5 py-2 text-[0.875rem] font-medium transition-colors duration-200 sm:inline-flex",
                 solida ? "text-texto-suave hover:bg-hueso hover:text-ink" : "text-white/80 hover:bg-white/12 hover:text-white",
               )}
             >
@@ -146,7 +147,7 @@ export function Nav() {
                   />
                 ) : null}
               </span>
-              {cuenta ? cuenta.nombre.split(" ")[0] : "Mi cuenta"}
+              {esCliente ? "Mis consultas" : "Mi cuenta"}
               {sinLeer ? (
                 <span className="rounded-full bg-oro px-1.5 py-0.5 text-[0.68rem] font-bold text-white">
                   {sinLeer}
@@ -230,8 +231,8 @@ export function Nav() {
                   </a>
                 </Boton>
                 <Boton asChild variante="contorno" medida="lg" pastilla>
-                  <Link href={cuenta ? "/mis-consultas" : "/entrar"} onClick={() => setAbierto(false)}>
-                    {cuenta ? "Mis consultas" : "Entrar a mi cuenta"}
+                  <Link href={esCliente ? "/mis-consultas" : "/entrar"} onClick={() => setAbierto(false)}>
+                    {esCliente ? "Mis consultas" : "Mi cuenta"}
                     {sinLeer ? (
                       <span className="ml-2 rounded-full bg-oro px-1.5 py-0.5 text-[0.68rem] font-bold text-white">
                         {sinLeer}

@@ -15,66 +15,67 @@ export function Hero() {
   const portada = resolver(ajustes.portada) || foto.fachada;
 
   return (
-    <section id="inicio" className="relative">
-      <div className="group relative h-[min(94svh,52rem)] min-h-[34rem] w-full overflow-hidden">
+    <section id="inicio" className="relative pb-10 pt-20 sm:pt-24">
+      <div className="contenedor">
+        {/* Banner principal presentado de forma limpia sin textos ni velos oscuros que pisen la imagen gráfica */}
         <motion.div
-          initial={{ scale: 1.1, opacity: 0.8 }}
+          initial={{ scale: 0.98, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 1.3, ease: [0.23, 1, 0.32, 1] }}
-          className="absolute inset-0 size-full overflow-hidden"
+          transition={{ duration: 0.9, ease: [0.23, 1, 0.32, 1] }}
+          className="group relative w-full overflow-hidden rounded-2xl border border-linea/60 bg-hueso shadow-alza"
         >
-          <Image
-            src={portada}
-            alt="Fachada de Departamentos La Fe al atardecer, con el cordón montañoso de Ushuaia detrás"
-            fill
-            priority
-            fetchPriority="high"
-            sizes="100vw"
-            unoptimized={portada.startsWith("data:")}
-            className="object-cover object-center transition-transform duration-1000 ease-salida group-hover:scale-105"
-          />
+          <div className="relative aspect-[16/9] w-full overflow-hidden sm:aspect-[2/1] lg:aspect-[2.2/1]">
+            <Image
+              src={portada}
+              alt="Departamentos La Fe — Ushuaia"
+              fill
+              priority
+              fetchPriority="high"
+              sizes="100vw"
+              unoptimized={portada.startsWith("data:")}
+              className="object-cover object-center transition-transform duration-1000 ease-salida group-hover:scale-[1.02]"
+            />
+          </div>
         </motion.div>
-        <div aria-hidden className="velo-foto absolute inset-0 transition-opacity duration-700 group-hover:opacity-90" />
 
-        <div className="contenedor absolute inset-x-0 bottom-0 pb-16 sm:pb-20 lg:pb-24">
-          <motion.p
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.15, ease: [0.23, 1, 0.32, 1] }}
-            className="text-[0.8rem] font-medium tracking-wide uppercase text-white/80"
-          >
-            {sitio.ciudad}, {sitio.provincia}
-          </motion.p>
+        {/* Barra de acciones e información ubicada justo abajo del banner para no tapar la imagen */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.25, ease: [0.23, 1, 0.32, 1] }}
+          className="mt-5 flex flex-col gap-4 rounded-xl border border-linea/80 bg-white p-4 shadow-carta sm:flex-row sm:items-center sm:justify-between sm:px-6"
+        >
+          <div className="flex items-center gap-3">
+            <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-oro/10 text-oro">
+              <Star className="size-4 fill-oro text-oro" strokeWidth={0} aria-hidden />
+            </div>
+            <div>
+              <p className="text-[0.925rem] font-semibold text-ink">
+                4,93 <span className="font-normal text-texto-suave">· 231 opiniones</span>
+              </p>
+              <p className="text-[0.78rem] text-texto-tenue">
+                Atendido directamente por sus dueños · {sitio.ciudad}, {sitio.provincia}
+              </p>
+            </div>
+          </div>
 
-          <motion.h1
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.3, ease: [0.23, 1, 0.32, 1] }}
-            className="mt-3 max-w-3xl text-[clamp(2.9rem,8vw,6rem)] leading-[0.94] text-white drop-shadow-sm"
-          >
-            Viví Ushuaia sin apuro
-          </motion.h1>
-
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.45, ease: [0.23, 1, 0.32, 1] }}
-            className="mt-6 max-w-xl text-[1.05rem] leading-relaxed text-white/85"
-          >
-            Seis departamentos propios en dos edificios, a cinco cuadras del centro.
-            Llegás, dejás las valijas y salís a caminar.
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.6, ease: [0.23, 1, 0.32, 1] }}
-            className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center"
-          >
-            <Boton asChild variante="blanco" medida="lg" pastilla className="transition-all duration-300 hover:-translate-y-0.5 hover:shadow-alza">
+          <div className="flex flex-wrap items-center gap-3">
+            <Boton
+              asChild
+              variante="principal"
+              medida="md"
+              pastilla
+              className="transition-all duration-300 hover:-translate-y-0.5 hover:shadow-alza"
+            >
               <a href="#departamentos">Ver los departamentos</a>
             </Boton>
-            <Boton asChild variante="vidrio" medida="lg" pastilla className="transition-all duration-300 hover:-translate-y-0.5 hover:bg-white/25">
+            <Boton
+              asChild
+              variante="oro"
+              medida="md"
+              pastilla
+              className="transition-all duration-300 hover:-translate-y-0.5 hover:shadow-alza"
+            >
               <a
                 href={`https://wa.me/${ajustes.whatsapp}`}
                 target="_blank"
@@ -83,21 +84,8 @@ export function Hero() {
                 Consultar disponibilidad
               </a>
             </Boton>
-          </motion.div>
-
-          <motion.p
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.75, ease: [0.23, 1, 0.32, 1] }}
-            className="mt-8 flex items-center gap-2.5 text-white/80"
-          >
-            <Star className="size-4 fill-white text-white transition-transform duration-300 hover:scale-125" strokeWidth={0} aria-hidden />
-            <span className="text-[0.875rem]">
-              <span className="font-semibold text-white">4,93</span> · 231 opiniones ·
-              atendido por sus dueños
-            </span>
-          </motion.p>
-        </div>
+          </div>
+        </motion.div>
       </div>
     </section>
   );
