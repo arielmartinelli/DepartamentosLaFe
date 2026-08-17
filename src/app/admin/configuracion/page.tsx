@@ -37,6 +37,8 @@ const campos: { clave: keyof Ajustes; etiqueta: string; tipo?: string }[] = [
   { clave: "facebook", etiqueta: "Facebook", tipo: "url" },
 ];
 
+import { normalizarUrl } from "@/lib/utils";
+
 export default function PaginaConfiguracion() {
   const { ajustes, guardarAjustes } = useContenido();
   const resolver = useResolverImagen();
@@ -47,6 +49,17 @@ export default function PaginaConfiguracion() {
   const editar = (clave: keyof Ajustes, valor: string) => {
     setBorrador({ ...borrador, [clave]: valor });
     setGuardado(false);
+  };
+
+  const guardarCambios = () => {
+    const normalizados: Partial<Ajustes> = {
+      ...borrador,
+      instagram: normalizarUrl(borrador.instagram),
+      facebook: normalizarUrl(borrador.facebook),
+    };
+    guardarAjustes(normalizados);
+    setBorrador((b) => ({ ...b, ...normalizados }));
+    setGuardado(true);
   };
 
   const descargar = async () => {
@@ -78,10 +91,7 @@ export default function PaginaConfiguracion() {
           <Boton
             variante="principal"
             medida="sm"
-            onClick={() => {
-              guardarAjustes(borrador);
-              setGuardado(true);
-            }}
+            onClick={guardarCambios}
           >
             {guardado ? <Check strokeWidth={2} /> : null}
             {guardado ? "Cambios guardados" : "Guardar cambios"}

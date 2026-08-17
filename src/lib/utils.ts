@@ -64,3 +64,33 @@ export function correoValido(valor: string) {
 export function telefonoValido(valor: string) {
   return valor.replace(/\D/g, "").length >= 8;
 }
+
+/**
+ * Normaliza una URL: si no incluye protocolo (http://, https://, etc.) ni es relativa (/...),
+ * le antepone automáticamente "https://".
+ */
+export function normalizarUrl(url: string): string {
+  const limpia = url.trim();
+  if (!limpia) return "";
+  if (/^(https?:|\/|data:|blob:|mailto:|tel:|wa\.me)/i.test(limpia)) {
+    return limpia;
+  }
+  return `https://${limpia}`;
+}
+
+/**
+ * Reemplaza en un texto cualquier dirección web o dominio (ej: instagram.com/foo, google.com/maps)
+ * que no tenga protocolo, anteponiéndole "https://".
+ */
+export function normalizarEnlacesEnTexto(texto: string): string {
+  if (!texto) return "";
+  return texto.replace(
+    /(^|\s)((?:[a-z0-9-]+\.)+[a-z]{2,}(?:\/[^\s]*)?)/gi,
+    (match, prefijo, url) => {
+      if (/^(https?:\/\/|mailto:|tel:|wa\.me|\/)/i.test(url)) {
+        return match;
+      }
+      return `${prefijo}https://${url}`;
+    }
+  );
+}

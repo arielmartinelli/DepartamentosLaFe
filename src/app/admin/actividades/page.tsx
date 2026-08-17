@@ -23,7 +23,7 @@ import { Modal } from "@/components/ui/modal";
 import { useContenido } from "@/lib/contenido";
 import { nuevoId } from "@/lib/repositorio";
 import type { Actividad } from "@/lib/tipos";
-import { cn } from "@/lib/utils";
+import { cn, normalizarUrl } from "@/lib/utils";
 
 export default function PaginaQueHacer() {
   const { actividades, ajustes, guardarActividad, eliminarActividad, moverActividad, guardarAjustes } =
@@ -245,7 +245,7 @@ export default function PaginaQueHacer() {
                   guardarActividad({
                     ...editando,
                     mapa:
-                      editando.mapa.trim() ||
+                      normalizarUrl(editando.mapa.trim()) ||
                       `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${editando.titulo}, Ushuaia`)}`,
                   });
                 }

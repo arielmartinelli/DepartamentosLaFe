@@ -11,7 +11,7 @@ import { Modal } from "@/components/ui/modal";
 import { useContenido } from "@/lib/contenido";
 import { nuevoId } from "@/lib/repositorio";
 import type { Comentario } from "@/lib/tipos";
-import { cn } from "@/lib/utils";
+import { cn, normalizarEnlacesEnTexto } from "@/lib/utils";
 
 export default function PaginaComentarios() {
   const { comentarios, guardarComentario, eliminarComentario } = useContenido();
@@ -113,7 +113,13 @@ export default function PaginaComentarios() {
               variante="principal"
               medida="sm"
               onClick={() => {
-                if (editando?.texto.trim()) guardarComentario(editando);
+                if (editando?.texto.trim()) {
+                  guardarComentario({
+                    ...editando,
+                    texto: normalizarEnlacesEnTexto(editando.texto.trim()),
+                    procedencia: normalizarEnlacesEnTexto(editando.procedencia.trim()),
+                  });
+                }
                 setEditando(null);
               }}
             >
