@@ -21,9 +21,9 @@ export function TarjetaDepto({
   const libre = dep.estado === "disponible";
 
   return (
-    <article className={cn("group", className)}>
+    <article className={cn("group transition-all duration-300 hover:-translate-y-1.5", className)}>
       <Link href={`/departamentos/${dep.slug}`} className="block rounded-lg outline-offset-4">
-        <div className="relative">
+        <div className="relative overflow-hidden rounded-lg shadow-sm transition-shadow duration-300 group-hover:shadow-alza">
           <Foto
             src={dep.fotos[0]}
             alt={`${edificio?.nombre} — ${dep.nombre}`}

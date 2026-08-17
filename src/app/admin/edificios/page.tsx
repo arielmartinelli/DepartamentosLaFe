@@ -134,7 +134,7 @@ export default function PaginaEdificios() {
                       id={`dir-${ed.id}`}
                       value={ed.direccion}
                       onChange={(e) => editar(original, { direccion: e.target.value })}
-                      placeholder="Ushuaia 1589, Ushuaia"
+                      placeholder="Padre Federico Torre 1589, Ushuaia"
                     />
                   </div>
 

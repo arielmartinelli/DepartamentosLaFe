@@ -25,7 +25,7 @@ export const sitio = {
     whatsappTexto:
       "Hola, escribo desde la web de Departamentos La Fe. Quisiera consultar disponibilidad.",
     email: "reservas@lafedepartamentos.com.ar",
-    direccion: "Ushuaia 1589, Ushuaia",
+    direccion: "Padre Federico Torre 1589 / Hernando de Magallanes 1507, Ushuaia",
     horarios: "Todos los días, de 9 a 21 h",
   },
   redes: {

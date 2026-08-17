@@ -24,7 +24,7 @@ export const edificios: Edificio[] = [
       "Cada uno con su dormitorio, su cocina-comedor equipada y todo lo necesario para instalarse sin comprar nada.",
     descripcion:
       "Son cuatro departamentos independientes en la misma propiedad. Todos tienen un dormitorio con cama matrimonial y cama simple, cocina-comedor completa, televisor en cada ambiente y fibra óptica. Están a cinco cuadras paralelas del centro, así que se llega caminando, y a menos de cien metros hay panadería, rotisería, carnicería, verdulería, kioscos y despensas.",
-    direccion: "Ushuaia 1589, Ushuaia",
+    direccion: "Padre Federico Torre 1589, Ushuaia",
     aLosPies: "5 cuadras del centro · comercios a 100 m",
     coordenadas: { lat: -54.8021, lng: -68.3095 },
     portada: foto.fachada,
@@ -44,7 +44,7 @@ export const edificios: Edificio[] = [
       "Dormitorio con cama king y un sofá hotelero en el living, con el mismo equipamiento que el resto.",
     descripcion:
       "Dos unidades con dormitorio de cama king y un sofá hotelero en el living. El equipamiento es el mismo que en La Fe I: cocina-comedor completa, televisor en cada ambiente, fibra óptica y cable.",
-    direccion: "Ushuaia, Tierra del Fuego",
+    direccion: "Hernando de Magallanes 1507, Ushuaia",
     aLosPies: "5 cuadras del centro · comercios a 100 m",
     coordenadas: { lat: -54.8015, lng: -68.3078 },
     portada: foto.livingVentanal,
