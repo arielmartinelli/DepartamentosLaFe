@@ -150,17 +150,44 @@ export const estadoDeLaBase = () => estadoRemoto;
 /** True mientras no llegó la primera respuesta de la base. */
 export const cargandoPrimeraVez = () => configurada && estadoRemoto === "cargando";
 
+/**
+ * Colecciones editadas acá que el servidor todavía no confirmó.
+ *
+ * Sin esto, una edición que tarda o falla en subir queda pisada por la próxima
+ * lectura del servidor: era el caso de la foto de portada, que se cambiaba y
+ * volvía sola a la anterior.
+ */
+const sinConfirmar = new Set<Clave>();
+
+export const hayCambiosSinSubir = () => sinConfirmar.size > 0;
+
 async function empujarAlServidor<T>(clave: Clave, valor: T) {
   if (!hayNavegador()) return;
   try {
     const remoto = await import("./supabase/remoto");
     if (!remoto.hayBaseDeDatos) return;
+
+    sinConfirmar.add(clave);
     const ok = await remoto.empujar(clave, valor);
-    if (!ok) estadoRemoto = "error";
+
+    if (ok) {
+      sinConfirmar.delete(clave);
+      if (estadoRemoto === "error" && !sinConfirmar.size) estadoRemoto = "listo";
+    } else {
+      estadoRemoto = "error";
+    }
     avisar();
   } catch {
     estadoRemoto = "error";
+    avisar();
   }
+}
+
+/** Reintenta lo que quedó sin subir, con lo último que haya en memoria. */
+async function reintentarPendientes() {
+  if (!sinConfirmar.size) return;
+  const pendientes = [...sinConfirmar];
+  await Promise.all(pendientes.map((clave) => empujarAlServidor(clave, cache.get(clave))));
 }
 
 /**
@@ -174,7 +201,10 @@ export async function escucharServidor() {
     const remoto = await import("./supabase/remoto");
     if (!remoto.hayBaseDeDatos) return () => {};
 
-    const refrescar = () => void sincronizarConLaBase({ silencioso: true });
+    const refrescar = () => {
+      void reintentarPendientes();
+      void sincronizarConLaBase({ silencioso: true });
+    };
     const cortarCanal = remoto.escucharCambios(refrescar);
 
     /* Por si el tiempo real no está habilitado en la base o se corta la
@@ -222,10 +252,12 @@ export async function sincronizarConLaBase({ silencioso = false } = {}) {
     );
 
     /* Sólo se reemplaza lo que realmente cambió: si la referencia no cambia,
-       React no vuelve a dibujar la pantalla. */
+       React no vuelve a dibujar la pantalla. Y nunca se pisa una colección que
+       este navegador editó y el servidor todavía no confirmó. */
     let cambio = false;
     resultados.forEach(([clave, valor]) => {
       if (valor === null || valor === undefined) return;
+      if (sinConfirmar.has(clave)) return;
       const antes = cache.get(clave);
       if (antes !== undefined && JSON.stringify(antes) === JSON.stringify(valor)) return;
       cache.set(clave, valor);

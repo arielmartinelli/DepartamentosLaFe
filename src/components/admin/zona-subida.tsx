@@ -1,6 +1,6 @@
 "use client";
 
-import { ImageUp, Loader2, X } from "lucide-react";
+import { ImageUp, Loader2, TriangleAlert, X } from "lucide-react";
 import { useId, useRef, useState, type DragEvent } from "react";
 import { Boton } from "@/components/ui/boton";
 import { guardarArchivo } from "@/lib/archivos";
@@ -33,26 +33,34 @@ export function ZonaSubida({
   const [encima, setEncima] = useState(false);
   const [trabajando, setTrabajando] = useState(0);
   const [errores, setErrores] = useState<string[]>([]);
+  const [avisos, setAvisos] = useState<string[]>([]);
 
   const procesar = async (archivos: FileList | null) => {
     if (!archivos?.length) return;
     const lista = Array.from(archivos).slice(0, multiple ? 20 : 1);
 
     setErrores([]);
+    setAvisos([]);
     setTrabajando(lista.length);
 
     const referencias: string[] = [];
     const fallos: string[] = [];
+    const alertas: string[] = [];
 
     for (const archivo of lista) {
       const r = await guardarArchivo(archivo);
-      if (r.ok) referencias.push(r.referencia);
-      else fallos.push(r.error);
+      if (r.ok) {
+        referencias.push(r.referencia);
+        if (r.aviso) alertas.push(r.aviso);
+      } else {
+        fallos.push(r.error);
+      }
       setTrabajando((n) => n - 1);
     }
 
     setTrabajando(0);
     setErrores(fallos);
+    setAvisos(alertas);
     if (referencias.length) onListo(referencias);
     if (entrada.current) entrada.current.value = "";
   };
@@ -135,6 +143,20 @@ export function ZonaSubida({
             >
               <X className="mt-0.5 size-3.5 shrink-0" strokeWidth={2.2} aria-hidden />
               {e}
+            </li>
+          ))}
+        </ul>
+      ) : null}
+
+      {avisos.length ? (
+        <ul className="mt-3 space-y-1.5">
+          {avisos.map((a) => (
+            <li
+              key={a}
+              className="flex items-start gap-2 rounded-sm bg-oro/10 px-3 py-2 text-[0.8rem] leading-relaxed text-oro-oscuro"
+            >
+              <TriangleAlert className="mt-0.5 size-3.5 shrink-0" strokeWidth={2} aria-hidden />
+              {a}
             </li>
           ))}
         </ul>

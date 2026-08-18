@@ -121,7 +121,9 @@ async function comprimir(archivo: File): Promise<string> {
 
 /* ── API pública ──────────────────────────────────────────────────── */
 
-export type ResultadoSubida = { ok: true; referencia: string } | { ok: false; error: string };
+export type ResultadoSubida =
+  | { ok: true; referencia: string; aviso?: string }
+  | { ok: false; error: string };
 
 /** Convierte el resultado comprimido en un archivo listo para subir. */
 async function aBinario(datos: string) {
@@ -171,6 +173,7 @@ export async function guardarArchivo(archivo: File): Promise<ResultadoSubida> {
     const datos = await comprimir(archivo);
 
     /* Con base de datos, la imagen queda en el servidor y la ve todo el mundo. */
+    const { hayBaseDeDatos } = await import("./supabase/cliente");
     const publica = await subirAlServidor(datos, archivo.name);
     if (publica) return { ok: true, referencia: publica };
 
@@ -180,7 +183,16 @@ export async function guardarArchivo(archivo: File): Promise<ResultadoSubida> {
     transaccion(db, "readwrite").put(datos, id);
     cache[id] = datos;
     avisar();
-    return { ok: true, referencia: `local:${id}` };
+
+    return {
+      ok: true,
+      referencia: `local:${id}`,
+      /* Antes esto pasaba en silencio: la foto se veía bien acá y en el sitio
+         publicado seguía la anterior, porque nunca había llegado al servidor. */
+      aviso: hayBaseDeDatos
+        ? `“${archivo.name}” quedó guardada sólo en esta computadora: no se pudo subir al servidor. En el sitio publicado se va a seguir viendo la foto anterior.`
+        : undefined,
+    };
   } catch {
     return { ok: false, error: `No se pudo procesar “${archivo.name}”.` };
   }
