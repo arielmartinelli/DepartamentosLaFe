@@ -177,7 +177,7 @@ export default function PaginaConfiguracion() {
                   compacta
                   className="mt-3"
                   onListo={([ref]) => editar("portada", ref)}
-                  ayuda="Es la foto grande del inicio y del acceso al panel."
+                  ayuda="Es la foto del acceso al panel. La del inicio del sitio se toma de La Fe I, en Edificios."
                 />
                 <Entrada
                   className="mt-2 h-10 text-[0.8rem]"

@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
-import { Menu, Phone, UserRound, X } from "lucide-react";
+import { LayoutDashboard, Menu, Phone, UserRound, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Boton } from "@/components/ui/boton";
 import { useContenido } from "@/lib/contenido";
@@ -12,7 +12,7 @@ import { pendientesParaElVisitante } from "@/lib/consultas";
 import { useSesion } from "@/lib/sesion";
 import { sitio, urlWhatsApp } from "@/lib/site";
 import { useResolverImagen } from "@/lib/usar-imagen";
-import { cn } from "@/lib/utils";
+import { cn, iniciales } from "@/lib/utils";
 
 /**
  * El logotipo está dibujado en blanco y oro, así que sobre fondo claro
@@ -43,11 +43,22 @@ function Logotipo({ enPlaca }: { enPlaca: boolean }) {
   );
 }
 
+/** Dos letras a partir del nombre; si no hay, la primera del correo. */
+function siglas(nombre: string, email: string) {
+  return iniciales(nombre) || email.slice(0, 2).toUpperCase() || "?";
+}
+
 export function Nav() {
   const ruta = usePathname();
-  const { cuenta } = useSesion();
+  const { cuenta, esPropietaria } = useSesion();
   const { consultas } = useContenido();
-  const sinLeer = cuenta ? pendientesParaElVisitante(consultas, cuenta.id, cuenta.email) : 0;
+
+  /* La propietaria no es una clienta: en el sitio no ve “mis consultas” ni el
+     contador de respuestas, sino el acceso a su panel. */
+  const visitante = cuenta && !esPropietaria ? cuenta : null;
+  const sinLeer = visitante
+    ? pendientesParaElVisitante(consultas, visitante.id, visitante.email)
+    : 0;
   const enPortada = ruta === "/";
   const [abierto, setAbierto] = useState(false);
   const [scrolleado, setScrolleado] = useState(false);
@@ -123,36 +134,54 @@ export function Nav() {
               {sitio.contacto.telefono}
             </a>
 
-            <Link
-              href={cuenta ? "/mis-consultas" : "/entrar"}
-              aria-label={
-                cuenta
-                  ? sinLeer
-                    ? `Mis consultas — ${sinLeer} con respuesta nueva`
-                    : "Mis consultas"
-                  : "Entrar a mi cuenta"
-              }
-              className={cn(
-                "relative hidden items-center gap-2 rounded-full px-3 py-2 text-[0.875rem] font-medium transition-colors duration-200 sm:inline-flex",
-                solida ? "text-texto-suave hover:bg-hueso hover:text-ink" : "text-white/80 hover:bg-white/12 hover:text-white",
-              )}
-            >
-              <span className="relative">
-                <UserRound className="size-4" strokeWidth={1.7} aria-hidden />
+            {esPropietaria ? (
+              <Link
+                href="/admin"
+                className={cn(
+                  "hidden items-center gap-2 rounded-full px-3 py-2 text-[0.875rem] font-medium transition-colors duration-200 sm:inline-flex",
+                  solida ? "text-texto-suave hover:bg-hueso hover:text-ink" : "text-white/80 hover:bg-white/12 hover:text-white",
+                )}
+              >
+                <LayoutDashboard className="size-4" strokeWidth={1.7} aria-hidden />
+                Mi panel
+              </Link>
+            ) : visitante ? (
+              /* Sólo las iniciales: los correos largos partían la barra en dos. */
+              <Link
+                href="/mis-consultas"
+                title={visitante.nombre || visitante.email}
+                aria-label={
+                  sinLeer
+                    ? `Mis consultas — ${sinLeer} sin leer`
+                    : `Mis consultas de ${visitante.nombre || visitante.email}`
+                }
+                className={cn(
+                  "relative hidden size-9 shrink-0 items-center justify-center rounded-full text-[0.75rem] font-bold tracking-[0.02em] transition-colors duration-200 sm:inline-flex",
+                  solida
+                    ? "bg-hueso text-ink hover:bg-linea"
+                    : "bg-white/15 text-white ring-1 ring-white/25 hover:bg-white/25",
+                )}
+              >
+                {siglas(visitante.nombre, visitante.email)}
                 {sinLeer ? (
-                  <span
-                    aria-hidden
-                    className="absolute -right-1 -top-1 size-2 rounded-full bg-oro ring-2 ring-white"
-                  />
+                  <span className="absolute -right-0.5 -top-0.5 grid min-w-4 place-items-center rounded-full bg-oro px-1 text-[0.62rem] font-bold text-white ring-2 ring-white">
+                    {sinLeer}
+                  </span>
                 ) : null}
-              </span>
-              {cuenta ? cuenta.nombre.split(" ")[0] : "Mi cuenta"}
-              {sinLeer ? (
-                <span className="rounded-full bg-oro px-1.5 py-0.5 text-[0.68rem] font-bold text-white">
-                  {sinLeer}
-                </span>
-              ) : null}
-            </Link>
+              </Link>
+            ) : (
+              <Link
+                href="/entrar"
+                aria-label="Entrar a mi cuenta"
+                className={cn(
+                  "hidden items-center gap-2 rounded-full px-3 py-2 text-[0.875rem] font-medium transition-colors duration-200 sm:inline-flex",
+                  solida ? "text-texto-suave hover:bg-hueso hover:text-ink" : "text-white/80 hover:bg-white/12 hover:text-white",
+                )}
+              >
+                <UserRound className="size-4" strokeWidth={1.7} aria-hidden />
+                Mi cuenta
+              </Link>
+            )}
 
             <Boton
               asChild
@@ -230,14 +259,20 @@ export function Nav() {
                   </a>
                 </Boton>
                 <Boton asChild variante="contorno" medida="lg" pastilla>
-                  <Link href={cuenta ? "/mis-consultas" : "/entrar"} onClick={() => setAbierto(false)}>
-                    {cuenta ? "Mis consultas" : "Entrar a mi cuenta"}
-                    {sinLeer ? (
-                      <span className="ml-2 rounded-full bg-oro px-1.5 py-0.5 text-[0.68rem] font-bold text-white">
-                        {sinLeer}
-                      </span>
-                    ) : null}
-                  </Link>
+                  {esPropietaria ? (
+                    <Link href="/admin" onClick={() => setAbierto(false)}>
+                      Ir a mi panel
+                    </Link>
+                  ) : (
+                    <Link href={visitante ? "/mis-consultas" : "/entrar"} onClick={() => setAbierto(false)}>
+                      {visitante ? "Mis consultas" : "Entrar a mi cuenta"}
+                      {sinLeer ? (
+                        <span className="ml-2 rounded-full bg-oro px-1.5 py-0.5 text-[0.68rem] font-bold text-white">
+                          {sinLeer}
+                        </span>
+                      ) : null}
+                    </Link>
+                  )}
                 </Boton>
                 <a
                   href={sitio.contacto.telefonoHref}

@@ -15,12 +15,31 @@ const tono = { nueva: "oro", respondida: "exito", archivada: "neutro" } as const
 const rotulo = { nueva: "Esperando respuesta", respondida: "Respondida", archivada: "Archivada" };
 
 export default function PaginaMisConsultas() {
-  const { cuenta, listo, salir } = useSesion();
+  const { cuenta, esPropietaria, listo, salir } = useSesion();
   const { consultas, departamentos, edificios, responderConsulta } = useContenido();
   const [respuestas, setRespuestas] = useState<Record<string, string>>({});
 
   if (!listo) {
     return <div className="contenedor min-h-[60svh] pt-40 text-texto-suave">Cargando…</div>;
+  }
+
+  /* La propietaria ve todas las consultas por permisos: si entrara acá,
+     aparecerían como si fueran suyas. Su lugar es el panel. */
+  if (esPropietaria) {
+    return (
+      <div className="contenedor flex min-h-[70svh] flex-col items-center justify-center py-32 text-center">
+        <h1 className="text-[clamp(1.9rem,4vw,2.6rem)] leading-tight">Esta sección es para huéspedes</h1>
+        <p className="mt-4 max-w-md text-[1rem] leading-relaxed text-texto-suave">
+          Estás entrando con la cuenta de la propietaria. Las consultas se responden desde el panel,
+          donde además tenés reservas, calendario y contenido.
+        </p>
+        <div className="mt-8">
+          <Boton asChild variante="principal" medida="lg" pastilla>
+            <Link href="/admin">Ir a mi panel</Link>
+          </Boton>
+        </div>
+      </div>
+    );
   }
 
   if (!cuenta) {

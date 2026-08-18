@@ -10,9 +10,14 @@ import { sitio } from "@/lib/site";
 import { useResolverImagen } from "@/lib/usar-imagen";
 
 export function Hero() {
-  const { ajustes } = useContenido();
+  const { ajustes, edificios } = useContenido();
   const resolver = useResolverImagen();
-  const portada = resolver(ajustes.portada) || foto.fachada;
+
+  /* La foto del inicio es la de La Fe I: se cambia una sola vez, en el
+     edificio, y el inicio la sigue. Antes había un valor aparte que quedaba
+     viejo y pisaba al otro. */
+  const laFeUno = edificios[0]?.portada;
+  const portada = resolver(laFeUno) || resolver(ajustes.portada) || foto.fachada;
 
   return (
     <section id="inicio" className="relative">
