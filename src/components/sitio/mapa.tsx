@@ -12,24 +12,23 @@ type Props = {
 };
 
 /**
- * Mapa embebido de OpenStreetMap: no necesita clave de API ni cookies de
- * terceros. El botón "Cómo llegar" abre la app de mapas del dispositivo.
+ * Mapa embebido de Google Maps. Los botones "Cómo llegar" y "Ver en Google Maps"
+ * abren Google Maps apuntando exactamente a la dirección cargada en la página.
  */
 export function Mapa({ lat, lng, titulo, direccion, className, alto = "h-[22rem] sm:h-[28rem]" }: Props) {
-  const d = 0.008;
-  const bbox = `${lng - d},${lat - d / 2},${lng + d},${lat + d / 2}`;
-  const embed = `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${lat},${lng}`;
-  const comoLlegar = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
-  const verMas = `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lng}#map=16/${lat}/${lng}`;
+  const consulta = encodeURIComponent(direccion || `${lat},${lng}`);
+  const embed = `https://maps.google.com/maps?q=${consulta}&t=&z=16&ie=UTF8&iwloc=&output=embed`;
+  const comoLlegar = `https://www.google.com/maps/dir/?api=1&destination=${consulta}`;
+  const verEnGoogleMaps = `https://www.google.com/maps/search/?api=1&query=${consulta}`;
 
   return (
-    <div className={cn("overflow-hidden rounded-xl border border-linea bg-white", className)}>
+    <div className={cn("overflow-hidden rounded-xl border border-linea bg-white shadow-carta", className)}>
       <iframe
-        title={`Mapa de ${titulo}`}
+        title={`Mapa de Google Maps para ${titulo}`}
         src={embed}
         loading="lazy"
         referrerPolicy="no-referrer-when-downgrade"
-        className={cn("w-full border-0 grayscale-[0.18]", alto)}
+        className={cn("w-full border-0", alto)}
       />
       <div className="flex flex-col gap-4 border-t border-linea p-5 sm:flex-row sm:items-center sm:justify-between">
         <p className="flex items-start gap-2.5 text-[0.9rem] text-texto-suave">
@@ -46,8 +45,8 @@ export function Mapa({ lat, lng, titulo, direccion, className, alto = "h-[22rem]
             </a>
           </Boton>
           <Boton asChild variante="contorno" medida="sm">
-            <a href={verMas} target="_blank" rel="noopener noreferrer">
-              Ver mapa
+            <a href={verEnGoogleMaps} target="_blank" rel="noopener noreferrer">
+              Ver en Google Maps
               <ExternalLink strokeWidth={1.7} aria-hidden />
             </a>
           </Boton>
