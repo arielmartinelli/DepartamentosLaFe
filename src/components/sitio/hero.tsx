@@ -13,11 +13,12 @@ export function Hero() {
   const { ajustes, edificios } = useContenido();
   const resolver = useResolverImagen();
 
-  /* La foto del inicio es la de La Fe I: se cambia una sola vez, en el
-     edificio, y el inicio la sigue. Antes había un valor aparte que quedaba
-     viejo y pisaba al otro. */
-  const laFeUno = edificios[0]?.portada;
-  const portada = resolver(laFeUno) || resolver(ajustes.portada) || foto.fachada;
+  /* La foto del inicio es la segunda de La Fe I: la chica que se ve al costado
+     en la sección de edificios. Se cambia una sola vez, ahí, y el inicio la
+     sigue; antes había un valor aparte que quedaba viejo y pisaba al otro. */
+  const laFeUno = edificios[0];
+  const secundaria = laFeUno?.fotos[1] ?? laFeUno?.portada;
+  const portada = resolver(secundaria) || resolver(ajustes.portada) || foto.fachada;
 
   return (
     <section id="inicio" className="relative">
